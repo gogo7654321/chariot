@@ -1,20 +1,21 @@
-# **App Name**: AP Command Center
+# **App Name**: AP Ace
 
 ## Core Features:
 
-- Personalized Dashboard: Display a personalized dashboard with daily schedule, AP class progress, to-do list, daily goals, quick launch tools, and focus zone.
-- Calendar and Classroom Sync: Sync user's schedule and assignments from Google Calendar or Google Classroom.
-- Goal Setting and Streak Tracking: Allow user to set and track daily study goals and streaks to gamify studying.
-- Quick Launch Tools: Provide quick access to essential study tools.
-- Topic Recommender: Offer an AI tool that will recommend what to study next, acting as a tool to help decide what topic is most important to prioritize for the user, given their history and upcoming test dates.
-- Flashcard Generator: Incorporate an AI tool for flashcard generation from given notes or topics. The AI tool should decide how best to split topics into flashcards.
+- Engaging Landing Page: Landing page with clear CTAs and visual feature grid.
+- Courses Hub: Centralized course hub with SVG icons and search functionality.
+- Course Pages: Dedicated course pages featuring study guides, interactive flashcards, practice questions, and progress tracking.
+- Practice Test Generation Tool: AI-powered practice test generator based on selected courses and topics.
+- AI Essay Grader: Essay grader for AP Language and Literature courses. The AI will act as a tool for evaluating and scoring essays.
+- Gamification System: Gamified elements such as XP points, streaks, and badges to increase user engagement.
+- Responsive UI Design: User-friendly, responsive design with soft shadows, rounded cards, and large imagery, inspired by Apple's aesthetic.
 
 ## Style Guidelines:
 
-- Primary color: A vibrant blue (#29ABE2) to evoke feelings of focus and intelligence. Blue is also associated with trust, security, and precision, which is relevant to the educational context.
-- Background color: A light, desaturated blue (#E5F6FD) for a calm and uncluttered feel.
-- Accent color: A lively green (#90EE90) used to highlight progress and achievements.
-- Body and headline font: 'Inter', a grotesque-style sans-serif, is suitable for headlines or body text, ensuring a modern and objective look.
-- Use simple, clear icons in a flat design style for easy recognition of different sections and tools.
-- Employ a card-based layout with clear separation between sections for easy scanning and navigation.
-- Incorporate subtle animations for task completion and progress updates to provide positive feedback and engagement.
+- Primary color: Vibrant blue (#29ABE2) to represent trust and intellect, commonly associated with educational platforms.
+- Background color: Light gray (#F0F2F5), a desaturated version of the primary hue to ensure readability and a clean backdrop.
+- Accent color: A contrasting magenta (#E91E63) for highlights and call-to-action elements, adding a pop of color.
+- Headline font: 'Space Grotesk' (sans-serif) for a tech-forward and modern look, ideal for headlines. Body text: 'Inter' (sans-serif) for a neutral and readable design.
+- Custom SVG icons (referenced as src='./images/ap_*.svg') for each AP course, aligning with the course's theme.
+- Use a grid layout for the courses hub and feature sections for a structured and easy-to-navigate experience.
+- Implement subtle parallax scroll effects and animations to enhance user engagement and visual appeal.

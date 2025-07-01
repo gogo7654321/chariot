@@ -1,76 +1,141 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: 'Inter', sans-serif;
+}
+
 @layer base {
-  :root {
-    --background: 197 88% 95%;
-    --foreground: 224 71% 4%;
+  :root, html[data-theme="default"] {
+    --background: 240 10% 98%; /* Light gray */
+    --foreground: 220 49% 10%; /* Dark Blue */
     --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
+    --card-foreground: 220 49% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
-    --primary: 197 76% 53%;
+    --popover-foreground: 220 49% 10%;
+    --primary: 220 49% 21%; /* Dark Blue #1a2b50 */
     --primary-foreground: 0 0% 100%;
-    --secondary: 197 50% 85%;
-    --secondary-foreground: 224 71% 4%;
-    --muted: 197 50% 90%;
-    --muted-foreground: 224 71% 25%;
-    --accent: 120 73% 75%;
-    --accent-foreground: 120 100% 15%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 197 50% 80%;
-    --input: 197 50% 88%;
-    --ring: 197 76% 53%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 220 49% 21%;
+    --muted: 220 13% 91%;
+    --muted-foreground: 220 10% 40%; /* Made this darker for readability */
+    --accent: 181 29% 42%; /* Teal #4d8a8b */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 59% 55%; /* Red #d14747 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 85%;
+    --input: 220 13% 88%;
+    --ring: 220 49% 21%;
+    --chart-1: 220 49% 21%;
+    --chart-2: 181 29% 42%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.8rem;
-    --sidebar-background: 0 0% 100%;
+    --radius: 1rem;
+    --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 197 76% 53%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 197 88% 95%;
-    --sidebar-accent-foreground: 197 76% 45%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 197 76% 53%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+    --primary-gradient-start: hsl(var(--primary));
+    --primary-gradient-end: hsl(var(--accent));
   }
-  .dark {
-    --background: 222 47% 11%;
+  .dark, html[data-theme="default"].dark {
+    --background: 220 49% 10%; /* Dark Blue */
     --foreground: 210 40% 98%;
-    --card: 222 47% 14%;
+    --card: 220 49% 15%;
     --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
+    --popover: 220 49% 10%;
     --popover-foreground: 210 40% 98%;
-    --primary: 197 76% 53%;
+    --primary: 181 29% 42%; /* Teal */
     --primary-foreground: 0 0% 100%;
-    --secondary: 217 33% 17%;
+    --secondary: 220 49% 21%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 120 73% 75%;
-    --accent-foreground: 120 90% 95%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 22%;
-    --input: 217 33% 22%;
-    --ring: 197 76% 53%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 222 47% 9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 197 76% 53%;
+    --muted: 220 49% 21%;
+    --muted-foreground: 220 10% 60%;
+    --accent: 220 49% 35%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 59% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 49% 25%;
+    --input: 220 49% 25%;
+    --ring: 181 29% 42%;
+    --chart-1: 181 29% 42%;
+    --chart-2: 220 49% 21%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 47% 14%;
-    --sidebar-accent-foreground: 197 76% 60%;
-    --sidebar-border: 217 33% 22%;
-    --sidebar-ring: 197 76% 53%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+    --primary-gradient-start: hsl(var(--primary));
+    --primary-gradient-end: hsl(var(--accent));
+  }
+
+  /* Protanopia (Red-blind) Theme */
+  html[data-theme="protanopia"] {
+    --primary: 210 80% 55%;
+    --accent: 39 90% 55%;
+    --destructive: 240 50% 60%;
+    --ring: 210 80% 55%;
+    --chart-1: 210 80% 55%;
+    --chart-2: 39 90% 55%;
+  }
+
+  html[data-theme="protanopia"].dark {
+    --primary: 210 80% 55%;
+    --accent: 39 90% 55%;
+    --destructive: 240 50% 50%;
+    --ring: 210 80% 55%;
+    --chart-1: 210 80% 55%;
+    --chart-2: 39 90% 55%;
+  }
+
+  /* Deuteranopia (Green-blind) Theme */
+  html[data-theme="deuteranopia"] {
+    --primary: 220 85% 60%;
+    --accent: 260 70% 65%;
+    --destructive: 30 80% 60%;
+    --ring: 220 85% 60%;
+    --chart-1: 220 85% 60%;
+    --chart-2: 260 70% 65%;
+  }
+
+  html[data-theme="deuteranopia"].dark {
+    --primary: 220 85% 60%;
+    --accent: 260 70% 65%;
+    --destructive: 30 80% 50%;
+    --ring: 220 85% 60%;
+    --chart-1: 220 85% 60%;
+    --chart-2: 260 70% 65%;
+  }
+  
+  /* Tritanopia (Blue-yellow-blind) Theme */
+  html[data-theme="tritanopia"] {
+    --primary: 350 80% 60%;
+    --accent: 180 60% 45%;
+    --destructive: 20 80% 55%;
+    --ring: 350 80% 60%;
+    --chart-1: 350 80% 60%;
+    --chart-2: 180 60% 45%;
+  }
+  html[data-theme="tritanopia"].dark {
+    --primary: 350 80% 60%;
+    --accent: 180 60% 45%;
+    --destructive: 20 80% 50%;
+    --ring: 350 80% 60%;
+    --chart-1: 350 80% 60%;
+    --chart-2: 180 60% 45%;
   }
 }
 
@@ -80,5 +145,189 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  /* Quill editor general styles */
+  .quill-container .ql-editor {
+      font-family: 'Inter', sans-serif;
+      min-height: 150px;
+  }
+  .quill-container .ql-container.ql-snow {
+    @apply rounded-b-md;
+    border: none !important;
+  }
+  .quill-container .ql-toolbar.ql-snow {
+    @apply hidden; /* Hide default toolbar; we use a custom one */
+  }
+  
+  /* Quill editor placeholder color */
+  .ql-editor.ql-blank::before {
+    color: hsl(var(--muted-foreground) / 0.6) !important;
+    font-style: normal !important;
+  }
+  .dark .ql-editor.ql-blank::before {
+    color: hsl(var(--primary-foreground) / 0.6) !important;
+  }
+
+  /* Quill editor dark mode styles */
+  .dark .ql-snow .ql-stroke {
+    @apply stroke-current text-muted-foreground;
+  }
+  .dark .ql-snow .ql-picker-label {
+    @apply text-muted-foreground;
+  }
+  .dark .ql-snow .ql-picker-options {
+    @apply bg-popover text-popover-foreground border-border;
+  }
+  .dark .ql-snow .ql-picker-item:hover, .dark .ql-snow .ql-picker-item.ql-selected {
+    @apply text-accent-foreground bg-accent;
+  }
+  .dark .ql-snow .ql-tooltip, .dark .ql-snow .ql-formula {
+      @apply bg-popover text-popover-foreground border-border shadow-lg rounded-md;
+  }
+  .dark .ql-snow .ql-tooltip input[type=text] {
+      @apply bg-input border-border text-foreground;
+  }
+  .dark .ql-snow .ql-tooltip a.ql-action::after {
+      @apply bg-primary text-primary-foreground rounded-md p-1 border-none;
+  }
+  .dark .ql-snow a {
+    @apply text-primary;
+  }
+
+  /* Custom floating toolbar styles */
+  .floating-toolbar {
+    @apply flex h-10 items-center rounded-lg p-1;
+  }
+  .floating-toolbar .ql-formats {
+    @apply flex h-full items-center;
+  }
+  .floating-toolbar .ql-formats:not(:empty)::after {
+    content: '';
+    @apply mx-1.5 block h-[60%] w-px bg-border;
+    align-self: center;
+  }
+  .floating-toolbar .ql-formats:last-child::after {
+    display: none;
+  }
+  .floating-toolbar button, .floating-toolbar .ql-picker {
+    @apply flex h-8 items-center justify-center rounded-md p-0 transition-colors duration-150 hover:bg-accent hover:text-accent-foreground;
+  }
+  .floating-toolbar button {
+     @apply w-8;
+  }
+  .floating-toolbar .ql-picker {
+    @apply w-auto border-none text-muted-foreground;
+  }
+  .floating-toolbar .ql-picker-label {
+    @apply flex h-full items-center px-2;
+  }
+  
+  /* Custom Quill color picker styling */
+  .ql-snow .ql-picker.ql-color .ql-picker-options,
+  .ql-snow .ql-picker.ql-background .ql-picker-options {
+    @apply absolute p-2 rounded-md border bg-popover shadow-lg transition-none;
+    display: none;
+    z-index: 51;
+  }
+  
+  .ql-snow .ql-picker.ql-expanded.ql-color .ql-picker-options,
+  .ql-snow .ql-picker.ql-expanded.ql-background .ql-picker-options {
+    @apply w-[168px] grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    display: grid !important;
+  }
+  
+  .ql-snow .ql-picker.ql-color .ql-picker-item,
+  .ql-snow .ql-picker.ql-background .ql-picker-item {
+    @apply h-5 w-5 rounded-sm border-none transition-all hover:ring-2 hover:ring-ring hover:ring-offset-background hover:ring-offset-1;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* General tooltip and formula pop-up styling */
+  .ql-snow .ql-tooltip {
+    @apply rounded-md border bg-popover p-2 text-popover-foreground shadow-lg;
+    z-index: 50;
+  }
+  .ql-snow .ql-tooltip input[type=text] {
+      @apply bg-input p-1 rounded-sm border-border;
+  }
+  .ql-snow .ql-tooltip a.ql-action::after {
+    content: 'Save';
+    @apply ml-2 rounded-sm bg-primary px-2 py-1 text-xs text-primary-foreground;
+  }
+  .ql-snow .ql-tooltip a.ql-remove::before {
+    content: 'Remove';
+    @apply rounded-sm border border-destructive px-2 py-1 text-xs text-destructive hover:bg-destructive hover:text-destructive-foreground;
+  }
+  
+  /* Formula (KaTeX) styling */
+  .ql-snow .ql-tooltip.ql-editing .ql-preview,
+  .ql-snow .ql-tooltip a {
+      text-decoration: none;
+  }
+
+  /* Custom Quill editor for answer fields to match textarea height */
+  .quill-answer-box .ql-editor {
+    min-height: 42px; /* Matches ShadCN h-10 input/textarea */
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  /* --- Math Editor Cursor Fix --- */
+  .theme-aware-cursor {
+    caret-color: hsl(var(--foreground));
+  }
+  
+  /* KaTeX font fix to prevent visual mismatches if needed */
+  .katex {
+    font-size: 1.25em; /* Match text-2xl size used in editor */
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* --- Animated Gradient Text for Deck Hover --- */
+  .animated-gradient-text {
+    position: relative;
+    display: inline-block;
+    color: inherit;
+  }
+
+  .animated-gradient-text::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    background-image: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .group:hover .animated-gradient-text::after {
+    width: 100%;
+  }
+
+  .copyright-symbol {
+    @apply text-[0.6em] font-normal align-super -top-0.5 relative ml-px;
   }
 }

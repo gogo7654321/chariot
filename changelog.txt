@@ -1,0 +1,90 @@
+
+          _____                    _____                                   
+         /\    \                  /\    \                                 
+        /::\    \                /::\    \                                 
+       /::::\    \              /::::\    \                                
+      /::::::\    \            /::::::\    \                               
+     /:::/\:::\    \          /:::/\:::\    \                              
+    /:::/__\:::\    \        /:::/__\:::\    \                             
+   /::::\   \:::\    \      /::::\   \:::\    \                            
+  /::::::\   \:::\    \    /::::::\   \:::\    \                           
+ /:::/\:::\   \:::\    \  /:::/\:::\   \:::\____\                          
+/:::/  \:::\   \:::\____\/:::/  \:::\   \:::|    |                         
+\::/    \:::\  /:::/    /\::/    \:::\  /:::|____|                         
+ \/____/ \:::\/:::/    /  \/_____/\:::\/:::/    /                          
+          \::::::/    /            \::::::/    /                           
+           \::::/    /              \::::/    /                            
+           /:::/    /                \::/____/                             
+          /:::/    /                  ~~                                   
+         /:::/    /                                                        
+        /:::/    /                                                         
+        \::/    /                                                          
+         \/____/                                                           
+                                                                           
+          _____                    _____                    _____          
+         /\    \                  /\    \                  /\    \         
+        /::\    \                /::\    \                /::\    \        
+       /::::\    \              /::::\    \              /::::\    \       
+      /::::::\    \            /::::::\    \            /::::::\    \      
+     /:::/\:::\    \          /:::/\:::\    \          /:::/\:::\    \     
+    /:::/__\:::\    \        /:::/  \:::\    \        /:::/__\:::\    \    
+   /::::\   \:::\    \      /:::/    \:::\    \      /::::\   \:::\    \   
+  /::::::\   \:::\    \    /:::/    / \:::\    \    /::::::\   \:::\    \  
+ /:::/\:::\   \:::\    \  /:::/    /   \:::\    \  /:::/\:::\   \:::\    \ 
+/:::/  \:::\   \:::\____\/:::/____/     \:::\____\/:::/__\:::\   \:::\____\
+\::/    \:::\  /:::/    /\:::\    \      \::/    /\:::\   \:::\   \::/    /
+ \/____/ \:::\/:::/    /  \:::\    \      \/____/  \:::\   \:::\   \/____/ 
+          \::::::/    /    \:::\    \               \:::\   \:::\    \     
+           \::::/    /      \:::\    \               \:::\   \:::\____\    
+           /:::/    /        \:::\    \               \:::\   \::/    /    
+          /:::/    /          \:::\    \               \:::\   \/____/     
+         /:::/    /            \:::\    \               \:::\    \         
+        /:::/    /              \:::\____\               \:::\____\        
+        \::/    /                \::/    /                \::/    /        
+         \/____/                  \/____/                  \/____/         
+
+==================================================================================
+  Project: AP Ace© - Development Log
+  Initiated: 2025-06-24
+==================================================================================
+
+[ 2025-06-25 ]
+----------------------------------------------------------------------------------
+  - [FEAT]    Implemented the "Deep Dive" adaptive study mode with a "Typed Recall" question format and an intelligent, typo-aware "Smart Grader" engine.
+  - [FEAT]    Added a settings toggle to enable or disable the "Smart Grader" feature within the Deep Dive study mode for more flexible practice.
+  - [FEAT]    Introduced an "Override: I was wrong" button for typo corrections in Deep Dive, giving users full control over their progress tracking.
+  - [FEAT]    Added a fullscreen mode to the "Deep Dive" player for a more immersive and focused study session.
+  - [FIX]     Resolved a runtime error in the "Deep Dive" player caused by a missing import for the `Label` component.
+  - [STYLE]   Increased the default width of flashcard decks on the Ace OS homepage for a more prominent and visually balanced layout.
+  - [STYLE]   Renamed the "Learn" study mode to the more engaging "Deep Dive".
+  - [STYLE]   Standardized copyright symbol (©) usage for "AP Ace" and "Ace OS" across the application for consistent branding.
+  - [DOCS]    Created and implemented a comprehensive Privacy Policy page, replacing the previous placeholder.
+
+[ 2025-06-24 ]
+----------------------------------------------------------------------------------
+  - [FEAT]    Added a live date and time display to the dashboard header for a more dynamic and informative user experience.
+  - [FIX]     Normalized the hover color for the sidebar accessibility button to match other sidebar icons, changing it from pink to the standard theme-aware grey.
+  - [FEAT]    Integrated Google Analytics to track site usage and user engagement.
+  - [FEAT]    Added a "Log In / Sign Up" button to the floating settings menu for guests, providing easier access to the authentication page.
+  - [FEAT]    Implemented cross-device syncing for user theme and accessibility settings by saving preferences to Firestore for logged-in users.
+  - [FIX]     Corrected CSS for the courses page to ensure text is visible in both light and dark modes.
+  - [FEAT]    Replaced the SVG mascot with the official logo from `/public/images/logo.png` for brand consistency.
+  - [STYLE]   Updated changelog ASCII art to correctly display "AP ACE©" for better readability and branding.
+  - [INIT]    Project changelog initiated.
+  - [FEAT]    Enhanced hover animation for "Why Choose AP Ace©?" feature cards to be more pronounced, matching other interactive elements.
+  - [FIX]     Corrected file paths for testimonial images on the landing page to ensure they display correctly.
+
+----------------------------------------------------------------------------------
+  OLDER CHANGES (Pre-Changelog)
+----------------------------------------------------------------------------------
+  - [FEAT]    Adjusted logo scroller animation speed for a more dynamic feel.
+  - [FEAT]    Refactored logo scroller for a seamless, infinite looping animation, removing the "jump" at the end of the loop.
+  - [FIX]     Resolved a major CSS bug that caused the logo scroller images to stack vertically instead of horizontally.
+  - [FEAT]    Modified the logo scroller hover effect to scale individual logos up without pausing the entire animation reel.
+  - [FIX]     Resolved a persistent animation stutter in the logo scroller by correcting underlying CSS rendering conflicts.
+  - [FIX]     Re-implemented the "Trusted by schools" section on the landing page after accidental deletion, restoring both markup and styling.
+  - [FIX]     Corrected an invalid image path for a school logo in the scroller.
+  - [FIX]     Centered the main hero logo on the landing page via CSS for proper alignment.
+  - [FIX]     Resolved a critical Next.js server startup failure caused by invalid CSS variables within an SVG gradient definition.
+  - [INFRA]   Implemented a version backup/restore point capability.
+----------------------------------------------------------------------------------

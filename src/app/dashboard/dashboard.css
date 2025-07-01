@@ -1,0 +1,114 @@
+
+.react-grid-layout {
+  position: relative;
+  transition: height 200ms ease;
+}
+
+.react-grid-item {
+  transition: all 200ms ease;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform;
+}
+
+.react-grid-item.resizing {
+  z-index: 1;
+  will-change: width, height;
+}
+
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 3;
+  will-change: transform;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background: hsl(var(--primary) / 0.2);
+  border-radius: 0.5rem;
+  transition-duration: 100ms;
+  z-index: 2;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.grid-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.grid-card-wrapper > * {
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-card-wrapper > * > .p-6 { /* CardContent */
+  overflow: visible;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 24px;
+  height: 24px;
+  cursor: grab;
+  z-index: 20;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-handle::before {
+    content: "⠿";
+    font-size: 20px;
+    line-height: 1;
+    color: hsl(var(--muted-foreground) / 0.5);
+    transition: color 0.2s;
+}
+
+.drag-handle:hover::before {
+    color: hsl(var(--muted-foreground));
+}
+
+/* Styles for the resize handle */
+.react-resizable-handle.react-resizable-handle-se {
+  width: 20px;
+  height: 20px;
+  bottom: 0px;
+  right: 0px;
+  cursor: se-resize;
+  position: absolute;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.react-grid-item:hover .react-resizable-handle.react-resizable-handle-se {
+  opacity: 1;
+}
+
+.react-resizable-handle.react-resizable-handle-se::after {
+  content: "";
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid hsl(var(--muted-foreground));
+  border-bottom: 2px solid hsl(var(--muted-foreground));
+}
