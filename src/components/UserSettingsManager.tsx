@@ -10,20 +10,23 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 
 type AccessibilityTheme = "default" | "protanopia" | "deuteranopia" | "tritanopia";
-type SidebarPosition = 'left' | 'right';
+type SidebarPosition = 'left' | 'right' | 'top' | 'bottom';
 
+// This function now only reads data.
 async function getFirestoreSettings(user: User) {
     const userDocRef = doc(db, 'users', user.uid);
     const docSnap = await getDoc(userDocRef);
     if (docSnap.exists()) {
         return docSnap.data();
     }
-    await setDoc(userDocRef, {});
+    // No need to create the doc here, saving will handle it.
     return null;
 }
 
 async function saveFirestoreSettings(user: User, settings: Record<string, string>) {
     const userDocRef = doc(db, 'users', user.uid);
+    // { merge: true } is crucial here. It creates the document if it doesn't exist,
+    // or updates it without overwriting other fields.
     await setDoc(userDocRef, settings, { merge: true });
 }
 
