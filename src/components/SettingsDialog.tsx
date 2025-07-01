@@ -46,23 +46,23 @@ export function SettingsDialog({ trigger }: { trigger: React.ReactNode }) {
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl flex flex-col max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>
             Manage your account and appearance settings. Your preferences are saved automatically.
           </DialogDescription>
         </DialogHeader>
-        <div className="pt-4">
-          <Tabs defaultValue="appearance">
+        <div className="pt-4 flex-1 min-h-0">
+          <Tabs defaultValue="appearance" className="flex flex-col h-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="appearance"><Palette className="mr-2 h-4 w-4" />Appearance</TabsTrigger>
               <TabsTrigger value="account"><User className="mr-2 h-4 w-4" />Account</TabsTrigger>
               <TabsTrigger value="notifications" disabled><Bell className="mr-2 h-4 w-4" />Notifications</TabsTrigger>
             </TabsList>
-            <TabsContent value="appearance" className="mt-6">
-                <ScrollArea className="max-h-[70vh]">
-                    <div className="space-y-6 pr-4">
+            <TabsContent value="appearance" className="mt-6 flex-1 min-h-0">
+                <ScrollArea className="h-full pr-4">
+                    <div className="space-y-6">
                         <div className="flex items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                                 <Label className="text-base flex items-center gap-2"><Sun className="h-4 w-4 hidden dark:inline-block" /><Moon className="h-4 w-4 inline-block dark:hidden" /> Dark Mode</Label>
@@ -121,13 +121,11 @@ export function SettingsDialog({ trigger }: { trigger: React.ReactNode }) {
                             </RadioGroup>
                         </div>
                     </div>
-              </ScrollArea>
+                </ScrollArea>
             </TabsContent>
-             <TabsContent value="account" className="mt-6">
-                <ScrollArea className="max-h-[70vh]">
-                  <div className="pr-4">
+             <TabsContent value="account" className="mt-6 flex-1 min-h-0">
+                <ScrollArea className="h-full pr-4">
                     <AccountSettingsForm />
-                  </div>
                 </ScrollArea>
              </TabsContent>
              <TabsContent value="notifications">
