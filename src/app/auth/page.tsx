@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,8 +16,10 @@ import {
   setPersistence,
   browserSessionPersistence,
   browserLocalPersistence,
+  getRedirectResult,
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
+import { collection, query, where, getDocs, setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { AceMascot } from '@/components/AceMascot';
 import { Button } from '@/components/ui/button';
 import {
@@ -52,7 +54,7 @@ import { logUserAction } from '@/lib/logging';
 const signUpSchema = z
   .object({
     firstname: z.string().min(1, { message: 'First name is required.' }),
-    username: z.string().min(3, { message: 'Username must be at least 3 characters.' }),
+    username: z.string().min(3, { message: 'Username must be at least 3 characters.' }).regex(/^[a-zA-Z0-9_.-]+$/, { message: 'Username can only contain letters, numbers, underscores, dots, and hyphens.' }),
     email: z.string().email({ message: 'Invalid email address.' }),
     password: z.string()
       .min(8, { message: "Password must be at least 8 characters long." })
@@ -68,7 +70,7 @@ const signUpSchema = z
   });
 
 const loginSchema = z.object({
-  email: z.string().email({ message: 'Invalid email address.' }),
+  emailOrUsername: z.string().min(1, { message: 'Email or Username is required' }),
   password: z.string().min(1, { message: 'Password is required.' }),
 });
 
@@ -98,6 +100,21 @@ export default function AuthPage() {
   const [resetSuccess, setResetSuccess] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
 
+  // Handle redirect result from Google Sign In
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          logUserAction({ uid: result.user.uid, email: result.user.email }, 'login_google');
+          router.push('/dashboard');
+        }
+      })
+      .catch((err) => {
+        console.error('Redirect login error:', err);
+        setError(err.message);
+      });
+  }, [router]);
+
   const signUpForm = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { firstname: '', username: '', email: '', password: '', confirmPassword: '' },
@@ -105,22 +122,44 @@ export default function AuthPage() {
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { emailOrUsername: '', password: '' },
   });
 
   const handleSignUp = async (values: SignUpFormValues) => {
     setIsLoading(true);
     setError(null);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-      await updateProfile(userCredential.user, {
-        displayName: values.firstname
-      });
-      logUserAction({ uid: userCredential.user.uid, email: userCredential.user.email }, 'signup');
-      router.push('/dashboard');
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where("username", "==", values.username));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          setError("This username is already taken. Please choose another one.");
+          setIsLoading(false);
+          return;
+        }
+
+        const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+        const user = userCredential.user;
+
+        await updateProfile(user, {
+            displayName: values.firstname
+        });
+        
+        await setDoc(doc(db, 'users', user.uid), {
+            username: values.username,
+            email: user.email,
+            createdAt: serverTimestamp(),
+        }, { merge: true });
+
+        logUserAction({ uid: user.uid, email: user.email }, 'signup');
+        router.push('/dashboard');
     } catch (err: any) {
       console.error('Sign up error:', err);
-      setError(err.message);
+      if (err.code === 'auth/email-already-in-use') {
+        setError("An account with this email address already exists.");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -129,15 +168,35 @@ export default function AuthPage() {
   const handleLogin = async (values: LoginFormValues) => {
     setIsLoading(true);
     setError(null);
+    let emailToLogin = values.emailOrUsername;
+
     try {
+      if (!emailToLogin.includes('@')) {
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where("username", "==", emailToLogin));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          setError('Invalid credentials. Please check your email/username and password.');
+          setIsLoading(false);
+          return;
+        }
+
+        const userDoc = querySnapshot.docs[0];
+        emailToLogin = userDoc.data().email;
+      }
+
       await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
-      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await signInWithEmailAndPassword(auth, emailToLogin, values.password);
       logUserAction({ uid: userCredential.user.uid, email: userCredential.user.email }, 'login');
       router.push('/dashboard');
-    } catch (err: any)
-     {
+    } catch (err: any) {
       console.error('Login error:', err);
-      setError(err.message);
+      if (err.code === 'auth/invalid-credential') {
+         setError('Invalid credentials. Please check your email/username and password.');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -148,9 +207,8 @@ export default function AuthPage() {
     setError(null);
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
-      logUserAction({ uid: result.user.uid, email: result.user.email }, 'login_google');
-      router.push('/dashboard');
+      await signInWithPopup(auth, provider);
+      // The redirect logic in useEffect will handle the successful login
     } catch (err: any) {
       console.error('Google sign in error:', err);
       // Don't show the 'popup-closed-by-user' error as it's not a real error.
@@ -215,9 +273,9 @@ export default function AuthPage() {
             <TabsContent value="login" className="mt-4">
               <form onSubmit={loginForm.handleSubmit(handleLogin)} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" type="email" placeholder="you@example.com" autoComplete="email" {...loginForm.register('email')} />
-                  {loginForm.formState.errors.email && <p className="text-sm text-destructive">{loginForm.formState.errors.email.message}</p>}
+                  <Label htmlFor="login-email-username">Email or Username</Label>
+                  <Input id="login-email-username" type="text" placeholder="you@example.com or ace_student" autoComplete="username email" {...loginForm.register('emailOrUsername')} />
+                  {loginForm.formState.errors.emailOrUsername && <p className="text-sm text-destructive">{loginForm.formState.errors.emailOrUsername.message}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="login-password">Password</Label>
