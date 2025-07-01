@@ -48,7 +48,6 @@ export function AccountSettingsForm() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [initialUsername, setInitialUsername] = useState('');
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -72,7 +71,6 @@ export function AccountSettingsForm() {
           firstName: user.displayName || '',
           username: currentUsername,
         });
-        setInitialUsername(currentUsername);
         setIsLoading(false);
       };
       fetchUserData();
@@ -98,13 +96,17 @@ export function AccountSettingsForm() {
         await uploadBytes(avatarRef, file);
         const photoURL = await getDownloadURL(avatarRef);
         
-        // This updates the Firebase Auth user profile.
-        // The onAuthStateChanged listener in AuthContext will automatically update the UI.
         await updateProfile(auth.currentUser!, { photoURL });
         
         toast({ title: "Success!", description: "Your profile picture has been updated." });
     } catch (err: any) {
-        toast({ variant: 'destructive', title: 'Upload Failed', description: 'Could not upload your new profile picture.' });
+        let description = 'Could not upload your new profile picture.';
+        if (err.code === 'storage/unauthorized') {
+            description = 'Permission denied. Please check your Firebase Storage security rules.';
+        } else if (err.code === 'storage/object-not-found') {
+            description = 'File not found. This might be a network issue.';
+        }
+        toast({ variant: 'destructive', title: 'Upload Failed', description: description });
         console.error("Avatar upload error:", err);
     } finally {
         setIsUploading(false);
@@ -118,11 +120,7 @@ export function AccountSettingsForm() {
     setError(null);
     
     try {
-      // NOTE: Client-side uniqueness check removed to resolve Firestore permission errors.
-      // A server-side check is recommended for a production environment to ensure usernames are unique.
-      
       if (data.firstName !== user.displayName) {
-        // This updates the Firebase Auth user profile
         await updateProfile(auth.currentUser!, { displayName: data.firstName });
       }
       
@@ -131,19 +129,13 @@ export function AccountSettingsForm() {
           username: data.username,
       });
 
-      // Update the local state so the form knows the "new" username is now the "initial" one
-      setInitialUsername(data.username);
-      form.reset(data); // This clears the "dirty" state of the form
+      form.reset(data, { keepValues: true });
       
       toast({ title: 'Success!', description: 'Your account details have been updated.' });
 
     } catch (err: any) {
       console.error("Error updating account:", err);
-      if (err.code === 'permission-denied') {
-          setError("Update failed due to insufficient permissions. This is likely a database security rule issue.");
-      } else {
-          setError(err.message);
-      }
+      setError(err.message || "An unknown error occurred.");
     } finally {
       setIsSaving(false);
     }
