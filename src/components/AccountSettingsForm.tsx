@@ -40,7 +40,7 @@ const accountSchema = z.object({
 type AccountFormValues = z.infer<typeof accountSchema>;
 
 export function AccountSettingsForm() {
-  const { user, setUser: setAuthUser } = useAuth(); // Assuming useAuth provides a setter
+  const { user } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
   
@@ -97,10 +97,10 @@ export function AccountSettingsForm() {
     try {
         await uploadBytes(avatarRef, file);
         const photoURL = await getDownloadURL(avatarRef);
+        
+        // This updates the Firebase Auth user profile.
+        // The onAuthStateChanged listener in AuthContext will automatically update the UI.
         await updateProfile(auth.currentUser!, { photoURL });
-
-        // Manually update the user in AuthContext to reflect the change immediately
-        setAuthUser(auth.currentUser);
         
         toast({ title: "Success!", description: "Your profile picture has been updated." });
     } catch (err: any) {
@@ -124,8 +124,6 @@ export function AccountSettingsForm() {
       if (data.firstName !== user.displayName) {
         // This updates the Firebase Auth user profile
         await updateProfile(auth.currentUser!, { displayName: data.firstName });
-        // This updates the local context to match
-        setAuthUser(auth.currentUser);
       }
       
       const userDocRef = doc(db, 'users', user.uid);
@@ -296,15 +294,4 @@ export function AccountSettingsForm() {
       </div>
     </div>
   );
-}
-
-// NOTE: We need to augment the useAuth hook's type to include the setter
-// For the purpose of this component, let's assume the context provides it.
-// A real implementation would involve updating AuthContext.tsx
-declare module '@/contexts/AuthContext' {
-    interface AuthContextType {
-        user: import('firebase/auth').User | null;
-        isLoading: boolean;
-        setUser: React.Dispatch<React.SetStateAction<import('firebase/auth').User | null>>;
-    }
 }
