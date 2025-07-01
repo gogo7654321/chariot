@@ -8,9 +8,14 @@ import { auth } from '@/lib/firebase';
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 };
 
-const AuthContext = createContext<AuthContextType>({ user: null, isLoading: true });
+const AuthContext = createContext<AuthContextType>({ 
+    user: null, 
+    isLoading: true,
+    setUser: () => {},
+});
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -27,12 +32,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const value = useMemo(() => ({
     user,
-    isLoading
+    isLoading,
+    setUser
   }), [user, isLoading]);
 
-  // By always rendering the provider and its children, we prevent a full-page
-  // unmount/remount cycle which was causing an infinite render loop on login.
-  // Child components are now responsible for handling the loading state.
   return (
     <AuthContext.Provider value={value}>
       {children}
