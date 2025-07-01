@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,8 +10,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   sendPasswordResetEmail,
   updateProfile,
   setPersistence,
@@ -99,27 +98,6 @@ export default function AuthPage() {
   const [resetSuccess, setResetSuccess] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
 
-  useEffect(() => {
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result) {
-          // This is the success case after redirect.
-          logUserAction({ uid: result.user.uid, email: result.user.email }, 'login_google');
-          router.push('/dashboard');
-        } else {
-          // This will be null if the user just landed on the page without a redirect.
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        // Handle errors from the redirect.
-        console.error('Google sign in redirect error:', err);
-        setError(err.message);
-        setIsLoading(false);
-      });
-  }, [router]);
-
-
   const signUpForm = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { firstname: '', username: '', email: '', password: '', confirmPassword: '' },
@@ -166,11 +144,22 @@ export default function AuthPage() {
   };
 
   const handleGoogleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    // This will redirect the user to Google's sign-in page.
-    // The result is handled by the useEffect above when they return.
     setIsLoading(true);
-    await signInWithRedirect(auth, provider);
+    setError(null);
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      logUserAction({ uid: result.user.uid, email: result.user.email }, 'login_google');
+      router.push('/dashboard');
+    } catch (err: any) {
+      console.error('Google sign in error:', err);
+      // Don't show the 'popup-closed-by-user' error as it's not a real error.
+      if (err.code !== 'auth/popup-closed-by-user') {
+        setError(err.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePasswordReset = async () => {
