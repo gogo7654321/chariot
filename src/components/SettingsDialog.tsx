@@ -27,6 +27,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useTheme } from 'next-themes';
 import { useAppearance } from '@/contexts/AccessibilityContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AccountSettingsForm } from './AccountSettingsForm';
 
 type AccessibilityTheme = "default" | "protanopia" | "deuteranopia" | "tritanopia";
 type SidebarPosition = "left" | "right" | "top" | "bottom";
@@ -55,7 +56,7 @@ export function SettingsDialog({ trigger }: { trigger: React.ReactNode }) {
           <Tabs defaultValue="appearance">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="appearance"><Palette className="mr-2 h-4 w-4" />Appearance</TabsTrigger>
-              <TabsTrigger value="account" disabled><User className="mr-2 h-4 w-4" />Account</TabsTrigger>
+              <TabsTrigger value="account"><User className="mr-2 h-4 w-4" />Account</TabsTrigger>
               <TabsTrigger value="notifications" disabled><Bell className="mr-2 h-4 w-4" />Notifications</TabsTrigger>
             </TabsList>
             <TabsContent value="appearance" className="mt-6">
@@ -120,13 +121,9 @@ export function SettingsDialog({ trigger }: { trigger: React.ReactNode }) {
 
               </div>
             </TabsContent>
-             <TabsContent value="account">
-                <div className="text-center py-16 text-muted-foreground">
-                    <Wrench className="mx-auto h-12 w-12" />
-                    <h3 className="mt-4 text-lg font-semibold">More Account Settings Coming Soon</h3>
-                    <p className="mt-1 text-sm">We're working on adding more ways to manage your account.</p>
-                </div>
-            </TabsContent>
+             <TabsContent value="account" className="mt-6">
+                <AccountSettingsForm />
+             </TabsContent>
              <TabsContent value="notifications">
                  <div className="text-center py-16 text-muted-foreground">
                     <Wrench className="mx-auto h-12 w-12" />
