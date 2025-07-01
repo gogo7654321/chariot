@@ -61,8 +61,8 @@ export function SettingsDialog({ trigger }: { trigger: React.ReactNode }) {
               <TabsTrigger value="notifications" disabled><Bell className="mr-2 h-4 w-4" />Notifications</TabsTrigger>
             </TabsList>
             <TabsContent value="appearance" className="mt-6">
-                <ScrollArea className="max-h-[70vh] pr-6">
-                    <div className="space-y-6 pr-1">
+                <ScrollArea className="max-h-[70vh]">
+                    <div className="space-y-6 pr-4">
                         <div className="flex items-center justify-between rounded-lg border p-4">
                             <div className="space-y-0.5">
                                 <Label className="text-base flex items-center gap-2"><Sun className="h-4 w-4 hidden dark:inline-block" /><Moon className="h-4 w-4 inline-block dark:hidden" /> Dark Mode</Label>
@@ -124,8 +124,8 @@ export function SettingsDialog({ trigger }: { trigger: React.ReactNode }) {
               </ScrollArea>
             </TabsContent>
              <TabsContent value="account" className="mt-6">
-                <ScrollArea className="max-h-[70vh] pr-6">
-                  <div className="pr-1">
+                <ScrollArea className="max-h-[70vh]">
+                  <div className="pr-4">
                     <AccountSettingsForm />
                   </div>
                 </ScrollArea>
