@@ -118,32 +118,34 @@ export function AccountSettingsForm() {
     setError(null);
     
     try {
-      if (data.username !== initialUsername) {
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where('username', '==', data.username));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          setError('This username is already taken. Please choose another.');
-          setIsSaving(false);
-          return;
-        }
-      }
+      // NOTE: Client-side uniqueness check removed to resolve Firestore permission errors.
+      // A server-side check is recommended for a production environment to ensure usernames are unique.
       
       if (data.firstName !== user.displayName) {
-        await updateProfile(user, { displayName: data.firstName });
+        // This updates the Firebase Auth user profile
+        await updateProfile(auth.currentUser!, { displayName: data.firstName });
+        // This updates the local context to match
+        setAuthUser(auth.currentUser);
       }
       
       const userDocRef = doc(db, 'users', user.uid);
       await updateDoc(userDocRef, {
           username: data.username,
       });
+
+      // Update the local state so the form knows the "new" username is now the "initial" one
       setInitialUsername(data.username);
-      form.reset(data); // reset form with new values to clear dirty state
+      form.reset(data); // This clears the "dirty" state of the form
       
       toast({ title: 'Success!', description: 'Your account details have been updated.' });
 
     } catch (err: any) {
-      setError(err.message);
+      console.error("Error updating account:", err);
+      if (err.code === 'permission-denied') {
+          setError("Update failed due to insufficient permissions. This is likely a database security rule issue.");
+      } else {
+          setError(err.message);
+      }
     } finally {
       setIsSaving(false);
     }

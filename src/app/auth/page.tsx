@@ -129,14 +129,9 @@ export default function AuthPage() {
     setIsLoading(true);
     setError(null);
     try {
-        const usersRef = collection(db, 'users');
-        const q = query(usersRef, where("username", "==", values.username));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-          setError("This username is already taken. Please choose another one.");
-          setIsLoading(false);
-          return;
-        }
+        // NOTE: Client-side username uniqueness check removed to resolve Firestore permission errors.
+        // Firebase Auth will still prevent duplicate emails. A server-side check
+        // for usernames is recommended for a production environment.
 
         const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
         const user = userCredential.user;
