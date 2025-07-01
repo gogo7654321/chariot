@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,7 +10,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   sendPasswordResetEmail,
   updateProfile,
   setPersistence,
@@ -98,6 +99,27 @@ export default function AuthPage() {
   const [resetSuccess, setResetSuccess] = useState<string | null>(null);
   const [isResetting, setIsResetting] = useState(false);
 
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          // This is the success case after redirect.
+          logUserAction({ uid: result.user.uid, email: result.user.email }, 'login_google');
+          router.push('/dashboard');
+        } else {
+          // This will be null if the user just landed on the page without a redirect.
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        // Handle errors from the redirect.
+        console.error('Google sign in redirect error:', err);
+        setError(err.message);
+        setIsLoading(false);
+      });
+  }, [router]);
+
+
   const signUpForm = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
     defaultValues: { firstname: '', username: '', email: '', password: '', confirmPassword: '' },
@@ -144,23 +166,11 @@ export default function AuthPage() {
   };
 
   const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    // This will redirect the user to Google's sign-in page.
+    // The result is handled by the useEffect above when they return.
     setIsLoading(true);
-    setError(null);
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      logUserAction({ uid: result.user.uid, email: result.user.email }, 'login_google');
-      router.push('/dashboard');
-    } catch (err) {
-      console.error('Google sign in error:', err);
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unknown error occurred during Google sign-in.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
+    await signInWithRedirect(auth, provider);
   };
 
   const handlePasswordReset = async () => {
