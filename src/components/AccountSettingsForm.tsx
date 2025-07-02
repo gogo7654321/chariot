@@ -83,54 +83,73 @@ export function AccountSettingsForm() {
     if (!event.target.files || event.target.files.length === 0 || !user) {
       return;
     }
+    
     const file = event.target.files[0];
     if (file.size > 2 * 1024 * 1024) { // 2MB limit
-        toast({ variant: 'destructive', title: 'File too large', description: 'Please select an image smaller than 2MB.' });
-        return;
+      toast({ variant: 'destructive', title: 'File too large', description: 'Please select an image smaller than 2MB.' });
+      return;
     }
     
     setIsUploading(true);
     console.log("Starting avatar upload...");
-    const avatarRef = storageRef(storage, `avatars/${user.uid}/${file.name}`);
+    
+    // Safety timeout - force stop loading after 30 seconds
+    const timeoutId = setTimeout(() => {
+      console.log("Upload timeout - forcing isUploading to false");
+      setIsUploading(false);
+      toast({ variant: 'destructive', title: 'Upload Timeout', description: 'Upload took too long and was cancelled.' });
+    }, 30000);
     
     try {
-        console.log(`Attempting to upload to: ${avatarRef.fullPath}`);
-        const uploadResult = await uploadBytes(avatarRef, file);
-        console.log("Upload successful:", uploadResult);
-        
-        console.log("Attempting to get download URL...");
-        const photoURL = await getDownloadURL(avatarRef);
-        console.log("Successfully received download URL:", photoURL);
-        
-        console.log("Attempting to update user profile...");
-        await updateProfile(auth.currentUser!, { photoURL });
-        console.log("Profile update successful.");
-        
-        toast({ title: "Success!", description: "Your profile picture has been updated." });
+      const avatarRef = storageRef(storage, `avatars/${user.uid}/${Date.now()}_${file.name}`);
+      console.log(`Attempting to upload to: ${avatarRef.fullPath}`);
+      
+      const uploadResult = await uploadBytes(avatarRef, file);
+      console.log("Upload successful:", uploadResult);
+      
+      console.log("Attempting to get download URL...");
+      const photoURL = await getDownloadURL(avatarRef);
+      console.log("Successfully received download URL:", photoURL);
+      
+      console.log("Attempting to update user profile...");
+      await updateProfile(auth.currentUser!, { photoURL });
+      console.log("Profile update successful.");
+      
+      toast({ title: "Success!", description: "Your profile picture has been updated." });
 
     } catch (err: any) {
-        console.error("Caught error during upload process:", err);
-        let description = 'An unexpected error occurred. Please check the browser console for details.';
-        
-        switch (err.code) {
-            case 'storage/unauthorized':
-                description = 'Permission denied. Please double-check your Firebase Storage security rules.';
-                break;
-            case 'storage/object-not-found':
-                description = `File not found. This can happen if your Storage Bucket ('${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}') is not configured correctly in your project environment variables.`;
-                break;
-            case 'storage/unknown':
-                description = 'An unknown error occurred. This can happen if Firebase Storage is not enabled for your project.';
-                break;
-            case 'storage/project-not-found':
-                 description = 'Firebase project not found. Please ensure your Firebase configuration is correct.';
-                 break;
-        }
+      console.error("Caught error during upload process:", err);
+      let description = 'An unexpected error occurred. Please check the browser console for details.';
+      
+      switch (err.code) {
+        case 'storage/unauthorized':
+          description = 'Permission denied. Please double-check your Firebase Storage security rules.';
+          break;
+        case 'storage/object-not-found':
+          description = 'Storage bucket not found or not configured properly.';
+          break;
+        case 'storage/unknown':
+          description = 'Firebase Storage service unavailable.';
+          break;
+        case 'storage/project-not-found':
+          description = 'Firebase project not found.';
+          break;
+        case 'storage/network-request-failed':
+          description = 'Network error. Check your connection and try again.';
+          break;
+        default:
+          description = `Upload failed: ${err.message || 'Unknown error'}`;
+      }
 
-        toast({ variant: 'destructive', title: 'Upload Failed', description: description });
+      toast({ variant: 'destructive', title: 'Upload Failed', description: description });
     } finally {
-        console.log("Upload process finished. Hiding spinner.");
-        setIsUploading(false);
+      clearTimeout(timeoutId); // Clear the timeout
+      console.log("Upload process finished. Setting isUploading to false.");
+      setIsUploading(false);
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
