@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { db, auth, storage } from '@/lib/firebase';
 import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { updateProfile, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
+import { updateProfile, sendPasswordResetEmail, deleteUser, verifyBeforeUpdateEmail } from 'firebase/auth';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +39,12 @@ const accountSchema = z.object({
 
 type AccountFormValues = z.infer<typeof accountSchema>;
 
+const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" {...props}>
+        <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.62 2.04-4.75 2.04-5.73 0-10.37-4.64-10.37-10.37s4.64-10.37 10.37-10.37c3.25 0 5.42 1.3 6.66 2.53l2.83-2.83C19.46 2.04 16.47 0 12.48 0 5.88 0 0 5.88 0 12.48s5.88 12.48 12.48 12.48c7.38 0 12.12-4.92 12.12-12.12 0-.8-.08-1.5-.2-2.32H12.48z" fill="currentColor"/>
+    </svg>
+);
+
 export function AccountSettingsForm() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -49,6 +55,10 @@ export function AccountSettingsForm() {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
+  const [emailChangeMessage, setEmailChangeMessage] = useState<string | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<AccountFormValues>({
@@ -58,6 +68,8 @@ export function AccountSettingsForm() {
       username: '',
     },
   });
+
+  const isGoogleProvider = user?.providerData.some(p => p.providerId === 'google.com');
 
   useEffect(() => {
     if (user) {
@@ -71,6 +83,7 @@ export function AccountSettingsForm() {
           firstName: user.displayName || '',
           username: currentUsername,
         });
+        setNewEmail(user.email || '');
         setIsLoading(false);
       };
       fetchUserData();
@@ -178,6 +191,35 @@ export function AccountSettingsForm() {
     }
   };
 
+  const handleRequestEmailChange = async () => {
+    if (!user || !newEmail || newEmail === user.email) {
+        setIsEditingEmail(false);
+        return;
+    }
+
+    setIsSaving(true);
+    setEmailChangeMessage(null);
+    setError(null);
+
+    try {
+        await verifyBeforeUpdateEmail(auth.currentUser!, newEmail);
+        setEmailChangeMessage(`Verification email sent to ${newEmail}. Please check your inbox to complete the change.`);
+        toast({ title: "Verification Sent", description: `Please check ${newEmail} to confirm your new email address.` });
+        setIsEditingEmail(false);
+    } catch (err: any) {
+        if (err.code === 'auth/email-already-in-use') {
+            setError("This email address is already in use by another account.");
+        } else if (err.code === 'auth/requires-recent-login') {
+            setError("This is a sensitive operation. Please log out and log back in before changing your email.");
+        } else {
+            setError(err.message || "An unknown error occurred while trying to change the email.");
+        }
+    } finally {
+        setIsSaving(false);
+    }
+  };
+
+
   const handlePasswordReset = async () => {
     if (!user || !user.email) return;
     try {
@@ -232,9 +274,9 @@ export function AccountSettingsForm() {
             <Button onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
                 <Edit2 className="mr-2 h-4 w-4" />Change Picture
             </Button>
-            <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/*" className="hidden" />
+            <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/png, image/jpeg, image/gif, image/webp" className="hidden" />
             <p className="text-xs text-muted-foreground mt-2">
-                PNG, JPG, GIF, WebP. Image not supported?{' '}
+                PNG, JPG, GIF, WebP. File not supported?{' '}
                 <a href="https://cloudconvert.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">
                     Use a converter.
                 </a>
@@ -272,14 +314,72 @@ export function AccountSettingsForm() {
       {/* Account Security Section */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Account Security</h3>
+        
+        {isGoogleProvider && (
+            <div className="flex items-center justify-between rounded-lg border p-3 bg-secondary/30">
+                <div className="flex items-center gap-2">
+                    <GoogleIcon className="h-5 w-5 text-green-600" />
+                    <p className="text-sm font-medium">Connected to Google</p>
+                </div>
+            </div>
+        )}
+        
         <div>
             <Label>Email</Label>
-            <Input readOnly disabled value={user.email || 'No email associated'} className="mt-1 bg-secondary/50" />
+            {isGoogleProvider ? (
+                <>
+                    <Input readOnly disabled value={user.email || 'No email associated'} className="mt-1 bg-secondary/50" />
+                    <p className="text-xs text-muted-foreground mt-2">
+                        Your email is managed by your Google account and cannot be changed here.
+                    </p>
+                </>
+            ) : isEditingEmail ? (
+                <div className="space-y-2 mt-1">
+                    <div className="flex items-center gap-2">
+                        <Input
+                            value={newEmail}
+                            onChange={(e) => {
+                                setNewEmail(e.target.value);
+                                setError(null);
+                                setEmailChangeMessage(null);
+                            }}
+                            placeholder="Enter new email"
+                        />
+                        <Button type="button" onClick={handleRequestEmailChange} disabled={isSaving}>
+                            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
+                        </Button>
+                        <Button type="button" variant="ghost" onClick={() => setIsEditingEmail(false)} disabled={isSaving}>
+                            Cancel
+                        </Button>
+                    </div>
+                </div>
+            ) : (
+                <>
+                    <div className="flex items-center justify-between rounded-lg border p-3 mt-1">
+                        <p className="text-sm font-medium">{user.email}</p>
+                        <Button variant="outline" size="sm" onClick={() => {
+                            setIsEditingEmail(true);
+                            setNewEmail(user.email || '');
+                            setEmailChangeMessage(null);
+                            setError(null);
+                        }}>
+                            Change Email
+                        </Button>
+                    </div>
+                </>
+            )}
+             {emailChangeMessage && <p className="text-sm text-green-600 mt-2">{emailChangeMessage}</p>}
         </div>
+
         <div className="flex items-center justify-between rounded-lg border p-3">
           <p className="text-sm font-medium">Change Password</p>
-          <Button variant="outline" size="sm" onClick={handlePasswordReset}>Send Reset Email</Button>
+          <Button variant="outline" size="sm" onClick={handlePasswordReset} disabled={isGoogleProvider}>Send Reset Email</Button>
         </div>
+        {isGoogleProvider && (
+            <p className="text-xs text-muted-foreground -mt-2 pl-1">
+                Password is managed through your Google account.
+            </p>
+        )}
       </div>
 
       <Separator />
