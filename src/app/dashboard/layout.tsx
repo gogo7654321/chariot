@@ -1,4 +1,3 @@
-
 'use client';
 
 import { DashboardSidebar } from '@/components/DashboardSidebar';
@@ -11,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { AceMascot } from "@/components/AceMascot";
 import { usePathname } from 'next/navigation';
-import { useAppearance } from '@/contexts/AccessibilityContext';
+import { useAppearance } from '@/contexts/AppearanceContext';
 
 function DashboardWithSidebar({ children }: { children: React.ReactNode }) {
   const { setOpen, isMobile } = useSidebar();

@@ -1,11 +1,10 @@
-
 'use client';
 
 import { Palette, LogIn } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from 'next-themes';
-import { useAppearance } from '@/contexts/AccessibilityContext';
+import { useAppearance } from '@/contexts/AppearanceContext';
 import { Button } from '@/components/ui/button';
 import {
   Popover,

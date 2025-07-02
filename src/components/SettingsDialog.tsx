@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -25,7 +24,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useTheme } from 'next-themes';
-import { useAppearance } from '@/contexts/AccessibilityContext';
+import { useAppearance } from '@/contexts/AppearanceContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AccountSettingsForm } from './AccountSettingsForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
