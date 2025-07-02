@@ -372,16 +372,9 @@ export function AccountSettingsForm() {
                     </p>
                 </>
             ) : isEditingEmail ? (
-                <div className="space-y-1 mt-1">
+                <div className="space-y-2 mt-1">
                     <div className="flex items-center gap-2">
-                         <div className="relative flex-grow">
-                            <Input
-                                id="email-suggestion"
-                                readOnly
-                                disabled
-                                value={emailSuggestion}
-                                className="absolute inset-0 z-0 text-muted-foreground bg-transparent border-transparent px-3 py-2 text-sm md:text-base pointer-events-none"
-                            />
+                        <div className="relative flex-grow">
                             <Input
                                 value={newEmail}
                                 onChange={handleEmailChange}
@@ -390,6 +383,14 @@ export function AccountSettingsForm() {
                                 className="relative z-10 bg-transparent"
                                 autoComplete="off"
                             />
+                            {emailSuggestion.startsWith(newEmail) && newEmail && (
+                                <div className="absolute inset-y-0 left-0 z-0 flex items-center px-3 pointer-events-none text-base md:text-sm">
+                                    <span className="text-transparent">{newEmail}</span>
+                                    <span className="text-muted-foreground">
+                                        {emailSuggestion.substring(newEmail.length)}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                         <Button type="button" onClick={handleRequestEmailChange} disabled={isSaving}>
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
@@ -398,9 +399,9 @@ export function AccountSettingsForm() {
                             Cancel
                         </Button>
                     </div>
-                    {emailSuggestion && (
-                        <p className="text-xs text-muted-foreground pl-1">
-                            Press <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-sm">Tab</kbd> to accept suggestion.
+                    {emailSuggestion.startsWith(newEmail) && newEmail && (
+                         <p className="text-xs text-muted-foreground pl-1">
+                            Press <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-sm dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">Tab</kbd> to accept suggestion.
                         </p>
                     )}
                 </div>
