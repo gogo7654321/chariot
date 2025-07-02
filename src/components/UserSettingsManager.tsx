@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAppearance, type CustomTheme } from '@/contexts/AppearanceContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
@@ -19,7 +19,6 @@ type AppearanceSettings = {
     sidebarPosition: SidebarPosition;
     customTheme: CustomTheme | null;
 };
-
 
 async function saveFirestoreSettings(user: User, settings: AppearanceSettings) {
     const userDocRef = doc(db, 'users', user.uid);
@@ -42,7 +41,6 @@ export function UserSettingsManager() {
     const {
         theme: nextTheme,
         setTheme: setNextTheme,
-        resolvedTheme
     } = useNextTheme();
     const {
         theme: accessibilityTheme,
@@ -53,10 +51,36 @@ export function UserSettingsManager() {
         applyCustomTheme,
     } = useAppearance();
 
-    // This effect runs once when the app loads for a logged-out user.
-    // It loads any settings stored in localStorage.
+    const isInitialized = useRef(false);
+
+    // Effect for loading settings from storage (localStorage or Firestore)
     useEffect(() => {
-        if (!user && !isAuthLoading) {
+        // Don't do anything until authentication is resolved
+        if (isAuthLoading) {
+            return;
+        }
+
+        if (user) {
+            // User is logged in, subscribe to Firestore for settings
+            const userDocRef = doc(db, 'users', user.uid);
+            const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+                const savedSettings = docSnap.data()?.appearance as AppearanceSettings | undefined;
+
+                if (savedSettings) {
+                    // Apply saved settings
+                    setNextTheme(savedSettings.lightDarkTheme || 'light');
+                    setAccessibilityTheme(savedSettings.accessibilityTheme || 'default');
+                    setSidebarPosition(savedSettings.sidebarPosition || 'left');
+                    applyCustomTheme(savedSettings.customTheme || null);
+                }
+                
+                // Mark as initialized after the first data fetch
+                isInitialized.current = true;
+            });
+            
+            return () => unsubscribe(); // Cleanup Firestore listener
+        } else {
+            // User is logged out, load from localStorage
             const storedAccessibilityTheme = localStorage.getItem('accessibility-theme') as AccessibilityTheme | null;
             if (storedAccessibilityTheme) setAccessibilityTheme(storedAccessibilityTheme);
 
@@ -72,44 +96,15 @@ export function UserSettingsManager() {
                     localStorage.removeItem('custom-theme');
                 }
             }
+            
+            isInitialized.current = true;
         }
-    }, [user, isAuthLoading, setAccessibilityTheme, setSidebarPosition, applyCustomTheme]);
+    }, [user, isAuthLoading, setNextTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme]);
 
-
-    // This effect syncs settings between Firestore and the app state for logged-in users.
+    // Effect for saving settings to storage
     useEffect(() => {
-        if (!user) return;
-
-        const userDocRef = doc(db, 'users', user.uid);
-        const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-            const savedSettings = docSnap.data()?.appearance as AppearanceSettings | undefined;
-
-            if (docSnap.exists() && savedSettings) {
-                // Firestore has settings, apply them to the context if they differ.
-                // This check prevents infinite loops from the listener re-applying the same state.
-                if (savedSettings.lightDarkTheme && savedSettings.lightDarkTheme !== nextTheme) {
-                    setNextTheme(savedSettings.lightDarkTheme);
-                }
-                if (savedSettings.accessibilityTheme && savedSettings.accessibilityTheme !== accessibilityTheme) {
-                    setAccessibilityTheme(savedSettings.accessibilityTheme);
-                }
-                if (savedSettings.sidebarPosition && savedSettings.sidebarPosition !== sidebarPosition) {
-                    setSidebarPosition(savedSettings.sidebarPosition);
-                }
-                if (JSON.stringify(savedSettings.customTheme) !== JSON.stringify(customTheme)) {
-                    applyCustomTheme(savedSettings.customTheme || null);
-                }
-            }
-        });
-
-        return () => unsubscribe(); // Cleanup listener on unmount
-    }, [user, nextTheme, accessibilityTheme, sidebarPosition, customTheme, setNextTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme]);
-
-
-    // This effect SAVES any changes from the app's state to the appropriate storage.
-    useEffect(() => {
-        // Wait until authentication and the initial theme are resolved.
-        if (isAuthLoading || !resolvedTheme) {
+        // Do not save anything until the initial settings have been loaded
+        if (!isInitialized.current) {
             return;
         }
 
@@ -121,10 +116,10 @@ export function UserSettingsManager() {
         };
 
         if (user) {
-            // User is logged in, save to Firestore.
+            // Logged-in: save to Firestore
             saveFirestoreSettings(user, currentSettings);
         } else {
-            // User is logged out, save to localStorage.
+            // Logged-out: save to localStorage
             localStorage.setItem('accessibility-theme', currentSettings.accessibilityTheme);
             localStorage.setItem('sidebar-position', currentSettings.sidebarPosition);
             if (currentSettings.customTheme) {
@@ -133,7 +128,7 @@ export function UserSettingsManager() {
                 localStorage.removeItem('custom-theme');
             }
         }
-    }, [user, isAuthLoading, nextTheme, resolvedTheme, accessibilityTheme, sidebarPosition, customTheme]);
+    }, [user, nextTheme, accessibilityTheme, sidebarPosition, customTheme]);
 
     return null; // This component does not render anything.
 }
