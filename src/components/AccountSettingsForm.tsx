@@ -214,7 +214,7 @@ export function AccountSettingsForm() {
                 <Edit2 className="mr-2 h-4 w-4" />Change Picture
             </Button>
             <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/*" className="hidden" />
-            <p className="text-xs text-muted-foreground mt-2">PNG or JPG, up to 1MB.</p>
+            <p className="text-xs text-muted-foreground mt-2">PNG, JPG, GIF, WebP. 1MB limit.</p>
         </div>
       </div>
 
