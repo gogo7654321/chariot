@@ -6,7 +6,13 @@ import { isColorDark } from './colorUtils';
 export const THEME_PRESETS = [
     { id: 'neo-future', name: '✨ Neo Future', colors: { background: '#00f5d4', primary: '#ff00ff', accent: '#1a2b50' } },
     { id: 'vaporwave', name: '🩵 Vaporwave', colors: { background: '#ff77cc', primary: '#00e5ff', accent: '#2d3436' } },
-    { id: 'sunset-heat', name: '🔥 Sunset Heat', colors: { background: '#ff4e50', primary: '#fc913a', accent: '#2c3e50' } },
+    
+    // Enhanced sunset themes with proper color depth
+    { id: 'sunset-heat', name: '🌅 Sunset Heat', colors: { background: '#ff6b35', primary: '#f7931e', accent: '#c44569' } },
+    { id: 'golden-hour', name: '🌇 Golden Hour', colors: { background: '#ff9068', primary: '#ffd23f', accent: '#ee5a6f' } },
+    { id: 'twilight-fire', name: '🔥 Twilight Fire', colors: { background: '#ff4757', primary: '#ffa726', accent: '#8e44ad' } },
+    { id: 'desert-sunset', name: '🏜️ Desert Sunset', colors: { background: '#ff7675', primary: '#fdcb6e', accent: '#6c5ce7' } },
+    
     { id: 'cosmic-grape', name: '🪐 Cosmic Grape', colors: { background: '#9b59b6', primary: '#f1c40f', accent: '#341f97' } },
     { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { background: '#0c1660', primary: '#0d69ae', accent: '#65e5d5' } },
     { id: 'candy-pop', name: '🍭 Candy Pop', colors: { background: '#ff69b4', primary: '#89cff0', accent: '#f9f9f9' } },

@@ -2,7 +2,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useLayoutEffect, ReactNode, useCallback, useEffect } from 'react';
-import { hexToHsl, isColorDark } from '@/lib/colorUtils';
+import { hexToHsl } from '@/lib/colorUtils';
 
 // --- TYPES --- //
 export type AccessibilityTheme = "default" | "protanopia" | "deuteranopia" | "tritanopia";
