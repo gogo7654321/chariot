@@ -32,18 +32,25 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
     const themeBackground = colors.background;
     const themeForeground = isBgDark ? '#FAFAFA' : '#0A0A0A';
     const themePrimary = colors.primary;
-    // The third color from the preset will now define the card background.
-    const cardAndSecondaryColor = colors.accent;
+    const themeAccent = colors.accent;
 
-    // Determine foregrounds based on background brightness
+    // Determine foregrounds for primary and accent colors
     const primaryForeground = isColorDark(themePrimary) ? '#FFFFFF' : '#111827';
-    const cardAndSecondaryForeground = isColorDark(cardAndSecondaryColor) ? '#FFFFFF' : '#111827';
+    const accentForeground = isColorDark(themeAccent) ? '#FFFFFF' : '#111827';
 
-    // Derive other surface colors
-    const popoverColor = isBgDark ? tint(0.05, cardAndSecondaryColor) : shade(0.05, cardAndSecondaryColor);
+    // Derive surface colors from the main background for a layered look.
+    const cardColor = isBgDark ? tint(0.05, themeBackground) : shade(0.03, themeBackground);
+    const cardForeground = isColorDark(cardColor) ? '#FFFFFF' : '#111827';
+    
+    const secondaryColor = isBgDark ? tint(0.08, themeBackground) : shade(0.05, themeBackground);
+    const secondaryForeground = isColorDark(secondaryColor) ? '#FFFFFF' : '#111827';
+
+    const popoverColor = isBgDark ? tint(0.12, themeBackground) : shade(0.08, themeBackground);
     const popoverForeground = isColorDark(popoverColor) ? '#FFFFFF' : '#111827';
+
     const mutedColor = isBgDark ? tint(0.15, themeBackground) : shade(0.07, themeBackground);
     const mutedForeground = isBgDark ? shade(0.3, themeForeground) : tint(0.3, themeForeground);
+    
     const borderColor = isBgDark ? tint(0.2, themeBackground) : shade(0.1, themeBackground);
 
     return {
@@ -58,15 +65,15 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
             primary: themePrimary,
             primaryForeground: primaryForeground,
 
-            // Accent for highlights (now uses the primary color for pop)
-            accent: themePrimary,
-            accentForeground: primaryForeground,
+            // Accent for highlights
+            accent: themeAccent,
+            accentForeground: accentForeground,
 
-            // Surfaces
-            card: cardAndSecondaryColor,
-            cardForeground: cardAndSecondaryForeground,
-            secondary: cardAndSecondaryColor,
-            secondaryForeground: cardAndSecondaryForeground,
+            // Surfaces derived from background
+            card: cardColor,
+            cardForeground: cardForeground,
+            secondary: secondaryColor,
+            secondaryForeground: secondaryForeground,
             
             popover: popoverColor,
             popoverForeground: popoverForeground,

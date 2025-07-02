@@ -108,8 +108,8 @@ body {
     --ring: var(--custom-ring);
     --radius: 0.5rem;
     /* Sidebar colors are now distinct for better layering */
-    --sidebar-background: var(--custom-card); /* Using card color for sidebar bg */
-    --sidebar-foreground: var(--custom-card-foreground);
+    --sidebar-background: var(--custom-secondary); /* Using secondary for sidebar bg */
+    --sidebar-foreground: var(--custom-secondary-foreground);
     --sidebar-accent: var(--custom-muted); /* Using muted for sidebar hover */
     --sidebar-accent-foreground: var(--custom-muted-foreground);
     --sidebar-border: var(--custom-border);
