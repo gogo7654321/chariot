@@ -38,12 +38,18 @@ const ResetToDefault = () => {
      <div>
         <Separator className="my-6" />
         <h3 className="text-lg font-semibold mb-2">Reset</h3>
-        <div className="flex items-center justify-between rounded-xl border p-3">
+        <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3">
             <div>
-                <Label>Reset to Default</Label>
-                <p className="text-xs text-muted-foreground">Revert all colors to the AP Ace© default.</p>
+                <Label className="text-black">Reset to Default</Label>
+                <p className="text-xs text-gray-500">Revert all colors to the AP Ace© default.</p>
             </div>
-            <Button variant="outline" onClick={resetCustomTheme}>Reset</Button>
+            <Button
+                variant="outline"
+                onClick={resetCustomTheme}
+                className="border-gray-300 bg-white text-black hover:bg-gray-100"
+            >
+                Reset
+            </Button>
         </div>
     </div>
   )
@@ -181,9 +187,9 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
         </SheetHeader>
         
         <Tabs defaultValue="presets" className="flex-1 flex flex-col min-h-0 pt-4">
-            <TabsList className="grid w-full grid-cols-2 rounded-xl">
-                <TabsTrigger value="presets" className="rounded-lg">Presets</TabsTrigger>
-                <TabsTrigger value="manual" className="rounded-lg">Manual</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="presets">Presets</TabsTrigger>
+                <TabsTrigger value="manual">Manual</TabsTrigger>
             </TabsList>
             <TabsContent value="presets" className="flex-1 overflow-auto mt-4">
                  <ScrollArea className="h-full pr-4">
