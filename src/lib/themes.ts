@@ -18,72 +18,64 @@ export const THEME_PRESETS = [
 
 /**
  * Creates a full theme object from a base preset.
- * This function uses the preset's 'accent' color for card and secondary surfaces
- * to create a more distinct and layered look.
+ * This version uses a gradient background and derives solid surface colors for a layered effect.
  * @param preset - The base preset containing primary, accent, and background colors.
  * @returns A full CustomTheme object.
  */
 export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme {
     const { colors } = preset;
+
+    const gradientStart = colors.background;
+    const gradientEnd = colors.primary;
+
+    // Use the preset's 'accent' color for primary actions.
+    const primaryActionColor = colors.accent;
     
-    const isBgDark = isColorDark(colors.background);
-    
-    // Base palette
-    const themeBackground = colors.background;
+    // Determine the base foreground color from the start of the gradient for general text readability.
+    const isBgDark = isColorDark(gradientStart);
     const themeForeground = isBgDark ? '#FAFAFA' : '#0A0A0A';
-    const themePrimary = colors.primary;
-    const themeAccent = colors.accent;
 
-    // Determine foregrounds for primary and accent colors
-    const primaryForeground = isColorDark(themePrimary) ? '#FFFFFF' : '#111827';
-    const accentForeground = isColorDark(themeAccent) ? '#FFFFFF' : '#111827';
-
-    // Derive surface colors from the main background for a layered look.
-    const cardColor = isBgDark ? tint(0.05, themeBackground) : shade(0.03, themeBackground);
-    const cardForeground = isColorDark(cardColor) ? '#FFFFFF' : '#111827';
-    
-    const secondaryColor = isBgDark ? tint(0.08, themeBackground) : shade(0.05, themeBackground);
-    const secondaryForeground = isColorDark(secondaryColor) ? '#FFFFFF' : '#111827';
-
-    const popoverColor = isBgDark ? tint(0.12, themeBackground) : shade(0.08, themeBackground);
-    const popoverForeground = isColorDark(popoverColor) ? '#FFFFFF' : '#111827';
-
-    const mutedColor = isBgDark ? tint(0.15, themeBackground) : shade(0.07, themeBackground);
-    const mutedForeground = isBgDark ? shade(0.3, themeForeground) : tint(0.3, themeForeground);
-    
-    const borderColor = isBgDark ? tint(0.2, themeBackground) : shade(0.1, themeBackground);
+    // Create layered surfaces by tinting/shading the gradient's start color.
+    const cardColor = isBgDark ? tint(0.08, gradientStart) : shade(0.03, gradientStart);
+    const secondaryColor = isBgDark ? tint(0.05, gradientStart) : shade(0.05, gradientStart);
+    const popoverColor = isBgDark ? tint(0.12, gradientStart) : shade(0.08, gradientStart);
+    const mutedColor = isBgDark ? tint(0.15, gradientStart) : shade(0.07, gradientStart);
+    const borderColor = isBgDark ? tint(0.2, gradientStart) : shade(0.1, gradientStart);
 
     return {
         id: preset.id,
         name: preset.name,
         colors: {
-            // Base
-            background: themeBackground,
+            // Gradient colors for the page background
+            primaryGradientStart: gradientStart,
+            primaryGradientEnd: gradientEnd,
+
+            // Base colors (background is now for solid surfaces, not the page)
+            background: cardColor, 
             foreground: themeForeground,
 
-            // Primary Actions
-            primary: themePrimary,
-            primaryForeground: primaryForeground,
+            // Primary actions
+            primary: primaryActionColor,
+            primaryForeground: isColorDark(primaryActionColor) ? '#FFFFFF' : '#111827',
 
-            // Accent for highlights
-            accent: themeAccent,
-            accentForeground: accentForeground,
-
-            // Surfaces derived from background
-            card: cardColor,
-            cardForeground: cardForeground,
-            secondary: secondaryColor,
-            secondaryForeground: secondaryForeground,
+            // Accent can be the gradient's end color for consistency
+            accent: gradientEnd,
+            accentForeground: isColorDark(gradientEnd) ? '#FFFFFF' : '#111827',
             
+            // Layered surfaces
+            card: cardColor,
+            cardForeground: themeForeground,
+            secondary: secondaryColor,
+            secondaryForeground: themeForeground,
             popover: popoverColor,
-            popoverForeground: popoverForeground,
+            popoverForeground: themeForeground,
 
             // Utility
             muted: mutedColor,
-            mutedForeground: mutedForeground,
+            mutedForeground: isBgDark ? tint(0.4, themeForeground) : shade(0.4, themeForeground),
             border: borderColor,
             input: borderColor,
-            ring: themePrimary,
+            ring: primaryActionColor,
         }
     };
 }

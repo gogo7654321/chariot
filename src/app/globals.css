@@ -30,7 +30,6 @@ body {
     --border: 220 13% 85%;
     --input: 220 13% 88%;
     --ring: 220 49% 21%;
-    --radius: 0.5rem;
     --chart-1: 220 49% 21%;
     --chart-2: 181 29% 42%;
     --chart-3: 197 37% 24%;
@@ -44,8 +43,6 @@ body {
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-    --primary-gradient-start: hsl(var(--primary));
-    --primary-gradient-end: hsl(var(--accent));
   }
   
   /* Default dark theme variables */
@@ -83,12 +80,12 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-    --primary-gradient-start: hsl(var(--primary));
-    --primary-gradient-end: hsl(var(--accent));
   }
 
   /* This block applies the custom theme variables when a custom theme is active AND we are in the dashboard scope */
   html[data-custom-theme-active="true"]:has(body.dashboard-scope) {
+    --primary-gradient-start: var(--custom-primary-gradient-start);
+    --primary-gradient-end: var(--custom-primary-gradient-end);
     --background: var(--custom-background);
     --foreground: var(--custom-foreground);
     --card: var(--custom-card);
@@ -116,6 +113,12 @@ body {
     /* Charts */
     --chart-1: var(--custom-primary);
     --chart-2: var(--custom-accent);
+  }
+  
+  /* Apply the gradient background only when a custom theme is active within the dashboard */
+  html[data-custom-theme-active="true"] body.dashboard-scope {
+    background-image: linear-gradient(135deg, hsl(var(--primary-gradient-start)), hsl(var(--primary-gradient-end)));
+    background-attachment: fixed;
   }
 
   /* Protanopia (Red-blind) Theme */
@@ -181,6 +184,10 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  html[data-custom-theme-active="true"] .dashboard-scope main {
+    background-color: transparent;
   }
 }
 
@@ -367,5 +374,3 @@ body {
     @apply text-[0.6em] font-normal align-super -top-0.5 relative ml-px;
   }
 }
-
-    

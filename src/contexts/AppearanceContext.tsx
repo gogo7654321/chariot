@@ -12,6 +12,8 @@ export type CustomTheme = {
   id: string;
   name: string;
   colors: {
+    primaryGradientStart: string;
+    primaryGradientEnd: string;
     primary: string;
     secondary: string;
     background: string;
@@ -73,6 +75,8 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
       const t = customTheme.colors;
       const css = `
         :root {
+          --custom-primary-gradient-start: ${hexToHsl(t.primaryGradientStart)};
+          --custom-primary-gradient-end: ${hexToHsl(t.primaryGradientEnd)};
           --custom-background: ${hexToHsl(t.background)};
           --custom-foreground: ${hexToHsl(t.foreground)};
           --custom-card: ${hexToHsl(t.card)};
