@@ -28,6 +28,16 @@ const getBrowserTimezone = () => {
     }
 };
 
+const isValidTimezone = (tz: string) => {
+    try {
+        Intl.DateTimeFormat(undefined, { timeZone: tz });
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+
 export function DashboardHeader() {
   const { user } = useAuth();
   const [greeting, setGreeting] = useState('');
@@ -42,8 +52,7 @@ export function DashboardHeader() {
       const userDocRef = doc(db, 'users', user.uid);
       const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
         const savedTimezone = docSnap.data()?.calendarSettings?.timezone;
-        const isValidTimezone = timezones.some(tz => tz.value === savedTimezone);
-        setTimezone(isValidTimezone ? savedTimezone : getBrowserTimezone());
+        setTimezone(isValidTimezone(savedTimezone) ? savedTimezone : getBrowserTimezone());
       });
       return () => unsubscribe();
     } else {
@@ -63,9 +72,11 @@ export function DashboardHeader() {
 
     const updateDateTime = () => {
       const now = new Date();
+      const effectiveTimezone = isValidTimezone(timezone) ? timezone : 'UTC';
+
       try {
-        setCurrentDate(now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', timeZone: timezone }));
-        setCurrentTime(now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', timeZone: timezone, hour12: true }));
+        setCurrentDate(now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', timeZone: effectiveTimezone }));
+        setCurrentTime(now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', timeZone: effectiveTimezone, hour12: true }));
       } catch (e) {
         // Fallback to local time if timezone is invalid
         console.error("Invalid timezone:", timezone, e);
