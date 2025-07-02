@@ -45,6 +45,8 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
+const commonDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'aol.com', 'icloud.com', 'protonmail.com', 'zoho.com', 'hotmail.com'];
+
 export function AccountSettingsForm() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -57,6 +59,7 @@ export function AccountSettingsForm() {
   
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [newEmail, setNewEmail] = useState('');
+  const [emailSuggestion, setEmailSuggestion] = useState('');
   const [emailChangeMessage, setEmailChangeMessage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -191,6 +194,41 @@ export function AccountSettingsForm() {
     }
   };
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setNewEmail(value);
+    setError(null);
+    setEmailChangeMessage(null);
+
+    if (value.includes('@') && !value.endsWith('@')) {
+      const parts = value.split('@');
+      const userPart = parts[0];
+      const domainPart = parts[1];
+
+      if (domainPart) {
+        const suggestion = commonDomains.find(d => d.startsWith(domainPart));
+        if (suggestion && suggestion !== domainPart) {
+          setEmailSuggestion(userPart + '@' + suggestion);
+        } else {
+          setEmailSuggestion('');
+        }
+      } else {
+        setEmailSuggestion('');
+      }
+    } else {
+      setEmailSuggestion('');
+    }
+  };
+
+  const handleEmailKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Tab' && emailSuggestion) {
+      e.preventDefault();
+      setNewEmail(emailSuggestion);
+      setEmailSuggestion('');
+    }
+  };
+
+
   const handleRequestEmailChange = async () => {
     if (!user || !newEmail || newEmail === user.email) {
         setIsEditingEmail(false);
@@ -276,7 +314,7 @@ export function AccountSettingsForm() {
             </Button>
             <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/png, image/jpeg, image/gif, image/webp" className="hidden" />
             <p className="text-xs text-muted-foreground mt-2">
-                PNG, JPG, GIF, WebP. File not supported?{' '}
+                File not supported?{' '}
                 <a href="https://cloudconvert.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">
                     Use a converter.
                 </a>
@@ -334,17 +372,25 @@ export function AccountSettingsForm() {
                     </p>
                 </>
             ) : isEditingEmail ? (
-                <div className="space-y-2 mt-1">
+                <div className="space-y-1 mt-1">
                     <div className="flex items-center gap-2">
-                        <Input
-                            value={newEmail}
-                            onChange={(e) => {
-                                setNewEmail(e.target.value);
-                                setError(null);
-                                setEmailChangeMessage(null);
-                            }}
-                            placeholder="Enter new email"
-                        />
+                         <div className="relative flex-grow">
+                            <Input
+                                id="email-suggestion"
+                                readOnly
+                                disabled
+                                value={emailSuggestion}
+                                className="absolute inset-0 z-0 text-muted-foreground bg-transparent border-transparent px-3 py-2 text-sm md:text-base pointer-events-none"
+                            />
+                            <Input
+                                value={newEmail}
+                                onChange={handleEmailChange}
+                                onKeyDown={handleEmailKeyDown}
+                                placeholder="Enter new email"
+                                className="relative z-10 bg-transparent"
+                                autoComplete="off"
+                            />
+                        </div>
                         <Button type="button" onClick={handleRequestEmailChange} disabled={isSaving}>
                             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Save'}
                         </Button>
@@ -352,6 +398,11 @@ export function AccountSettingsForm() {
                             Cancel
                         </Button>
                     </div>
+                    {emailSuggestion && (
+                        <p className="text-xs text-muted-foreground pl-1">
+                            Press <kbd className="px-1.5 py-0.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-sm">Tab</kbd> to accept suggestion.
+                        </p>
+                    )}
                 </div>
             ) : (
                 <>
