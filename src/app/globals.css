@@ -82,12 +82,6 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  /* Apply the gradient background only when a custom theme is active within the dashboard */
-  html[data-custom-theme-active="true"] body.dashboard-scope {
-    background-image: linear-gradient(135deg, hsl(var(--primary-gradient-start)), hsl(var(--primary-gradient-end)));
-    background-attachment: fixed;
-  }
-
   /* Protanopia (Red-blind) Theme */
   html[data-theme="protanopia"]:not([data-custom-theme-active="true"]) {
     --primary: 210 80% 55%;
@@ -142,6 +136,49 @@ body {
     --ring: 350 80% 60%;
     --chart-1: 350 80% 60%;
     --chart-2: 180 60% 45%;
+  }
+
+  /*
+    High-specificity rule for custom themes.
+    This rule is activated by the `data-custom-theme-active` attribute.
+    It maps the standard theme variables to custom variables, which are then
+    set via inline styles on the <html> element for maximum priority.
+  */
+  html[data-custom-theme-active="true"] {
+    --background: var(--custom-background);
+    --foreground: var(--custom-foreground);
+    --card: var(--custom-card);
+    --card-foreground: var(--custom-card-foreground);
+    --popover: var(--custom-popover);
+    --popover-foreground: var(--custom-popover-foreground);
+    --primary: var(--custom-primary);
+    --primary-foreground: var(--custom-primary-foreground);
+    --secondary: var(--custom-secondary);
+    --secondary-foreground: var(--custom-secondary-foreground);
+    --muted: var(--custom-muted);
+    --muted-foreground: var(--custom-muted-foreground);
+    --accent: var(--custom-accent);
+    --accent-foreground: var(--custom-accent-foreground);
+    --destructive: 0 59% 55%; /* Keep destructive colors standard */
+    --destructive-foreground: 0 0% 100%;
+    --border: var(--custom-border);
+    --input: var(--custom-input);
+    --ring: var(--custom-ring);
+    
+    --sidebar-background: var(--custom-secondary);
+    --sidebar-foreground: var(--custom-secondary-foreground);
+    --sidebar-accent: var(--custom-muted);
+    --sidebar-accent-foreground: var(--custom-muted-foreground);
+    --sidebar-border: var(--custom-border);
+    
+    --chart-1: var(--custom-primary);
+    --chart-2: var(--custom-accent);
+  }
+
+  /* Apply the gradient background only when a custom theme is active within the dashboard */
+  html[data-custom-theme-active="true"] body.dashboard-scope {
+    background-image: linear-gradient(135deg, hsl(var(--custom-primary-gradient-start)), hsl(var(--custom-primary-gradient-end)));
+    background-attachment: fixed;
   }
 }
 

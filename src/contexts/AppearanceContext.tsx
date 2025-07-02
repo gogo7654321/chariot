@@ -25,9 +25,12 @@ export type CustomTheme = {
     popoverForeground: string;
     muted: string;
     mutedForeground: string;
+    accentForeground: string;
     border: string;
     input: string;
     ring: string;
+    primaryForeground: string;
+    secondaryForeground: string;
   };
 };
 
@@ -50,6 +53,17 @@ type AppearanceContextType = {
 // --- CONTEXT --- //
 const AppearanceContext = createContext<AppearanceContextType | undefined>(undefined);
 
+// A list of all CSS custom properties we manage.
+const managedCustomProperties = [
+  '--custom-primary-gradient-start', '--custom-primary-gradient-end', '--custom-background',
+  '--custom-foreground', '--custom-card', '--custom-card-foreground', '--custom-popover',
+  '--custom-popover-foreground', '--custom-primary', '--custom-primary-foreground',
+  '--custom-secondary', '--custom-secondary-foreground', '--custom-muted',
+  '--custom-muted-foreground', '--custom-accent', '--custom-accent-foreground',
+  '--custom-border', '--custom-input', '--custom-ring'
+];
+
+
 // --- PROVIDER --- //
 export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<AccessibilityTheme>('default');
@@ -67,75 +81,48 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
 
   // Effect to apply the custom theme as inline styles to the HTML element.
   useEffect(() => {
-    const styleElementId = 'custom-dashboard-theme';
-    let styleElement = document.getElementById(styleElementId) as HTMLStyleElement | null;
-
     if (customTheme) {
-      if (!styleElement) {
-        styleElement = document.createElement('style');
-        styleElement.id = styleElementId;
-        document.head.appendChild(styleElement);
-      }
-
       const t = customTheme.colors;
-      const primaryForeground = isColorDark(t.primary) ? '0 0% 100%' : '220 49% 10%';
+      
+      const themeValues: { [key: string]: string } = {
+        '--custom-primary-gradient-start': hexToHsl(t.primaryGradientStart),
+        '--custom-primary-gradient-end': hexToHsl(t.primaryGradientEnd),
+        '--custom-background': hexToHsl(t.background),
+        '--custom-foreground': hexToHsl(t.foreground),
+        '--custom-card': hexToHsl(t.card),
+        '--custom-card-foreground': hexToHsl(t.cardForeground),
+        '--custom-popover': hexToHsl(t.popover),
+        '--custom-popover-foreground': hexToHsl(t.popoverForeground),
+        '--custom-primary': hexToHsl(t.primary),
+        '--custom-primary-foreground': hexToHsl(t.primaryForeground),
+        '--custom-secondary': hexToHsl(t.secondary),
+        '--custom-secondary-foreground': hexToHsl(t.secondaryForeground),
+        '--custom-muted': hexToHsl(t.muted),
+        '--custom-muted-foreground': hexToHsl(t.mutedForeground),
+        '--custom-accent': hexToHsl(t.accent),
+        '--custom-accent-foreground': hexToHsl(t.accentForeground),
+        '--custom-border': hexToHsl(t.border),
+        '--custom-input': hexToHsl(t.input),
+        '--custom-ring': hexToHsl(t.ring),
+      };
 
-      const css = `
-        html[data-custom-theme-active="true"] {
-          --primary-gradient-start: ${hexToHsl(t.primaryGradientStart)};
-          --primary-gradient-end: ${hexToHsl(t.primaryGradientEnd)};
-          --background: ${hexToHsl(t.background)};
-          --foreground: ${hexToHsl(t.foreground)};
-          --card: ${hexToHsl(t.card)};
-          --card-foreground: ${hexToHsl(t.cardForeground)};
-          --popover: ${hexToHsl(t.popover)};
-          --popover-foreground: ${hexToHsl(t.popoverForeground)};
-          --primary: ${hexToHsl(t.primary)};
-          --primary-foreground: ${primaryForeground};
-          --secondary: ${hexToHsl(t.secondary)};
-          --secondary-foreground: ${hexToHsl(t.secondaryForeground)};
-          --muted: ${hexToHsl(t.muted)};
-          --muted-foreground: ${hexToHsl(t.mutedForeground)};
-          --accent: ${hexToHsl(t.accent)};
-          --accent-foreground: ${hexToHsl(t.accentForeground)};
-          --destructive: 0 59% 55%;
-          --destructive-foreground: 0 0% 100%;
-          --border: ${hexToHsl(t.border)};
-          --input: ${hexToHsl(t.input)};
-          --ring: ${hexToHsl(t.ring)};
-          --radius: 0.5rem;
-          /* Sidebar colors */
-          --sidebar-background: ${hexToHsl(t.secondary)};
-          --sidebar-foreground: ${hexToHsl(t.secondaryForeground)};
-          --sidebar-accent: ${hexToHsl(t.muted)};
-          --sidebar-accent-foreground: ${isColorDark(t.muted) ? '0 0% 100%' : '220 49% 10%'};
-          --sidebar-border: ${hexToHsl(t.border)};
-          /* Charts */
-          --chart-1: ${hexToHsl(t.primary)};
-          --chart-2: ${hexToHsl(t.accent)};
-        }
-
-        html[data-custom-theme-active="true"] body.dashboard-scope {
-          background-image: linear-gradient(135deg, hsl(var(--primary-gradient-start)), hsl(var(--primary-gradient-end)));
-          background-attachment: fixed;
-        }
-
-        html[data-custom-theme-active="true"] .dashboard-scope main {
-          background-color: transparent;
-        }
-      `;
-      styleElement.innerHTML = css;
-      document.documentElement.setAttribute('data-custom-theme-active', 'true');
-    } else {
-      if (styleElement) {
-        styleElement.remove();
+      for (const [prop, value] of Object.entries(themeValues)) {
+        document.documentElement.style.setProperty(prop, value);
       }
+      
+      document.documentElement.setAttribute('data-custom-theme-active', 'true');
+      
+      // Clean up old implementation if it exists
+      const oldStyleTag = document.getElementById('custom-dashboard-theme');
+      if (oldStyleTag) oldStyleTag.remove();
+
+    } else {
+      // If no custom theme, remove the properties and attribute
+      managedCustomProperties.forEach(prop => {
+        document.documentElement.style.removeProperty(prop);
+      });
       document.documentElement.removeAttribute('data-custom-theme-active');
     }
-
-    return () => {
-      // Cleanup on unmount if needed, though usually we want themes to persist.
-    };
   }, [customTheme]);
 
   // --- CALLBACKS --- //
