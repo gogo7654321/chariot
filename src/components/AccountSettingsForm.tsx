@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { db, auth, storage } from '@/lib/firebase';
-import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, deleteDoc } from 'firebase/firestore';
 import { updateProfile, sendPasswordResetEmail, deleteUser, verifyBeforeUpdateEmail } from 'firebase/auth';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Button } from '@/components/ui/button';
@@ -76,22 +76,40 @@ export function AccountSettingsForm() {
 
   useEffect(() => {
     if (user) {
-      const fetchUserData = async () => {
-        setIsLoading(true);
-        const userDocRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(userDocRef);
+      setIsLoading(true);
+      const userDocRef = doc(db, 'users', user.uid);
+
+      const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
         const userData = docSnap.exists() ? docSnap.data() : {};
         const currentUsername = userData.username || '';
-        form.reset({
+
+        // Only update the form with new data if the user hasn't started editing it.
+        // This prevents overwriting their input if the data changes in another tab.
+        if (!form.formState.isDirty) {
+          form.reset({
+            firstName: user.displayName || '',
+            username: currentUsername,
+          });
+        }
+        
+        // The email field is not part of the form, so it's always safe to update.
+        if (user.email) {
+          setNewEmail(user.email);
+        }
+
+        setIsLoading(false);
+      });
+      
+      // Set initial values immediately for better UX.
+      setNewEmail(user.email || '');
+      form.reset({
           firstName: user.displayName || '',
-          username: currentUsername,
-        });
-        setNewEmail(user.email || '');
-        setIsLoading(false);
-      };
-      fetchUserData();
+          username: '', // Username will be populated by the snapshot listener
+      });
+
+      return () => unsubscribe();
     } else {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   }, [user, form]);
   
