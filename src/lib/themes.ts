@@ -8,7 +8,7 @@ export const THEME_PRESETS = [
     { id: 'vaporwave', name: '🩵 Vaporwave', colors: { background: '#ff77cc', primary: '#00e5ff', accent: '#2d3436' } },
     { id: 'sunset-heat', name: '🔥 Sunset Heat', colors: { background: '#ff4e50', primary: '#fc913a', accent: '#2c3e50' } },
     { id: 'cosmic-grape', name: '🪐 Cosmic Grape', colors: { background: '#9b59b6', primary: '#f1c40f', accent: '#341f97' } },
-    { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { background: '#00a8cc', primary: '#f0f4f8', accent: '#99d9e9' } },
+    { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { background: '#0048ba', primary: '#54a3ff', accent: '#a1d0ff' } },
     { id: 'candy-pop', name: '🍭 Candy Pop', colors: { background: '#ff69b4', primary: '#89cff0', accent: '#f9f9f9' } },
     { id: 'monochrome', name: '🕶️ Monochrome', colors: { background: '#222222', primary: '#ffffff', accent: '#555555' } },
     { id: 'midnight-club', name: '🟣 Midnight Club', colors: { background: '#000033', primary: '#66ffe6', accent: '#4e4eff' } },
