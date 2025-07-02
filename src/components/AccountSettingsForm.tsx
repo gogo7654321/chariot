@@ -86,13 +86,32 @@ export function AccountSettingsForm() {
     
     const file = event.target.files[0];
     const MAX_FILE_SIZE_MB = 1;
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        variant: 'destructive',
+        title: 'Unsupported File Type',
+        description: (
+          <div>
+            Please select a PNG, JPG, GIF, or WebP file. You can use{' '}
+            <a href="https://cloudconvert.com/" target="_blank" rel="noopener noreferrer" className="underline font-semibold">
+              CloudConvert
+            </a>{' '}
+            to convert your file.
+          </div>
+        )
+      });
+      return;
+    }
+
     if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
       toast({ 
         variant: 'destructive', 
         title: 'File is too large', 
         description: (
           <div>
-            Please select an image smaller than {MAX_FILE_SIZE_MB}MB. You can use{' '}
+            Please select a smaller image. You can use{' '}
             <a href="https://tinypng.com/" target="_blank" rel="noopener noreferrer" className="underline font-semibold">
               a tool like TinyPNG
             </a>{' '}
@@ -214,7 +233,12 @@ export function AccountSettingsForm() {
                 <Edit2 className="mr-2 h-4 w-4" />Change Picture
             </Button>
             <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/*" className="hidden" />
-            <p className="text-xs text-muted-foreground mt-2">PNG, JPG, GIF, WebP. 1MB limit.</p>
+            <p className="text-xs text-muted-foreground mt-2">
+                PNG, JPG, GIF, WebP. Need to convert?{' '}
+                <a href="https://cloudconvert.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">
+                    Use a converter.
+                </a>
+            </p>
         </div>
       </div>
 
