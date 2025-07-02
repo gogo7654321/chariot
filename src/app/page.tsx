@@ -13,7 +13,7 @@ export default function RootPage() {
   useEffect(() => {
     if (!isLoading) {
       if (user) {
-        router.replace('/classes');
+        router.replace('/dashboard');
       } else {
         router.replace('/landing');
       }

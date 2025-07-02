@@ -83,7 +83,7 @@ export default function DashboardLayout({
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-transparent">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );
@@ -124,5 +124,3 @@ export default function DashboardLayout({
     </DashboardWithSidebarAndContext>
   );
 }
-
-    
