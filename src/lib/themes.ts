@@ -16,10 +16,11 @@ export const THEME_PRESETS = [
     { id: 'cosmic-grape', name: '🪐 Cosmic Grape', colors: { background: '#9b59b6', primary: '#f1c40f', accent: '#341f97' } },
     { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { background: '#0c1660', primary: '#0d69ae', accent: '#65e5d5' } },
     { id: 'candy-pop', name: '🍭 Candy Pop', colors: { background: '#ff69b4', primary: '#89cff0', accent: '#f9f9f9' } },
-    { id: 'monochrome', name: '🕶️ Monochrome', colors: { background: '#000000', primary: '#555555', accent: '#ffffff' } },
+    { id: 'monochrome', name: '🕶️ Monochrome', colors: { background: '#000000', primary: '#ffffff', accent: '#555555' } },
     { id: 'midnight-club', name: '🟣 Midnight Club', colors: { background: '#000033', primary: '#66ffe6', accent: '#4e4eff' } },
     { id: 'neon-racer', name: '⚡ Neon Racer', colors: { background: '#001f3f', primary: '#d4ff00', accent: '#ff00ff' } },
     { id: 'starlight-void', name: '🌌 Starlight Void', colors: { background: '#0f0c29', primary: '#f400a1', accent: '#00f2fe' } },
+    { id: 'psychedelic-planet', name: '🪐 Psychedelic Planet', colors: { background: '#000000', primary: '#ff007f', accent: '#007fff' } },
 ];
 
 
@@ -35,16 +36,12 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
     const gradientStart = colors.background;
     const gradientEnd = colors.primary;
 
-    // Use the preset's 'primary' color for primary actions.
     const primaryActionColor = colors.primary;
-    // Use the preset's 'accent' color for accents.
     const accentColor = colors.accent;
     
-    // Determine the base foreground color from the start of the gradient for general text readability.
     const isBgDark = isColorDark(gradientStart);
     const themeForeground = isBgDark ? '#FAFAFA' : '#0A0A0A';
 
-    // Create layered surfaces by tinting/shading the gradient's start color.
     const cardColor = isBgDark ? tint(0.08, gradientStart) : shade(0.03, gradientStart);
     const secondaryColor = isBgDark ? tint(0.05, gradientStart) : shade(0.05, gradientStart);
     const popoverColor = isBgDark ? tint(0.12, gradientStart) : shade(0.08, gradientStart);
@@ -55,23 +52,18 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
         id: preset.id,
         name: preset.name,
         colors: {
-            // Gradient colors for the page background
             primaryGradientStart: gradientStart,
             primaryGradientEnd: gradientEnd,
 
-            // Base colors (background is now for solid surfaces, not the page)
             background: cardColor, 
             foreground: themeForeground,
 
-            // Primary actions
             primary: primaryActionColor,
             primaryForeground: isColorDark(primaryActionColor) ? '#FFFFFF' : '#111827',
 
-            // Accent can be the gradient's end color for consistency
             accent: accentColor,
             accentForeground: isColorDark(accentColor) ? '#FFFFFF' : '#111827',
             
-            // Layered surfaces
             card: cardColor,
             cardForeground: themeForeground,
             secondary: secondaryColor,
@@ -79,7 +71,6 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
             popover: popoverColor,
             popoverForeground: themeForeground,
 
-            // Utility
             muted: mutedColor,
             mutedForeground: isBgDark ? tint(0.4, themeForeground) : shade(0.4, themeForeground),
             border: borderColor,
