@@ -34,7 +34,7 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
   const ResetToDefault = () => (
      <div>
         <h3 className="text-lg font-semibold mb-2">Reset</h3>
-        <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="flex items-center justify-between rounded-xl border p-3">
             <div>
                 <Label>Reset to Default</Label>
                 <p className="text-xs text-muted-foreground">Revert all colors to the AP Ace© default.</p>
@@ -71,7 +71,7 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
                                         key={preset.id}
                                         onClick={() => handlePresetSelect(preset.id)}
                                         className={cn(
-                                            "relative rounded-lg border-2 p-3 text-left transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                                            "relative rounded-xl border-2 p-3 text-left transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                                             customTheme?.id === preset.id ? "border-primary" : "border-border"
                                         )}
                                     >
@@ -101,7 +101,7 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
                     <div className="space-y-6">
                          <div>
                             <h3 className="text-lg font-semibold mb-3">Manual Color Editor</h3>
-                            <div className="space-y-4 rounded-lg border bg-secondary/50 p-4">
+                            <div className="space-y-4 rounded-xl border bg-secondary/50 p-4">
                                 <Info className="mx-auto h-8 w-8 text-muted-foreground" />
                                 <p className="text-center text-sm text-muted-foreground">
                                     The advanced manual color editor with sliders and pickers is coming soon!
