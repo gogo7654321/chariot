@@ -213,7 +213,7 @@ export function AccountSettingsForm() {
             <Button onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
                 <Edit2 className="mr-2 h-4 w-4" />Change Picture
             </Button>
-            <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/png, image/jpeg" className="hidden" />
+            <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/*" className="hidden" />
             <p className="text-xs text-muted-foreground mt-2">PNG or JPG, up to 1MB.</p>
         </div>
       </div>
