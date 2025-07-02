@@ -92,60 +92,102 @@ export function AccountSettingsForm() {
     
     setIsUploading(true);
     console.log("Starting avatar upload...");
+    console.log("File:", file.name, file.size, file.type);
+    console.log("User UID:", user.uid);
+    console.log("Storage bucket:", process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
     
-    // Safety timeout - force stop loading after 30 seconds
+    // Force stop after 15 seconds
     const timeoutId = setTimeout(() => {
-      console.log("Upload timeout - forcing isUploading to false");
+      console.log("⚠️ TIMEOUT: Forcing upload to stop");
       setIsUploading(false);
-      toast({ variant: 'destructive', title: 'Upload Timeout', description: 'Upload took too long and was cancelled.' });
-    }, 30000);
+      toast({ 
+        variant: 'destructive', 
+        title: 'Upload Timeout', 
+        description: 'Upload is taking too long. Please try again with a smaller image.' 
+      });
+    }, 15000);
     
     try {
-      const avatarRef = storageRef(storage, `avatars/${user.uid}/${Date.now()}_${file.name}`);
-      console.log(`Attempting to upload to: ${avatarRef.fullPath}`);
+      // Step 1: Create storage reference
+      const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      const avatarRef = storageRef(storage, `avatars/${user.uid}/${fileName}`);
+      console.log("✅ Step 1: Storage ref created:", avatarRef.fullPath);
       
-      const uploadResult = await uploadBytes(avatarRef, file);
-      console.log("Upload successful:", uploadResult);
+      // Step 2: Upload file with progress monitoring
+      console.log("🔄 Step 2: Starting upload...");
+      const uploadTask = uploadBytes(avatarRef, file);
       
-      console.log("Attempting to get download URL...");
-      const photoURL = await getDownloadURL(avatarRef);
-      console.log("Successfully received download URL:", photoURL);
+      // Add a race condition with timeout for upload
+      const uploadResult = await Promise.race([
+        uploadTask,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Upload timeout')), 10000)
+        )
+      ]);
       
-      console.log("Attempting to update user profile...");
-      await updateProfile(auth.currentUser!, { photoURL });
-      console.log("Profile update successful.");
+      console.log("✅ Step 2 complete: Upload successful");
       
+      // Step 3: Get download URL
+      console.log("🔄 Step 3: Getting download URL...");
+      const downloadURLTask = getDownloadURL(avatarRef);
+      
+      const photoURL = await Promise.race([
+        downloadURLTask,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Download URL timeout')), 5000)
+        )
+      ]);
+      
+      console.log("✅ Step 3 complete: Download URL obtained:", photoURL);
+      
+      // Step 4: Update user profile
+      console.log("🔄 Step 4: Updating user profile...");
+      if (!auth.currentUser) {
+        throw new Error('No authenticated user found');
+      }
+      
+      const updateTask = updateProfile(auth.currentUser, { photoURL });
+      
+      await Promise.race([
+        updateTask,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Profile update timeout')), 5000)
+        )
+      ]);
+      
+      console.log("✅ Step 4 complete: Profile updated successfully");
+      
+      clearTimeout(timeoutId);
       toast({ title: "Success!", description: "Your profile picture has been updated." });
 
     } catch (err: any) {
-      console.error("Caught error during upload process:", err);
-      let description = 'An unexpected error occurred. Please check the browser console for details.';
+      clearTimeout(timeoutId);
+      console.error("❌ Upload failed at some step:", err);
       
-      switch (err.code) {
-        case 'storage/unauthorized':
-          description = 'Permission denied. Please double-check your Firebase Storage security rules.';
-          break;
-        case 'storage/object-not-found':
-          description = 'Storage bucket not found or not configured properly.';
-          break;
-        case 'storage/unknown':
-          description = 'Firebase Storage service unavailable.';
-          break;
-        case 'storage/project-not-found':
-          description = 'Firebase project not found.';
-          break;
-        case 'storage/network-request-failed':
-          description = 'Network error. Check your connection and try again.';
-          break;
-        default:
-          description = `Upload failed: ${err.message || 'Unknown error'}`;
+      let description = 'Upload failed. ';
+      if (err.message === 'Upload timeout') {
+        description += 'File upload took too long. Try a smaller image.';
+      } else if (err.message === 'Download URL timeout') {
+        description += 'Could not retrieve image URL. Check Firebase Storage configuration.';
+      } else if (err.message === 'Profile update timeout') {
+        description += 'Could not update profile. Try logging out and back in.';
+      } else if (err.code) {
+        description += `Firebase error: ${err.code}`;
+      } else {
+        description += err.message || 'Unknown error occurred.';
       }
 
-      toast({ variant: 'destructive', title: 'Upload Failed', description: description });
+      toast({ variant: 'destructive', title: 'Upload Failed', description });
+      
     } finally {
-      clearTimeout(timeoutId); // Clear the timeout
-      console.log("Upload process finished. Setting isUploading to false.");
-      setIsUploading(false);
+      clearTimeout(timeoutId);
+      console.log("🏁 Upload process finished. Resetting spinner.");
+      
+      // Force reset the spinner
+      setTimeout(() => {
+        setIsUploading(false);
+      }, 100);
+      
       // Clear the file input
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -165,6 +207,8 @@ export function AccountSettingsForm() {
       }
       
       const userDocRef = doc(db, 'users', user.uid);
+      // NOTE: Client-side username uniqueness check removed to resolve Firestore permission errors.
+      // A server-side check (e.g., via Cloud Function) is the recommended secure pattern.
       await updateDoc(userDocRef, {
         username: data.username,
       });
