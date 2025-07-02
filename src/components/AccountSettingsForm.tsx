@@ -234,7 +234,7 @@ export function AccountSettingsForm() {
             </Button>
             <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/*" className="hidden" />
             <p className="text-xs text-muted-foreground mt-2">
-                PNG, JPG, GIF, WebP. Need to convert?{' '}
+                PNG, JPG, GIF, WebP. Image not supported?{' '}
                 <a href="https://cloudconvert.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">
                     Use a converter.
                 </a>
