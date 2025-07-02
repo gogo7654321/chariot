@@ -1,6 +1,7 @@
 
 "use client";
 
+import * as React from "react";
 import {
     SidebarContent,
     SidebarHeader,
@@ -25,7 +26,8 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { AceMascot } from "./AceMascot";
 import { useAuth } from "@/contexts/AuthContext";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
 import { signOut, type User } from "firebase/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { cn } from "@/lib/utils";
@@ -75,7 +77,7 @@ export function DashboardSidebar() {
                     <SidebarHeader className="p-0">
                          <a href="/" className="flex items-center gap-2">
                             <AceMascot className="w-8 h-8 flex-shrink-0" />
-                            <span className="font-bold text-lg whitespace-nowrap">AP Ace</span>
+                            <span className="font-bold text-lg whitespace-nowrap">AP Ace<span className="copyright-symbol">&copy;</span></span>
                         </a>
                     </SidebarHeader>
                     <Separator orientation="vertical" className="h-6" />
@@ -141,7 +143,7 @@ export function DashboardSidebar() {
             <SidebarHeader>
                  <a href="/" className="flex items-center gap-2">
                     <AceMascot className="w-8 h-8 flex-shrink-0" />
-                    <span className="font-bold text-lg whitespace-nowrap transition-opacity duration-500 group-data-[state=collapsed]:opacity-0">AP Ace</span>
+                    <span className="font-bold text-lg whitespace-nowrap transition-opacity duration-500 group-data-[state=collapsed]:opacity-0">AP Ace<span className="copyright-symbol">&copy;</span></span>
                 </a>
             </SidebarHeader>
             <SidebarContent>
@@ -208,6 +210,20 @@ export function DashboardSidebar() {
 function UserInfo({ user, onLogout }: { user: User, onLogout?: () => void }) {
     const { state, side } = useSidebar();
     const router = useRouter();
+    const [username, setUsername] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        if (!user) return;
+        const userDocRef = doc(db, 'users', user.uid);
+        const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+            if (docSnap.exists() && docSnap.data().username) {
+                setUsername(docSnap.data().username);
+            } else {
+                setUsername(null);
+            }
+        });
+        return () => unsubscribe();
+    }, [user]);
 
     if (side === 'top' || side === 'bottom') {
         return (
@@ -224,7 +240,7 @@ function UserInfo({ user, onLogout }: { user: User, onLogout?: () => void }) {
                     <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
                             <p className="text-sm font-medium leading-none">{user.displayName}</p>
-                            <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                            <p className="text-xs leading-none text-muted-foreground">{username ? `@${username}` : (user.email || 'No username')}</p>
                         </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
@@ -265,7 +281,7 @@ function UserInfo({ user, onLogout }: { user: User, onLogout?: () => void }) {
                 "data-[state=collapsed]:w-0 data-[state=collapsed]:opacity-0"
             )}>
                 <p className="font-semibold text-sm truncate whitespace-nowrap">{user.displayName || <>AP Ace<span className="copyright-symbol">&copy;</span> Student</>}</p>
-                <p className="text-xs text-muted-foreground truncate whitespace-nowrap">{user.email}</p>
+                <p className="text-xs text-muted-foreground truncate whitespace-nowrap">{username ? `@${username}` : (user.email || 'No username')}</p>
             </div>
         </div>
     )

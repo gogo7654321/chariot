@@ -1,6 +1,7 @@
 
 'use client';
 
+import * as React from "react";
 import {
   SidebarContent,
   SidebarHeader,
@@ -24,7 +25,8 @@ import {
 import { usePathname, useRouter } from 'next/navigation';
 import { AceMascot } from '@/components/AceMascot';
 import { useAuth } from '@/contexts/AuthContext';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
+import { doc, onSnapshot } from "firebase/firestore";
 import type { User } from 'firebase/auth';
 import { signOut } from 'firebase/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -166,6 +168,21 @@ export function DevSidebar() {
 
 function UserInfo({ user }: { user: User }) {
   const { state } = useSidebar();
+  const [username, setUsername] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (!user) return;
+    const userDocRef = doc(db, 'users', user.uid);
+    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+        if (docSnap.exists() && docSnap.data().username) {
+            setUsername(docSnap.data().username);
+        } else {
+            setUsername(null);
+        }
+    });
+    return () => unsubscribe();
+  }, [user]);
+
   return (
     <div
       data-state={state}
@@ -193,7 +210,7 @@ function UserInfo({ user }: { user: User }) {
         )}
       >
         <p className="font-semibold text-sm truncate whitespace-nowrap">{user.displayName || <><span className="whitespace-nowrap">AP Ace<span className="copyright-symbol">&copy;</span></span> Developer</>}</p>
-        <p className="text-xs text-muted-foreground truncate whitespace-nowrap">{user.email}</p>
+        <p className="text-xs text-muted-foreground truncate whitespace-nowrap">{username ? `@${username}` : (user.email || 'No username')}</p>
       </div>
     </div>
   );
