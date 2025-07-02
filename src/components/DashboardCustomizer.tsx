@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -10,15 +10,27 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useAppearance, type CustomTheme } from '@/contexts/AppearanceContext';
-import { Check, Info } from 'lucide-react';
+import { Check, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { THEME_PRESETS, createThemeObject } from '@/lib/themes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getContrastRatio, isColorDark } from '@/lib/colorUtils';
 
 const ResetToDefault = () => {
     const { resetCustomTheme } = useAppearance();
@@ -36,6 +48,115 @@ const ResetToDefault = () => {
     </div>
   )
 }
+
+const ColorInput = ({ label, value, onChange }: { label: string; value: string; onChange: (color: string) => void; }) => {
+  return (
+    <div className="flex items-center justify-between">
+      <Label>{label}</Label>
+      <div className="flex items-center gap-2 border rounded-full p-1 pr-3 bg-background">
+        <div className="relative h-6 w-6 rounded-full overflow-hidden border">
+          <div className="absolute inset-0" style={{ backgroundColor: value }} />
+          <input
+            type="color"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
+        </div>
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => {
+            if (/^#[0-9a-fA-F]{6}$/.test(e.target.value)) {
+              onChange(e.target.value);
+            }
+          }}
+          className="w-20 bg-transparent border-none focus:outline-none font-mono text-sm p-0"
+        />
+      </div>
+    </div>
+  );
+};
+
+
+function ManualEditor() {
+    const { customTheme, applyCustomTheme, resetCustomTheme } = useAppearance();
+    const [manualColors, setManualColors] = useState<CustomTheme['colors']>(
+        customTheme?.colors || createThemeObject(THEME_PRESETS.find(p => p.id === 'arctic-drift')!).colors
+    );
+    const [isWarningOpen, setWarningOpen] = useState(false);
+    const [warningMessage, setWarningMessage] = useState('');
+
+    useEffect(() => {
+        setManualColors(customTheme?.colors || createThemeObject(THEME_PRESETS.find(p => p.id === 'arctic-drift')!).colors);
+    }, [customTheme]);
+
+    const handleColorChange = (key: keyof CustomTheme['colors'], value: string) => {
+        const newColors = { ...manualColors, [key]: value };
+        setManualColors(newColors);
+
+        const newTheme: CustomTheme = {
+            id: 'manual-edit',
+            name: 'Manual Edit',
+            colors: newColors,
+        };
+        applyCustomTheme(newTheme);
+        checkContrast(newColors);
+    };
+
+    const checkContrast = (theme: CustomTheme['colors']) => {
+        const bgFgContrast = getContrastRatio(theme.background, theme.foreground);
+        if (bgFgContrast < 4.5) {
+            setWarningMessage(`The contrast between your background and text color is very low (${bgFgContrast.toFixed(2)}:1). This may make text hard to read.`);
+            setWarningOpen(true);
+            return;
+        }
+
+        const primaryFg = isColorDark(theme.primary) ? '#FFFFFF' : '#000000';
+        const primaryContrast = getContrastRatio(theme.primary, primaryFg);
+        if (primaryContrast < 3) {
+            setWarningMessage(`The contrast on your primary button is low (${primaryContrast.toFixed(2)}:1), which may make it hard to read.`);
+            setWarningOpen(true);
+            return;
+        }
+    };
+    
+    return (
+        <div className="space-y-6">
+            <div>
+                <h3 className="text-lg font-semibold mb-3">Manual Color Editor</h3>
+                <div className="space-y-4 rounded-xl border p-4">
+                    <ColorInput label="Primary" value={manualColors.primary} onChange={(v) => handleColorChange('primary', v)} />
+                    <ColorInput label="Secondary" value={manualColors.secondary} onChange={(v) => handleColorChange('secondary', v)} />
+                    <ColorInput label="Background" value={manualColors.background} onChange={(v) => handleColorChange('background', v)} />
+                    <ColorInput label="Text" value={manualColors.foreground} onChange={(v) => handleColorChange('foreground', v)} />
+                    <ColorInput label="Accent" value={manualColors.accent} onChange={(v) => handleColorChange('accent', v)} />
+                </div>
+            </div>
+            <ResetToDefault />
+            <AlertDialog open={isWarningOpen} onOpenChange={setWarningOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="text-amber-500" />
+                            Contrast Warning
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {warningMessage}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Dismiss</AlertDialogCancel>
+                        <AlertDialogAction onClick={resetCustomTheme} className={buttonVariants({ variant: "destructive" })}>
+                            Reset Colors
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </div>
+    );
+}
+
 
 export function DashboardCustomizer({ children }: { children: React.ReactNode }) {
   const { customTheme, applyCustomTheme } = useAppearance();
@@ -60,9 +181,9 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
         </SheetHeader>
         
         <Tabs defaultValue="presets" className="flex-1 flex flex-col min-h-0 pt-4">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="presets">Presets</TabsTrigger>
-                <TabsTrigger value="manual">Manual</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 rounded-xl">
+                <TabsTrigger value="presets" className="rounded-lg">Presets</TabsTrigger>
+                <TabsTrigger value="manual" className="rounded-lg">Manual</TabsTrigger>
             </TabsList>
             <TabsContent value="presets" className="flex-1 overflow-auto mt-4">
                  <ScrollArea className="h-full pr-4">
@@ -86,10 +207,10 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
                                             )}
                                         </div>
                                         <div className="mt-2 flex gap-1">
-                                            <div className="h-5 w-5 rounded-full" style={{ backgroundColor: preset.colors.primary }}></div>
-                                            <div className="h-5 w-5 rounded-full" style={{ backgroundColor: preset.colors.accent }}></div>
-                                            <div className="h-5 w-5 rounded-full" style={{ backgroundColor: preset.colors.secondary }}></div>
-                                            <div className="h-5 w-5 rounded-full" style={{ backgroundColor: preset.colors.background }}></div>
+                                            <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: preset.colors.primary }}></div>
+                                            <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: preset.colors.accent }}></div>
+                                            <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: preset.colors.secondary }}></div>
+                                            <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: preset.colors.background }}></div>
                                         </div>
                                     </button>
                                 ))}
@@ -101,18 +222,7 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
             </TabsContent>
             <TabsContent value="manual" className="flex-1 overflow-auto mt-4">
                 <ScrollArea className="h-full pr-4">
-                     <div className="space-y-6">
-                         <div>
-                            <h3 className="text-lg font-semibold mb-3">Manual Color Editor</h3>
-                            <div className="space-y-4 rounded-xl border bg-secondary/50 p-4">
-                                <Info className="mx-auto h-8 w-8 text-muted-foreground" />
-                                <p className="text-center text-sm text-muted-foreground">
-                                    The advanced manual color editor with sliders and pickers is coming soon!
-                                </p>
-                            </div>
-                        </div>
-                        <ResetToDefault />
-                    </div>
+                     <ManualEditor />
                 </ScrollArea>
             </TabsContent>
         </Tabs>
