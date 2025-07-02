@@ -195,6 +195,14 @@ export function AccountSettingsForm() {
     }
   };
 
+  const forceResetUpload = () => {
+    console.log("🚨 Emergency reset triggered");
+    setIsUploading(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const onSubmit = async (data: AccountFormValues) => {
     if (!user) return;
     
@@ -207,8 +215,6 @@ export function AccountSettingsForm() {
       }
       
       const userDocRef = doc(db, 'users', user.uid);
-      // NOTE: Client-side username uniqueness check removed to resolve Firestore permission errors.
-      // A server-side check (e.g., via Cloud Function) is the recommended secure pattern.
       await updateDoc(userDocRef, {
         username: data.username,
       });
@@ -279,6 +285,16 @@ export function AccountSettingsForm() {
             <Button onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
                 <Edit2 className="mr-2 h-4 w-4" />Change Picture
             </Button>
+            {isUploading && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={forceResetUpload}
+                className="ml-2"
+              >
+                Force Stop
+              </Button>
+            )}
             <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/png, image/jpeg" className="hidden" />
             <p className="text-xs text-muted-foreground mt-2">PNG or JPG, up to 2MB.</p>
         </div>
