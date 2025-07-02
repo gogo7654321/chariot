@@ -28,8 +28,10 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
     const gradientStart = colors.background;
     const gradientEnd = colors.primary;
 
-    // Use the preset's 'accent' color for primary actions.
-    const primaryActionColor = colors.accent;
+    // Use the preset's 'primary' color for primary actions.
+    const primaryActionColor = colors.primary;
+    // Use the preset's 'accent' color for accents.
+    const accentColor = colors.accent;
     
     // Determine the base foreground color from the start of the gradient for general text readability.
     const isBgDark = isColorDark(gradientStart);
@@ -59,8 +61,8 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
             primaryForeground: isColorDark(primaryActionColor) ? '#FFFFFF' : '#111827',
 
             // Accent can be the gradient's end color for consistency
-            accent: gradientEnd,
-            accentForeground: isColorDark(gradientEnd) ? '#FFFFFF' : '#111827',
+            accent: accentColor,
+            accentForeground: isColorDark(accentColor) ? '#FFFFFF' : '#111827',
             
             // Layered surfaces
             card: cardColor,

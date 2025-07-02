@@ -49,25 +49,6 @@ export function hexToHsl(hex: string): string {
 
 
 /**
- * Determines if a given hex color is "dark".
- * Useful for deciding whether foreground text should be light or dark.
- * @param {string} hex The hex color string.
- * @returns {boolean} True if the color is dark, false otherwise.
- */
-export function isColorDark(hex: string): boolean {
-  if (!hex || typeof hex !== 'string' || !hex.startsWith('#')) return false;
-  
-  const color = (hex.charAt(0) === '#') ? hex.substring(1, 7) : hex;
-  const r = parseInt(color.substring(0, 2), 16);
-  const g = parseInt(color.substring(2, 4), 16);
-  const b = parseInt(color.substring(4, 6), 16);
-  
-  // Using the YIQ formula to determine brightness
-  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-  return yiq < 128;
-}
-
-/**
  * Converts a hex color string to an RGB object.
  * @param {string} hex The hex color string.
  * @returns {{r: number, g: number, b: number} | null} An object with r, g, b values, or null if invalid.
@@ -85,7 +66,7 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
 }
 
 /**
- * Calculates the relative luminance of an RGB color.
+ * Calculates the relative luminance of an RGB color using the WCAG 2.0 formula.
  * @param {number} r The red value (0-255).
  * @param {number} g The green value (0-255).
  * @param {number} b The blue value (0-255).
@@ -98,6 +79,22 @@ function getLuminance(r: number, g: number, b: number): number {
   });
   return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
 }
+
+/**
+ * Determines if a given hex color is "dark" based on its luminance.
+ * This is used to decide whether foreground text should be light or dark for accessibility.
+ * @param {string} hex The hex color string.
+ * @returns {boolean} True if the color is dark, false otherwise.
+ */
+export function isColorDark(hex: string): boolean {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return false;
+  
+  const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
+  // Threshold based on WCAG guidelines. Colors with luminance <= 0.179 are considered dark.
+  return luminance <= 0.179;
+}
+
 
 /**
  * Calculates the contrast ratio between two hex colors.
