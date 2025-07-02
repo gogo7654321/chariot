@@ -88,7 +88,7 @@ body {
   }
 
   /* This block applies the custom theme variables when a custom theme is active AND we are in the dashboard scope */
-  body.dashboard-scope[data-custom-theme-active="true"] {
+  html[data-custom-theme-active="true"]:has(body.dashboard-scope) {
     --background: var(--custom-background);
     --foreground: var(--custom-foreground);
     --card: var(--custom-card);
