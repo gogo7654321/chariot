@@ -128,7 +128,7 @@ export default function DashboardPage() {
         {layouts.lg.map((item) => {
             const Component = componentMap[item.i as keyof typeof componentMap];
             return (
-                <div key={item.i} className="grid-card-wrapper bg-card rounded-lg border shadow-sm">
+                <div key={item.i} className="grid-card-wrapper">
                     <div className="drag-handle"></div>
                     <Component />
                 </div>
