@@ -87,8 +87,8 @@ body {
     --primary-gradient-end: hsl(var(--accent));
   }
 
-  /* This block applies the custom theme variables when a custom theme is active */
-  html[data-custom-theme-active="true"] {
+  /* This block applies the custom theme variables when a custom theme is active AND we are in the dashboard scope */
+  body.dashboard-scope[data-custom-theme-active="true"] {
     --background: var(--custom-background);
     --foreground: var(--custom-foreground);
     --card: var(--custom-card);
@@ -107,11 +107,11 @@ body {
     --input: var(--custom-input);
     --ring: var(--custom-ring);
     --radius: 0.5rem;
-    /* For sidebar, we can map them to the main theme for simplicity */
-    --sidebar-background: var(--custom-background);
-    --sidebar-foreground: var(--custom-foreground);
-    --sidebar-accent: var(--custom-secondary);
-    --sidebar-accent-foreground: var(--custom-secondary-foreground);
+    /* Sidebar colors are now distinct for better layering */
+    --sidebar-background: var(--custom-card); /* Using card color for sidebar bg */
+    --sidebar-foreground: var(--custom-card-foreground);
+    --sidebar-accent: var(--custom-muted); /* Using muted for sidebar hover */
+    --sidebar-accent-foreground: var(--custom-muted-foreground);
     --sidebar-border: var(--custom-border);
     /* Charts */
     --chart-1: var(--custom-primary);
@@ -367,3 +367,5 @@ body {
     @apply text-[0.6em] font-normal align-super -top-0.5 relative ml-px;
   }
 }
+
+    

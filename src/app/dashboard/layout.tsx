@@ -1,9 +1,10 @@
+
 'use client';
 
 import { DashboardSidebar } from '@/components/DashboardSidebar';
 import { Sidebar, SidebarInset, SidebarProvider, useSidebar } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/AuthContext';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LogIn, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -67,6 +68,15 @@ export default function DashboardLayout({
   const { user, isLoading } = useAuth();
   const pathname = usePathname();
 
+  // This effect adds a scoping class to the body tag when this layout is active.
+  useEffect(() => {
+    document.body.classList.add('dashboard-scope');
+    // Cleanup function to remove the class when the layout unmounts
+    return () => {
+      document.body.classList.remove('dashboard-scope');
+    }
+  }, []);
+
   // Routes that should NOT have the main dashboard sidebar
   const isDevPortal = pathname.startsWith('/dashboard/dev');
   const isFullPage = pathname.startsWith('/dashboard/ace-os/create') || pathname.startsWith('/dashboard/ace-os/study');
@@ -114,3 +124,5 @@ export default function DashboardLayout({
     </DashboardWithSidebarAndContext>
   );
 }
+
+    
