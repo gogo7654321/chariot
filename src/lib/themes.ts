@@ -3,13 +3,13 @@ import { type CustomTheme } from '@/contexts/AppearanceContext';
 import { tint, shade } from 'polished';
 
 export const THEME_PRESETS = [
-    { id: 'neo-future', name: '✨ Neo Future', colors: { primary: '#0fffc1', secondary: '#0a1f44', background: '#020617', accent: '#f97316' } },
-    { id: 'vaporwave', name: '🩵 Vaporwave', colors: { primary: '#ff8ff4', secondary: '#8ffaff', background: '#2d0037', accent: '#c2f750' } },
-    { id: 'sunset-heat', name: '🔥 Sunset Heat', colors: { primary: '#ff5e3a', secondary: '#ff9500', background: '#2c2c54', accent: '#ffc048' } },
-    { id: 'cosmic-grape', name: '🪐 Cosmic Grape', colors: { primary: '#a18cd1', secondary: '#fbc2eb', background: '#1e1e2f', accent: '#ff9ff3' } },
-    { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { primary: '#00796b', secondary: '#e0f7fa', background: '#f0f0f0', accent: '#00acc1' } },
-    { id: 'candy-pop', name: '🍭 Candy Pop', colors: { primary: '#f06292', secondary: '#ba68c8', background: '#fff0f6', accent: '#ff4081' } },
-    { id: 'monochrome', name: '🕶️ Monochrome', colors: { primary: '#ffffff', secondary: '#cfcfcf', background: '#1a1a1a', accent: '#999999' } },
+    { id: 'neo-future', name: '✨ Neo Future', colors: { primary: '#00f5d4', secondary: '#1a2b50', background: '#0c1324', accent: '#ff00ff' } },
+    { id: 'vaporwave', name: '🩵 Vaporwave', colors: { primary: '#ff77cc', secondary: '#2c3e50', background: '#1d1d3b', accent: '#00e5ff' } },
+    { id: 'sunset-heat', name: '🔥 Sunset Heat', colors: { primary: '#ff4e50', secondary: '#3d2c5a', background: '#1f1c2c', accent: '#fc913a' } },
+    { id: 'cosmic-grape', name: '🪐 Cosmic Grape', colors: { primary: '#9b59b6', secondary: '#342f4e', background: '#1c1b2a', accent: '#f1c40f' } },
+    { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { primary: '#00a8cc', secondary: '#e8f7f9', background: '#f5f7fa', accent: '#99d9e9' } },
+    { id: 'candy-pop', name: '🍭 Candy Pop', colors: { primary: '#ff69b4', secondary: '#f0f4ff', background: '#ffffff', accent: '#89cff0' } },
+    { id: 'monochrome', name: '🕶️ Monochrome', colors: { primary: '#ffffff', secondary: '#222222', background: '#000000', accent: '#555555' } },
     { id: 'midnight-club', name: '🟣 Midnight Club', colors: { primary: '#4e4eff', secondary: '#000033', background: '#0c0c1c', accent: '#66ffe6' } },
     { id: 'neon-racer', name: '⚡ Neon Racer', colors: { primary: '#d4ff00', secondary: '#001f3f', background: '#0b0c10', accent: '#ff00ff' } },
 ];
