@@ -16,10 +16,10 @@ export const THEME_PRESETS = [
     { id: 'cosmic-grape', name: '🪐 Cosmic Grape', colors: { background: '#9b59b6', primary: '#f1c40f', accent: '#341f97' } },
     { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { background: '#0c1660', primary: '#0d69ae', accent: '#65e5d5' } },
     { id: 'candy-pop', name: '🍭 Candy Pop', colors: { background: '#ff69b4', primary: '#89cff0', accent: '#f9f9f9' } },
-    { id: 'monochrome', name: '🕶️ Monochrome', colors: { background: '#000000', primary: '#ffffff', accent: '#555555' } },
+    { id: 'monochrome', name: '🕶️ Monochrome', colors: { background: '#000000', primary: '#555555', accent: '#ffffff' } },
     { id: 'midnight-club', name: '🟣 Midnight Club', colors: { background: '#000033', primary: '#66ffe6', accent: '#4e4eff' } },
     { id: 'neon-racer', name: '⚡ Neon Racer', colors: { background: '#001f3f', primary: '#d4ff00', accent: '#ff00ff' } },
-    { id: 'starlight-void', name: '🌌 Starlight Void', colors: { background: '#0a0a23', primary: '#00d8ff', accent: '#be29ec' } },
+    { id: 'starlight-void', name: '🌌 Starlight Void', colors: { background: '#0f0c29', primary: '#f400a1', accent: '#00f2fe' } },
 ];
 
 
