@@ -100,14 +100,25 @@ export function AccountSettingsForm() {
         
         toast({ title: "Success!", description: "Your profile picture has been updated." });
     } catch (err: any) {
-        let description = 'Could not upload your new profile picture.';
-        if (err.code === 'storage/unauthorized') {
-            description = 'Permission denied. Please check your Firebase Storage security rules.';
-        } else if (err.code === 'storage/object-not-found') {
-            description = 'File not found. This might be a network issue.';
+        console.error("Full avatar upload error object:", err);
+        let description = 'An unexpected error occurred. Please check the browser console for details.';
+        
+        switch (err.code) {
+            case 'storage/unauthorized':
+                description = 'Permission denied. Please double-check your Firebase Storage security rules.';
+                break;
+            case 'storage/object-not-found':
+                description = 'File not found. This can happen if your Storage Bucket is not configured correctly in your project environment variables.';
+                break;
+            case 'storage/unknown':
+                description = 'An unknown error occurred. This can happen if Firebase Storage is not enabled for your project.';
+                break;
+            case 'storage/project-not-found':
+                 description = 'Firebase project not found. Please ensure your Firebase configuration is correct.';
+                 break;
         }
+
         toast({ variant: 'destructive', title: 'Upload Failed', description: description });
-        console.error("Avatar upload error:", err);
     } finally {
         setIsUploading(false);
     }
@@ -125,9 +136,15 @@ export function AccountSettingsForm() {
       }
       
       const userDocRef = doc(db, 'users', user.uid);
-      await updateDoc(userDocRef, {
-          username: data.username,
-      });
+      const docSnap = await getDoc(userDocRef);
+      // NOTE: Client-side username uniqueness check removed to resolve Firestore permission errors.
+      // Firebase Auth will still prevent duplicate emails. A server-side check
+      // for usernames is recommended for a production environment.
+      if (!docSnap.exists() || docSnap.data().username !== data.username) {
+        await updateDoc(userDocRef, {
+            username: data.username,
+        });
+      }
 
       form.reset(data, { keepValues: true });
       
