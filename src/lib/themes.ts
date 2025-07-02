@@ -8,18 +8,18 @@ export const THEME_PRESETS = [
     { id: 'vaporwave', name: '🩵 Vaporwave', colors: { background: '#ff77cc', primary: '#00e5ff', accent: '#2d3436' } },
     { id: 'sunset-heat', name: '🔥 Sunset Heat', colors: { background: '#ff4e50', primary: '#fc913a', accent: '#2c3e50' } },
     { id: 'cosmic-grape', name: '🪐 Cosmic Grape', colors: { background: '#9b59b6', primary: '#f1c40f', accent: '#341f97' } },
-    { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { background: '#00a8cc', primary: '#99d9e9', accent: '#f0f4f8' } },
+    { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { background: '#00a8cc', primary: '#f0f4f8', accent: '#99d9e9' } },
     { id: 'candy-pop', name: '🍭 Candy Pop', colors: { background: '#ff69b4', primary: '#89cff0', accent: '#f9f9f9' } },
     { id: 'monochrome', name: '🕶️ Monochrome', colors: { background: '#222222', primary: '#ffffff', accent: '#555555' } },
-    { id: 'midnight-club', name: '🟣 Midnight Club', colors: { background: '#4e4eff', primary: '#66ffe6', accent: '#000033' } },
-    { id: 'neon-racer', name: '⚡ Neon Racer', colors: { background: '#d4ff00', primary: '#ff00ff', accent: '#001f3f' } },
+    { id: 'midnight-club', name: '🟣 Midnight Club', colors: { background: '#000033', primary: '#66ffe6', accent: '#4e4eff' } },
+    { id: 'neon-racer', name: '⚡ Neon Racer', colors: { background: '#001f3f', primary: '#d4ff00', accent: '#ff00ff' } },
 ];
 
 
 /**
  * Creates a full theme object from a base preset.
- * This function uses the preset's 'background' as the main UI color,
- * and derives other surfaces from it for a cohesive look.
+ * This function uses the preset's 'accent' color for card and secondary surfaces
+ * to create a more distinct and layered look.
  * @param preset - The base preset containing primary, accent, and background colors.
  * @returns A full CustomTheme object.
  */
@@ -30,20 +30,18 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
     
     // Base palette
     const themeBackground = colors.background;
-    const themeForeground = isBgDark ? '#FAFAFA' : '#0A0A0A'; // Off-white/black for softer contrast
+    const themeForeground = isBgDark ? '#FAFAFA' : '#0A0A0A';
     const themePrimary = colors.primary;
-    const themeAccent = colors.accent;
+    // The third color from the preset will now define the card background.
+    const cardAndSecondaryColor = colors.accent;
 
-    // Derived surfaces
-    const cardColor = isBgDark ? tint(0.07, themeBackground) : shade(0.03, themeBackground);
-    const popoverColor = isBgDark ? tint(0.1, themeBackground) : shade(0.05, themeBackground);
-
-    // Derived text colors
+    // Determine foregrounds based on background brightness
     const primaryForeground = isColorDark(themePrimary) ? '#FFFFFF' : '#111827';
-    const accentForeground = isColorDark(themeAccent) ? '#FFFFFF' : '#111827';
-    const cardForeground = isColorDark(cardColor) ? '#FAFAFA' : '#0A0A0A';
-    
-    // Muted/utility colors
+    const cardAndSecondaryForeground = isColorDark(cardAndSecondaryColor) ? '#FFFFFF' : '#111827';
+
+    // Derive other surface colors
+    const popoverColor = isBgDark ? tint(0.05, cardAndSecondaryColor) : shade(0.05, cardAndSecondaryColor);
+    const popoverForeground = isColorDark(popoverColor) ? '#FFFFFF' : '#111827';
     const mutedColor = isBgDark ? tint(0.15, themeBackground) : shade(0.07, themeBackground);
     const mutedForeground = isBgDark ? shade(0.3, themeForeground) : tint(0.3, themeForeground);
     const borderColor = isBgDark ? tint(0.2, themeBackground) : shade(0.1, themeBackground);
@@ -60,25 +58,24 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
             primary: themePrimary,
             primaryForeground: primaryForeground,
 
-            // Secondary Actions / Highlights
-            accent: themeAccent,
-            accentForeground: accentForeground,
+            // Accent for highlights (now uses the primary color for pop)
+            accent: themePrimary,
+            accentForeground: primaryForeground,
 
             // Surfaces
-            card: cardColor,
-            cardForeground: cardForeground,
-
-            popover: popoverColor,
-            popoverForeground: isColorDark(popoverColor) ? '#FAFAFA' : '#0A0A0A',
+            card: cardAndSecondaryColor,
+            cardForeground: cardAndSecondaryForeground,
+            secondary: cardAndSecondaryColor,
+            secondaryForeground: cardAndSecondaryForeground,
             
-            secondary: cardColor, // Re-use card color for secondary surfaces
-            secondaryForeground: cardForeground,
+            popover: popoverColor,
+            popoverForeground: popoverForeground,
 
             // Utility
             muted: mutedColor,
             mutedForeground: mutedForeground,
             border: borderColor,
-            input: borderColor, // Inputs can share border color
+            input: borderColor,
             ring: themePrimary,
         }
     };
