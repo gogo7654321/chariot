@@ -262,7 +262,7 @@ export function AccountSettingsForm() {
     if (!user || !user.email) return;
     try {
       await sendPasswordResetEmail(auth, user.email);
-      toast({ title: 'Password Reset Email Sent', description: 'Check your inbox for a link to reset your password.' });
+      toast({ title: 'Password Reset Email Sent', description: 'Check your inbox for a link to reset your password. Be sure to check your spam folder!' });
     } catch (err: any) {
       toast({ variant: 'destructive', title: 'Error', description: 'Failed to send password reset email.' });
     }
