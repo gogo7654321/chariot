@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Flame } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
+import { timezones } from "@/lib/timezones";
 
 const quotes = [
   "Success is the sum of small efforts, repeated day in and day out.",
@@ -41,7 +42,8 @@ export function DashboardHeader() {
       const userDocRef = doc(db, 'users', user.uid);
       const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
         const savedTimezone = docSnap.data()?.calendarSettings?.timezone;
-        setTimezone(savedTimezone || getBrowserTimezone());
+        const isValidTimezone = timezones.some(tz => tz.value === savedTimezone);
+        setTimezone(isValidTimezone ? savedTimezone : getBrowserTimezone());
       });
       return () => unsubscribe();
     } else {
