@@ -16,6 +16,7 @@ export function Providers({ children }: { children: ReactNode }) {
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
+          storageKey="light-dark-theme"
         >
           <UserSettingsManager />
           {children}

@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, useLayoutEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useLayoutEffect, ReactNode, useCallback, useEffect } from 'react';
 import { hexToHsl, isColorDark } from '@/lib/colorUtils';
 
 // --- TYPES --- //
@@ -53,34 +53,36 @@ type AppearanceContextType = {
 // --- CONTEXT --- //
 const AppearanceContext = createContext<AppearanceContextType | undefined>(undefined);
 
-// A list of all CSS custom properties we manage.
-const managedCustomProperties = [
-  '--custom-primary-gradient-start', '--custom-primary-gradient-end', '--custom-background',
-  '--custom-foreground', '--custom-card', '--custom-card-foreground', '--custom-popover',
-  '--custom-popover-foreground', '--custom-primary', '--custom-primary-foreground',
-  '--custom-secondary', '--custom-secondary-foreground', '--custom-muted',
-  '--custom-muted-foreground', '--custom-accent', '--custom-accent-foreground',
-  '--custom-border', '--custom-input', '--custom-ring'
-];
-
-
 // --- PROVIDER --- //
 export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
+  // Set default state for SSR, will be hydrated on client
   const [theme, setTheme] = useState<AccessibilityTheme>('default');
   const [sidebarPosition, setSidebarPosition] = useState<SidebarPosition>('left');
   const [customTheme, setCustomTheme] = useState<CustomTheme | null>(null);
   const [isAppearanceLoading, setIsAppearanceLoading] = useState(true);
 
+  // On initial client-side mount, hydrate state from localStorage to match the inline script.
+  // This syncs React's state with what's already been rendered, preventing mismatches.
+  useEffect(() => {
+    try {
+        const settingsJSON = localStorage.getItem('appearance-settings');
+        if (settingsJSON) {
+            const settings = JSON.parse(settingsJSON);
+            setTheme(settings.accessibilityTheme || 'default');
+            setSidebarPosition(settings.sidebarPosition || 'left');
+            setCustomTheme(settings.customTheme || null);
+        }
+    } catch(e) {
+        console.error("Failed to parse settings from localStorage", e);
+    }
+  }, []);
 
-  // --- EFFECTS --- //
 
-  // Effect to apply the accessibility theme class to the HTML element.
+  // --- DYNAMIC STYLE APPLICATION --- //
+  // This effect runs whenever the custom theme changes in React's state. It applies the styles
+  // for real-time updates when a user interacts with the customizer UI.
   useLayoutEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  // Effect to apply the custom theme as inline styles to the HTML element.
-  useLayoutEffect(() => {
+    const root = document.documentElement;
     if (customTheme) {
       const t = customTheme.colors;
       
@@ -107,28 +109,23 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
       };
 
       for (const [prop, value] of Object.entries(themeValues)) {
-        document.documentElement.style.setProperty(prop, value);
+        root.style.setProperty(prop, value);
       }
-      
-      document.documentElement.setAttribute('data-custom-theme-active', 'true');
-      
-      // Clean up old implementation if it exists
-      const oldStyleTag = document.getElementById('custom-dashboard-theme');
-      if (oldStyleTag) oldStyleTag.remove();
-
+      root.setAttribute('data-custom-theme-active', 'true');
     } else {
-      // If no custom theme, remove the properties and attribute
-      managedCustomProperties.forEach(prop => {
-        document.documentElement.style.removeProperty(prop);
-      });
-      document.documentElement.removeAttribute('data-custom-theme-active');
+      root.removeAttribute('data-custom-theme-active');
     }
   }, [customTheme]);
+
+  // Effect to apply the accessibility theme class to the HTML element.
+  useLayoutEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
 
   // --- CALLBACKS --- //
   
   const handleSetTheme = useCallback((newTheme: AccessibilityTheme) => {
-    // When an accessibility theme is applied, we must reset any custom theme.
     if (newTheme !== 'default') {
       setCustomTheme(null);
     }
@@ -137,7 +134,6 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
 
   const handleApplyCustomTheme = useCallback((themeToApply: CustomTheme | null) => {
     setCustomTheme(themeToApply);
-    // Applying a custom theme disables any active accessibility theme.
     if (themeToApply !== null) {
       setTheme('default');
     }
