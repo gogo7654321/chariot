@@ -4,7 +4,7 @@
 import { DashboardSidebar } from '@/components/DashboardSidebar';
 import { Sidebar, SidebarInset, SidebarProvider, useSidebar } from '@/components/ui/sidebar';
 import { useAuth } from '@/contexts/AuthContext';
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import { LogIn, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,7 +70,8 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   // This effect adds a scoping class to the body tag when this layout is active.
-  useEffect(() => {
+  // Use useLayoutEffect to apply styles before the browser paints, theming the loading screen.
+  useLayoutEffect(() => {
     document.body.classList.add('dashboard-scope');
     // Cleanup function to remove the class when the layout unmounts
     return () => {

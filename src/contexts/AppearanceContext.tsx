@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useLayoutEffect, ReactNode, useCallback } from 'react';
 import { hexToHsl, isColorDark } from '@/lib/colorUtils';
 
 // --- TYPES --- //
@@ -75,12 +75,12 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
   // --- EFFECTS --- //
 
   // Effect to apply the accessibility theme class to the HTML element.
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
   // Effect to apply the custom theme as inline styles to the HTML element.
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (customTheme) {
       const t = customTheme.colors;
       
