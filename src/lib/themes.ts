@@ -24,32 +24,45 @@ export const THEME_PRESETS = [
 export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme {
     const { colors } = preset;
     const isBgDark = isColorDark(colors.background);
-    const isCardDark = isColorDark(colors.secondary);
+
+    // Main colors are from the preset
+    const themePrimary = colors.primary;
+    const themeAccent = colors.accent;
+    const themeBackground = colors.background;
+
+    // "Side colors" are now derived from the background for better cohesion.
+    const themeCard = isBgDark ? tint(0.05, themeBackground) : shade(0.03, themeBackground);
+    const themeSecondary = themeCard;
+    const themePopover = themeCard;
+
+    // Text colors are derived from their respective backgrounds
+    const themeForeground = isBgDark ? tint(0.9, themeBackground) : shade(0.8, themeBackground);
+    const isCardDark = isColorDark(themeCard);
+    const themeCardForeground = isCardDark ? tint(0.9, themeCard) : shade(0.8, themeCard);
 
     return {
         id: preset.id,
         name: preset.name,
         colors: {
-            ...colors,
-            // Base colors
-            foreground: isBgDark ? tint(0.9, colors.background) : shade(0.8, colors.background),
+            primary: themePrimary,
+            accent: themeAccent,
+            background: themeBackground,
+            foreground: themeForeground,
             
-            // Cards & Popovers often use the secondary color as a base
-            card: colors.secondary,
-            cardForeground: isCardDark ? tint(0.9, colors.secondary) : shade(0.8, colors.secondary),
-            popover: colors.secondary,
-            popoverForeground: isCardDark ? tint(0.9, colors.secondary) : shade(0.8, colors.secondary),
+            secondary: themeSecondary,
+            // The secondary foreground is the same as the card foreground in this derived model
+            card: themeCard,
+            cardForeground: themeCardForeground,
+            popover: themePopover,
+            popoverForeground: themeCardForeground,
             
-            // Muted colors are tinted/shaded versions of the background
-            muted: isBgDark ? tint(0.1, colors.background) : shade(0.05, colors.background),
-            mutedForeground: isBgDark ? tint(0.5, colors.background) : shade(0.4, colors.background),
+            muted: isBgDark ? tint(0.1, themeBackground) : shade(0.07, themeBackground),
+            mutedForeground: isBgDark ? tint(0.5, themeBackground) : shade(0.4, themeBackground),
             
-            // Borders and inputs are slightly different from the background
-            border: isBgDark ? tint(0.15, colors.background) : shade(0.1, colors.background),
-            input: isBgDark ? tint(0.18, colors.background) : shade(0.12, colors.background),
+            border: isBgDark ? tint(0.15, themeBackground) : shade(0.1, themeBackground),
+            input: isBgDark ? tint(0.18, themeBackground) : shade(0.12, themeBackground),
 
-            // Ring color is often the primary color for focus states
-            ring: colors.primary,
+            ring: themePrimary,
         }
     };
 }
