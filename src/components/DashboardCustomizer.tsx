@@ -20,18 +20,9 @@ import { cn } from '@/lib/utils';
 import { THEME_PRESETS, createThemeObject } from '@/lib/themes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export function DashboardCustomizer({ children }: { children: React.ReactNode }) {
-  const { customTheme, applyCustomTheme, resetCustomTheme } = useAppearance();
-
-  const handlePresetSelect = (presetId: string) => {
-    const preset = THEME_PRESETS.find(p => p.id === presetId);
-    if (preset) {
-      const themeObject = createThemeObject(preset);
-      applyCustomTheme(themeObject);
-    }
-  };
-  
-  const ResetToDefault = () => (
+const ResetToDefault = () => {
+    const { resetCustomTheme } = useAppearance();
+    return (
      <div>
         <Separator className="my-6" />
         <h3 className="text-lg font-semibold mb-2">Reset</h3>
@@ -44,11 +35,23 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
         </div>
     </div>
   )
+}
 
+export function DashboardCustomizer({ children }: { children: React.ReactNode }) {
+  const { customTheme, applyCustomTheme } = useAppearance();
+
+  const handlePresetSelect = (presetId: string) => {
+    const preset = THEME_PRESETS.find(p => p.id === presetId);
+    if (preset) {
+      const themeObject = createThemeObject(preset);
+      applyCustomTheme(themeObject);
+    }
+  };
+  
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md">
+      <SheetContent className="w-full sm:max-w-md flex flex-col">
         <SheetHeader>
           <SheetTitle>Dashboard Customizer</SheetTitle>
           <SheetDescription>
