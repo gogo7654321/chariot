@@ -33,6 +33,7 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
   
   const ResetToDefault = () => (
      <div>
+        <Separator className="my-6" />
         <h3 className="text-lg font-semibold mb-2">Reset</h3>
         <div className="flex items-center justify-between rounded-xl border p-3">
             <div>
@@ -91,14 +92,13 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
                                 ))}
                             </div>
                         </div>
-                        <Separator />
                         <ResetToDefault />
                     </div>
                 </ScrollArea>
             </TabsContent>
             <TabsContent value="manual" className="flex-1 overflow-auto mt-4">
                 <ScrollArea className="h-full pr-4">
-                    <div className="space-y-6">
+                     <div className="space-y-6">
                          <div>
                             <h3 className="text-lg font-semibold mb-3">Manual Color Editor</h3>
                             <div className="space-y-4 rounded-xl border bg-secondary/50 p-4">
@@ -108,7 +108,6 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
                                 </p>
                             </div>
                         </div>
-                        <Separator />
                         <ResetToDefault />
                     </div>
                 </ScrollArea>
