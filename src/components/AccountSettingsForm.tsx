@@ -78,23 +78,23 @@ export function AccountSettingsForm() {
     if (user) {
       setIsLoading(true);
       const userDocRef = doc(db, 'users', user.uid);
-
+      
       const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
         const userData = docSnap.exists() ? docSnap.data() : {};
         const currentUsername = userData.username || '';
-
+        
         // Only update the form with new data if the user hasn't started editing it.
         // This prevents overwriting their input if the data changes in another tab.
         if (!form.formState.isDirty) {
           form.reset({
-            firstName: user.displayName || '',
+            firstName: auth.currentUser?.displayName || '',
             username: currentUsername,
           });
         }
         
         // The email field is not part of the form, so it's always safe to update.
-        if (user.email) {
-          setNewEmail(user.email);
+        if (auth.currentUser?.email) {
+          setNewEmail(auth.currentUser.email);
         }
 
         setIsLoading(false);
@@ -111,7 +111,7 @@ export function AccountSettingsForm() {
     } else {
       setIsLoading(false);
     }
-  }, [user, form]);
+  }, [user]); // This useEffect should only re-run when the user object changes.
   
   const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0 || !user) {

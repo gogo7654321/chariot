@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useAppearance, type CustomTheme } from '@/contexts/AppearanceContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
@@ -14,7 +14,11 @@ type SidebarPosition = 'left' | 'right' | 'top' | 'bottom';
 
 async function saveFirestoreSettings(user: User, settings: Record<string, any>) {
     const userDocRef = doc(db, 'users', user.uid);
-    await setDoc(userDocRef, { appearance: settings }, { merge: true });
+    try {
+        await setDoc(userDocRef, { appearance: settings }, { merge: true });
+    } catch (error) {
+        console.error("Failed to save settings to Firestore:", error);
+    }
 }
 
 export function UserSettingsManager() {
@@ -29,6 +33,25 @@ export function UserSettingsManager() {
     applyCustomTheme,
   } = useAppearance();
 
+  const loadSettingsFromLocalStorage = useCallback(() => {
+    const storedAccessibilityTheme = localStorage.getItem('accessibility-theme') as AccessibilityTheme;
+    if (storedAccessibilityTheme) setAccessibilityTheme(storedAccessibilityTheme);
+    
+    const storedSidebarPosition = localStorage.getItem('sidebar-position') as SidebarPosition;
+    if (storedSidebarPosition) setSidebarPosition(storedSidebarPosition);
+    
+    const storedCustomTheme = localStorage.getItem('custom-theme');
+    if (storedCustomTheme) {
+        try {
+            applyCustomTheme(JSON.parse(storedCustomTheme));
+        } catch (e) {
+            console.error("Failed to parse custom theme from localStorage", e);
+            localStorage.removeItem('custom-theme');
+        }
+    }
+  }, [setAccessibilityTheme, setSidebarPosition, applyCustomTheme]);
+  
+
   // Effect to load settings on mount and when user logs in/out
   useEffect(() => {
     if (isAuthLoading) return;
@@ -37,13 +60,17 @@ export function UserSettingsManager() {
       // User is logged in, load from Firestore and listen for real-time updates
       const userDocRef = doc(db, 'users', user.uid);
       const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-        const data = docSnap.data();
-        const settings = data?.appearance;
+        const settings = docSnap.data()?.appearance;
+        
+        // If firestore has settings, apply them
         if (settings) {
             if (settings.lightDarkTheme) setLightDarkTheme(settings.lightDarkTheme);
             if (settings.accessibilityTheme) setAccessibilityTheme(settings.accessibilityTheme);
             if (settings.sidebarPosition) setSidebarPosition(settings.sidebarPosition);
-            if (settings.customTheme) applyCustomTheme(settings.customTheme);
+            applyCustomTheme(settings.customTheme || null);
+        } else {
+            // If user has no settings in firestore, load from localStorage and then save it to firestore
+            loadSettingsFromLocalStorage();
         }
       });
       
@@ -51,37 +78,31 @@ export function UserSettingsManager() {
       return () => unsubscribe();
     } else {
       // User is logged out, load from localStorage
-      const storedAccessibilityTheme = localStorage.getItem('accessibility-theme') as AccessibilityTheme;
-      if (storedAccessibilityTheme) setAccessibilityTheme(storedAccessibilityTheme);
-      
-      const storedSidebarPosition = localStorage.getItem('sidebar-position') as SidebarPosition;
-      if (storedSidebarPosition) setSidebarPosition(storedSidebarPosition);
-      
-      const storedCustomTheme = localStorage.getItem('custom-theme');
-      if (storedCustomTheme) applyCustomTheme(JSON.parse(storedCustomTheme));
+      loadSettingsFromLocalStorage();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, isAuthLoading]);
+  }, [user, isAuthLoading, setLightDarkTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme, loadSettingsFromLocalStorage]);
 
   // Effect to save settings when they change
   useEffect(() => {
     // Don't save while auth state is resolving or if there is no resolved theme yet
     if (isAuthLoading || !resolvedTheme) return;
     
+    // Create a settings object that is not undefined.
+    // customTheme can be null, which is intended.
     const settingsToSave = {
-        lightDarkTheme: resolvedTheme,
-        accessibilityTheme,
-        sidebarPosition,
-        customTheme,
+        lightDarkTheme: resolvedTheme || 'light',
+        accessibilityTheme: accessibilityTheme || 'default',
+        sidebarPosition: sidebarPosition || 'left',
+        customTheme: customTheme,
     };
 
     if (user) {
         saveFirestoreSettings(user, settingsToSave);
     } else {
-        localStorage.setItem('accessibility-theme', accessibilityTheme);
-        localStorage.setItem('sidebar-position', sidebarPosition);
-        if (customTheme) {
-            localStorage.setItem('custom-theme', JSON.stringify(customTheme));
+        localStorage.setItem('accessibility-theme', settingsToSave.accessibilityTheme);
+        localStorage.setItem('sidebar-position', settingsToSave.sidebarPosition);
+        if (settingsToSave.customTheme) {
+            localStorage.setItem('custom-theme', JSON.stringify(settingsToSave.customTheme));
         } else {
             localStorage.removeItem('custom-theme');
         }
