@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { db, auth, storage } from '@/lib/firebase';
-import { doc, getDoc, updateDoc, collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { updateProfile, sendPasswordResetEmail, deleteUser } from 'firebase/auth';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Button } from '@/components/ui/button';
@@ -85,17 +85,25 @@ export function AccountSettingsForm() {
     }
     
     const file = event.target.files[0];
-    if (file.size > 2 * 1024 * 1024) { // 2MB limit
-      toast({ variant: 'destructive', title: 'File too large', description: 'Please select an image smaller than 2MB.' });
+    const MAX_FILE_SIZE_MB = 1;
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      toast({ 
+        variant: 'destructive', 
+        title: 'File is too large', 
+        description: (
+          <div>
+            Please select an image smaller than {MAX_FILE_SIZE_MB}MB. You can use{' '}
+            <a href="https://tinypng.com/" target="_blank" rel="noopener noreferrer" className="underline font-semibold">
+              a tool like TinyPNG
+            </a>{' '}
+            to resize it.
+          </div>
+        )
+      });
       return;
     }
     
     setIsUploading(true);
-    const timeoutId = setTimeout(() => {
-      setIsUploading(false);
-      toast({ variant: 'destructive', title: 'Upload Timeout', description: 'The upload took too long. Please try again.' });
-    }, 30000);
-    
     try {
       const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       const avatarRef = storageRef(storage, `avatars/${user.uid}/${fileName}`);
@@ -111,24 +119,12 @@ export function AccountSettingsForm() {
       }
 
     } catch (err: any) {
-      console.error("Caught error during upload process:", err);
       let description = 'An unexpected error occurred. Please check the browser console for details.';
-      
-      switch (err.code) {
-        case 'storage/unauthorized':
+      if (err.code === 'storage/unauthorized') {
           description = 'Permission denied. Please double-check your Firebase Storage security rules and CORS configuration.';
-          break;
-        case 'storage/object-not-found':
-          description = 'Storage bucket not found or not configured properly.';
-          break;
-        case 'storage/network-request-failed':
-          description = 'Network error. Check your internet connection and try again.';
-          break;
       }
-
       toast({ variant: 'destructive', title: 'Upload Failed', description });
     } finally {
-      clearTimeout(timeoutId);
       setIsUploading(false);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -157,7 +153,6 @@ export function AccountSettingsForm() {
       toast({ title: 'Success!', description: 'Your account details have been updated.' });
 
     } catch (err: any) {
-      console.error("Error updating account:", err);
       setError(err.message || "An unknown error occurred.");
     } finally {
       setIsSaving(false);
@@ -219,7 +214,7 @@ export function AccountSettingsForm() {
                 <Edit2 className="mr-2 h-4 w-4" />Change Picture
             </Button>
             <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/png, image/jpeg" className="hidden" />
-            <p className="text-xs text-muted-foreground mt-2">PNG or JPG, up to 2MB.</p>
+            <p className="text-xs text-muted-foreground mt-2">PNG or JPG, up to 1MB.</p>
         </div>
       </div>
 
