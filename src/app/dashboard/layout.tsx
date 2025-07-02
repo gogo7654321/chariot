@@ -65,7 +65,8 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
+  const { isAppearanceLoading } = useAppearance();
   const pathname = usePathname();
 
   // This effect adds a scoping class to the body tag when this layout is active.
@@ -77,13 +78,15 @@ export default function DashboardLayout({
     }
   }, []);
 
+  const isLoading = isAuthLoading || isAppearanceLoading;
+
   // Routes that should NOT have the main dashboard sidebar
   const isDevPortal = pathname.startsWith('/dashboard/dev');
   const isFullPage = pathname.startsWith('/dashboard/ace-os/create') || pathname.startsWith('/dashboard/ace-os/study');
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-transparent">
+      <div className="flex h-screen items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
       </div>
     );

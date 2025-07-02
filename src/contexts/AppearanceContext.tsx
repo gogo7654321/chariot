@@ -42,6 +42,9 @@ type AppearanceContextType = {
   customTheme: CustomTheme | null;
   applyCustomTheme: (theme: CustomTheme | null) => void;
   resetCustomTheme: () => void;
+  // Loading state
+  isAppearanceLoading: boolean;
+  setIsAppearanceLoading: (loading: boolean) => void;
 };
 
 // --- CONTEXT --- //
@@ -52,6 +55,8 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setTheme] = useState<AccessibilityTheme>('default');
   const [sidebarPosition, setSidebarPosition] = useState<SidebarPosition>('left');
   const [customTheme, setCustomTheme] = useState<CustomTheme | null>(null);
+  const [isAppearanceLoading, setIsAppearanceLoading] = useState(true);
+
 
   // --- EFFECTS --- //
 
@@ -73,8 +78,10 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const t = customTheme.colors;
+      const primaryForeground = isColorDark(t.primary) ? '0 0% 100%' : '220 49% 10%';
+
       const css = `
-        html[data-custom-theme-active="true"]:has(body.dashboard-scope) {
+        html[data-custom-theme-active="true"] {
           --primary-gradient-start: ${hexToHsl(t.primaryGradientStart)};
           --primary-gradient-end: ${hexToHsl(t.primaryGradientEnd)};
           --background: ${hexToHsl(t.background)};
@@ -84,26 +91,37 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
           --popover: ${hexToHsl(t.popover)};
           --popover-foreground: ${hexToHsl(t.popoverForeground)};
           --primary: ${hexToHsl(t.primary)};
-          --primary-foreground: ${isColorDark(t.primary) ? '0 0% 100%' : '220 49% 10%'};
+          --primary-foreground: ${primaryForeground};
           --secondary: ${hexToHsl(t.secondary)};
-          --secondary-foreground: ${isColorDark(t.secondary) ? '0 0% 100%' : '220 49% 10%'};
+          --secondary-foreground: ${hexToHsl(t.secondaryForeground)};
           --muted: ${hexToHsl(t.muted)};
           --muted-foreground: ${hexToHsl(t.mutedForeground)};
           --accent: ${hexToHsl(t.accent)};
-          --accent-foreground: ${isColorDark(t.accent) ? '0 0% 100%' : '220 49% 10%'};
+          --accent-foreground: ${hexToHsl(t.accentForeground)};
+          --destructive: 0 59% 55%;
+          --destructive-foreground: 0 0% 100%;
           --border: ${hexToHsl(t.border)};
           --input: ${hexToHsl(t.input)};
           --ring: ${hexToHsl(t.ring)};
           --radius: 0.5rem;
           /* Sidebar colors */
           --sidebar-background: ${hexToHsl(t.secondary)};
-          --sidebar-foreground: ${isColorDark(t.secondary) ? '0 0% 100%' : '220 49% 10%'};
+          --sidebar-foreground: ${hexToHsl(t.secondaryForeground)};
           --sidebar-accent: ${hexToHsl(t.muted)};
           --sidebar-accent-foreground: ${isColorDark(t.muted) ? '0 0% 100%' : '220 49% 10%'};
           --sidebar-border: ${hexToHsl(t.border)};
           /* Charts */
           --chart-1: ${hexToHsl(t.primary)};
           --chart-2: ${hexToHsl(t.accent)};
+        }
+
+        html[data-custom-theme-active="true"] body.dashboard-scope {
+          background-image: linear-gradient(135deg, hsl(var(--primary-gradient-start)), hsl(var(--primary-gradient-end)));
+          background-attachment: fixed;
+        }
+
+        html[data-custom-theme-active="true"] .dashboard-scope main {
+          background-color: transparent;
         }
       `;
       styleElement.innerHTML = css;
@@ -151,6 +169,8 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
     customTheme,
     applyCustomTheme: handleApplyCustomTheme,
     resetCustomTheme: handleResetCustomTheme,
+    isAppearanceLoading,
+    setIsAppearanceLoading,
   };
 
   return (

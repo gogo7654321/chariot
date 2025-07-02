@@ -49,38 +49,20 @@ export function UserSettingsManager() {
         setSidebarPosition,
         customTheme,
         applyCustomTheme,
+        setIsAppearanceLoading,
     } = useAppearance();
 
-    const isInitialized = useRef(false);
+    const isFirestoreInitialized = useRef(false);
 
     // Effect for loading settings from storage (localStorage or Firestore)
     useEffect(() => {
-        // Don't do anything until authentication is resolved
+        // If auth is still loading, we wait. The appearance is also considered loading.
         if (isAuthLoading) {
             return;
         }
 
-        if (user) {
-            // User is logged in, subscribe to Firestore for settings
-            const userDocRef = doc(db, 'users', user.uid);
-            const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-                const savedSettings = docSnap.data()?.appearance as AppearanceSettings | undefined;
-
-                if (savedSettings) {
-                    // Apply saved settings
-                    setNextTheme(savedSettings.lightDarkTheme || 'light');
-                    setAccessibilityTheme(savedSettings.accessibilityTheme || 'default');
-                    setSidebarPosition(savedSettings.sidebarPosition || 'left');
-                    applyCustomTheme(savedSettings.customTheme || null);
-                }
-                
-                // Mark as initialized after the first data fetch
-                isInitialized.current = true;
-            });
-            
-            return () => unsubscribe(); // Cleanup Firestore listener
-        } else {
-            // User is logged out, load from localStorage
+        // If not logged in, load from localStorage and finish.
+        if (!user) {
             const storedAccessibilityTheme = localStorage.getItem('accessibility-theme') as AccessibilityTheme | null;
             if (storedAccessibilityTheme) setAccessibilityTheme(storedAccessibilityTheme);
 
@@ -96,18 +78,45 @@ export function UserSettingsManager() {
                     localStorage.removeItem('custom-theme');
                 }
             }
-            
-            isInitialized.current = true;
+            setIsAppearanceLoading(false);
+            return;
         }
-    }, [user, isAuthLoading, setNextTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme]);
+
+        // If logged in, subscribe to Firestore.
+        const userDocRef = doc(db, 'users', user.uid);
+        const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+            const savedSettings = docSnap.exists() ? docSnap.data()?.appearance as AppearanceSettings | undefined : undefined;
+
+            if (savedSettings) {
+                // Apply saved settings
+                setNextTheme(savedSettings.lightDarkTheme || 'light');
+                setAccessibilityTheme(savedSettings.accessibilityTheme || 'default');
+                setSidebarPosition(savedSettings.sidebarPosition || 'left');
+                applyCustomTheme(savedSettings.customTheme || null);
+            }
+            
+            // Mark as initialized and stop loading after the first data check
+            if (!isFirestoreInitialized.current) {
+                setIsAppearanceLoading(false);
+                isFirestoreInitialized.current = true;
+            }
+        }, (error) => {
+            console.error("Failed to load user settings:", error);
+            setIsAppearanceLoading(false); // Stop loading even on error
+        });
+
+        return () => {
+            unsubscribe();
+            isFirestoreInitialized.current = false; // Reset on user change/logout
+        };
+    }, [user, isAuthLoading, setNextTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme, setIsAppearanceLoading]);
 
     // Effect for saving settings to storage
     useEffect(() => {
         // Do not save anything until the initial settings have been loaded
-        if (!isInitialized.current) {
-            return;
-        }
-
+        if (!isFirestoreInitialized.current && !user) return; // For logged-out, wait for localStorage load
+        if (user && !isFirestoreInitialized.current) return; // For logged-in, wait for Firestore load
+        
         const currentSettings: AppearanceSettings = {
             lightDarkTheme: nextTheme as AppearanceSettings['lightDarkTheme'],
             accessibilityTheme: accessibilityTheme,
