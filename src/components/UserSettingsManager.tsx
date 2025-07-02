@@ -2,42 +2,40 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useTheme } from 'next-themes';
-import { useAppearance } from '@/contexts/AccessibilityContext';
+import { useAppearance, type CustomTheme } from '@/contexts/AppearanceContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
+import { useTheme as useNextTheme } from 'next-themes';
 
 type AccessibilityTheme = "default" | "protanopia" | "deuteranopia" | "tritanopia";
 type SidebarPosition = 'left' | 'right' | 'top' | 'bottom';
 
-// This function now only reads data.
 async function getFirestoreSettings(user: User) {
     const userDocRef = doc(db, 'users', user.uid);
     const docSnap = await getDoc(userDocRef);
     if (docSnap.exists()) {
         return docSnap.data();
     }
-    // No need to create the doc here, saving will handle it.
     return null;
 }
 
-async function saveFirestoreSettings(user: User, settings: Record<string, string>) {
+async function saveFirestoreSettings(user: User, settings: Record<string, any>) {
     const userDocRef = doc(db, 'users', user.uid);
-    // { merge: true } is crucial here. It creates the document if it doesn't exist,
-    // or updates it without overwriting other fields.
-    await setDoc(userDocRef, settings, { merge: true });
+    await setDoc(userDocRef, { appearance: settings }, { merge: true });
 }
 
 export function UserSettingsManager() {
   const { user, isLoading: isAuthLoading } = useAuth();
-  const { setTheme: setLightDarkTheme, resolvedTheme } = useTheme();
+  const { setTheme: setLightDarkTheme, resolvedTheme } = useNextTheme();
   const { 
     theme: accessibilityTheme, 
     setTheme: setAccessibilityTheme,
     sidebarPosition,
-    setSidebarPosition
+    setSidebarPosition,
+    customTheme,
+    applyCustomTheme,
   } = useAppearance();
 
   // Effect to load settings on mount and when user logs in/out
@@ -46,46 +44,53 @@ export function UserSettingsManager() {
 
     if (user) {
       // User is logged in, load from Firestore
-      getFirestoreSettings(user).then(settings => {
+      getFirestoreSettings(user).then(data => {
+        const settings = data?.appearance;
         if (settings) {
             if (settings.lightDarkTheme) setLightDarkTheme(settings.lightDarkTheme);
             if (settings.accessibilityTheme) setAccessibilityTheme(settings.accessibilityTheme);
             if (settings.sidebarPosition) setSidebarPosition(settings.sidebarPosition);
+            if (settings.customTheme) applyCustomTheme(settings.customTheme);
         }
       });
     } else {
       // User is logged out, load from localStorage
       const storedAccessibilityTheme = localStorage.getItem('accessibility-theme') as AccessibilityTheme;
-      if (storedAccessibilityTheme) {
-        setAccessibilityTheme(storedAccessibilityTheme);
-      }
+      if (storedAccessibilityTheme) setAccessibilityTheme(storedAccessibilityTheme);
+      
       const storedSidebarPosition = localStorage.getItem('sidebar-position') as SidebarPosition;
-      if (storedSidebarPosition) {
-        setSidebarPosition(storedSidebarPosition);
-      }
-      // next-themes handles its own localStorage for light/dark theme
+      if (storedSidebarPosition) setSidebarPosition(storedSidebarPosition);
+      
+      const storedCustomTheme = localStorage.getItem('custom-theme');
+      if (storedCustomTheme) applyCustomTheme(JSON.parse(storedCustomTheme));
     }
-  }, [user, isAuthLoading, setLightDarkTheme, setAccessibilityTheme, setSidebarPosition]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isAuthLoading]);
 
   // Effect to save settings when they change
   useEffect(() => {
     // Don't save while auth state is resolving or if there is no resolved theme yet
     if (isAuthLoading || !resolvedTheme) return;
     
+    const settingsToSave = {
+        lightDarkTheme: resolvedTheme,
+        accessibilityTheme,
+        sidebarPosition,
+        customTheme,
+    };
+
     if (user) {
-        // User is logged in, save to Firestore.
-        saveFirestoreSettings(user, { 
-            lightDarkTheme: resolvedTheme, 
-            accessibilityTheme,
-            sidebarPosition,
-        });
+        saveFirestoreSettings(user, settingsToSave);
     } else {
-        // User is logged out, save to localStorage.
         localStorage.setItem('accessibility-theme', accessibilityTheme);
         localStorage.setItem('sidebar-position', sidebarPosition);
-        // next-themes handles its own localStorage saving.
+        if (customTheme) {
+            localStorage.setItem('custom-theme', JSON.stringify(customTheme));
+        } else {
+            localStorage.removeItem('custom-theme');
+        }
     }
-  }, [user, resolvedTheme, accessibilityTheme, sidebarPosition, isAuthLoading]);
+  }, [user, resolvedTheme, accessibilityTheme, sidebarPosition, customTheme, isAuthLoading]);
 
   return null; // This is a manager component, it doesn't render anything
 }

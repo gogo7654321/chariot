@@ -20,7 +20,7 @@ import { useAppearance } from "@/contexts/AccessibilityContext"
 type AccessibilityTheme = "default" | "protanopia" | "deuteranopia" | "tritanopia";
 
 export function AccessibilitySettings({ triggerType = 'icon' }: { triggerType?: 'icon' | 'button' | 'control' }) {
-  const { theme, setTheme } = useAppearance();
+  const { theme, setTheme, resetCustomTheme } = useAppearance();
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedMode, setSelectedMode] = React.useState<AccessibilityTheme>(theme);
 
@@ -29,6 +29,9 @@ export function AccessibilitySettings({ triggerType = 'icon' }: { triggerType?: 
   }, [theme]);
 
   const handleSave = () => {
+    if (selectedMode !== 'default') {
+      resetCustomTheme();
+    }
     setTheme(selectedMode);
     setIsOpen(false);
   };
@@ -73,7 +76,7 @@ export function AccessibilitySettings({ triggerType = 'icon' }: { triggerType?: 
         <DialogHeader>
           <DialogTitle>Accessibility Settings</DialogTitle>
           <DialogDescription>
-            Adjust color settings for better visibility. Your selection will be saved for future visits.
+            Choose a colorblind-friendly theme. This will reset any custom theme you have applied to ensure maximum readability.
           </DialogDescription>
         </DialogHeader>
         <RadioGroup

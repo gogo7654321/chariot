@@ -1,4 +1,5 @@
 
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,7 +9,8 @@ body {
 }
 
 @layer base {
-  :root, html[data-theme="default"] {
+  /* Default light theme variables */
+  :root, html[data-theme="default"]:not([data-custom-theme-active="true"]) {
     --background: 240 10% 98%; /* Light gray */
     --foreground: 220 49% 10%; /* Dark Blue */
     --card: 0 0% 100%;
@@ -33,7 +35,6 @@ body {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 1rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -45,7 +46,9 @@ body {
     --primary-gradient-start: hsl(var(--primary));
     --primary-gradient-end: hsl(var(--accent));
   }
-  .dark, html[data-theme="default"].dark {
+  
+  /* Default dark theme variables */
+  .dark, html[data-theme="default"].dark:not([data-custom-theme-active="true"]) {
     --background: 220 49% 10%; /* Dark Blue */
     --foreground: 210 40% 98%;
     --card: 220 49% 15%;
@@ -82,8 +85,38 @@ body {
     --primary-gradient-end: hsl(var(--accent));
   }
 
+  /* This block applies the custom theme variables when a custom theme is active */
+  html[data-custom-theme-active="true"] {
+    --background: var(--custom-background);
+    --foreground: var(--custom-foreground);
+    --card: var(--custom-card);
+    --card-foreground: var(--custom-card-foreground);
+    --popover: var(--custom-popover);
+    --popover-foreground: var(--custom-popover-foreground);
+    --primary: var(--custom-primary);
+    --primary-foreground: var(--custom-primary-foreground);
+    --secondary: var(--custom-secondary);
+    --secondary-foreground: var(--custom-secondary-foreground);
+    --muted: var(--custom-muted);
+    --muted-foreground: var(--custom-muted-foreground);
+    --accent: var(--custom-accent);
+    --accent-foreground: var(--custom-accent-foreground);
+    --border: var(--custom-border);
+    --input: var(--custom-input);
+    --ring: var(--custom-ring);
+    /* For sidebar, we can map them to the main theme for simplicity */
+    --sidebar-background: var(--custom-background);
+    --sidebar-foreground: var(--custom-foreground);
+    --sidebar-accent: var(--custom-secondary);
+    --sidebar-accent-foreground: var(--custom-secondary-foreground);
+    --sidebar-border: var(--custom-border);
+    /* Charts */
+    --chart-1: var(--custom-primary);
+    --chart-2: var(--custom-accent);
+  }
+
   /* Protanopia (Red-blind) Theme */
-  html[data-theme="protanopia"] {
+  html[data-theme="protanopia"]:not([data-custom-theme-active="true"]) {
     --primary: 210 80% 55%;
     --accent: 39 90% 55%;
     --destructive: 240 50% 60%;
@@ -92,7 +125,7 @@ body {
     --chart-2: 39 90% 55%;
   }
 
-  html[data-theme="protanopia"].dark {
+  html[data-theme="protanopia"].dark:not([data-custom-theme-active="true"]) {
     --primary: 210 80% 55%;
     --accent: 39 90% 55%;
     --destructive: 240 50% 50%;
@@ -102,7 +135,7 @@ body {
   }
 
   /* Deuteranopia (Green-blind) Theme */
-  html[data-theme="deuteranopia"] {
+  html[data-theme="deuteranopia"]:not([data-custom-theme-active="true"]) {
     --primary: 220 85% 60%;
     --accent: 260 70% 65%;
     --destructive: 30 80% 60%;
@@ -111,7 +144,7 @@ body {
     --chart-2: 260 70% 65%;
   }
 
-  html[data-theme="deuteranopia"].dark {
+  html[data-theme="deuteranopia"].dark:not([data-custom-theme-active="true"]) {
     --primary: 220 85% 60%;
     --accent: 260 70% 65%;
     --destructive: 30 80% 50%;
@@ -121,7 +154,7 @@ body {
   }
   
   /* Tritanopia (Blue-yellow-blind) Theme */
-  html[data-theme="tritanopia"] {
+  html[data-theme="tritanopia"]:not([data-custom-theme-active="true"]) {
     --primary: 350 80% 60%;
     --accent: 180 60% 45%;
     --destructive: 20 80% 55%;
@@ -129,7 +162,7 @@ body {
     --chart-1: 350 80% 60%;
     --chart-2: 180 60% 45%;
   }
-  html[data-theme="tritanopia"].dark {
+  html[data-theme="tritanopia"].dark:not([data-custom-theme-active="true"]) {
     --primary: 350 80% 60%;
     --accent: 180 60% 45%;
     --destructive: 20 80% 50%;

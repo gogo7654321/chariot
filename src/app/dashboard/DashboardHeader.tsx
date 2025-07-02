@@ -5,10 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { AceMascot } from "@/components/AceMascot";
 import { useEffect, useState } from "react";
-import { Flame } from "lucide-react";
+import { Flame, Palette } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { timezones } from "@/lib/timezones";
+import { DashboardCustomizer } from "@/components/DashboardCustomizer";
 
 const quotes = [
   "Success is the sum of small efforts, repeated day in and day out.",
@@ -103,7 +104,7 @@ export function DashboardHeader() {
           {quote ? `"${quote}"` : "Let's make today productive."}
         </p>
       </div>
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-2">
          <div className="hidden sm:flex items-center gap-6">
             <div className="text-right">
                 <p className="font-mono text-lg font-semibold tracking-tighter text-foreground">{currentTime}</p>
@@ -117,6 +118,11 @@ export function DashboardHeader() {
                 <p className="text-xs text-muted-foreground">Day Streak</p>
             </div>
          </div>
+         <DashboardCustomizer>
+          <button className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground transition-colors hover:bg-secondary/80">
+            <Palette className="h-5 w-5" />
+          </button>
+         </DashboardCustomizer>
          <AceMascot className="h-12 w-12 hidden sm:block" />
         <SidebarTrigger className="md:hidden" />
       </div>
