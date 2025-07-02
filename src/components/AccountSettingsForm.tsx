@@ -91,115 +91,48 @@ export function AccountSettingsForm() {
     }
     
     setIsUploading(true);
-    console.log("Starting avatar upload...");
-    console.log("File:", file.name, file.size, file.type);
-    console.log("User UID:", user.uid);
-    console.log("Storage bucket:", process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
-    
-    // Force stop after 15 seconds
     const timeoutId = setTimeout(() => {
-      console.log("⚠️ TIMEOUT: Forcing upload to stop");
       setIsUploading(false);
-      toast({ 
-        variant: 'destructive', 
-        title: 'Upload Timeout', 
-        description: 'Upload is taking too long. Please try again with a smaller image.' 
-      });
-    }, 15000);
+      toast({ variant: 'destructive', title: 'Upload Timeout', description: 'The upload took too long. Please try again.' });
+    }, 30000);
     
     try {
-      // Step 1: Create storage reference
       const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
       const avatarRef = storageRef(storage, `avatars/${user.uid}/${fileName}`);
-      console.log("✅ Step 1: Storage ref created:", avatarRef.fullPath);
       
-      // Step 2: Upload file with progress monitoring
-      console.log("🔄 Step 2: Starting upload...");
-      const uploadTask = uploadBytes(avatarRef, file);
+      await uploadBytes(avatarRef, file);
+      const photoURL = await getDownloadURL(avatarRef);
       
-      // Add a race condition with timeout for upload
-      const uploadResult = await Promise.race([
-        uploadTask,
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Upload timeout')), 10000)
-        )
-      ]);
-      
-      console.log("✅ Step 2 complete: Upload successful");
-      
-      // Step 3: Get download URL
-      console.log("🔄 Step 3: Getting download URL...");
-      const downloadURLTask = getDownloadURL(avatarRef);
-      
-      const photoURL = await Promise.race([
-        downloadURLTask,
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Download URL timeout')), 5000)
-        )
-      ]);
-      
-      console.log("✅ Step 3 complete: Download URL obtained:", photoURL);
-      
-      // Step 4: Update user profile
-      console.log("🔄 Step 4: Updating user profile...");
-      if (!auth.currentUser) {
-        throw new Error('No authenticated user found');
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, { photoURL });
+        toast({ title: "Success!", description: "Your profile picture has been updated." });
+      } else {
+        throw new Error("No authenticated user found for profile update.");
       }
-      
-      const updateTask = updateProfile(auth.currentUser, { photoURL });
-      
-      await Promise.race([
-        updateTask,
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Profile update timeout')), 5000)
-        )
-      ]);
-      
-      console.log("✅ Step 4 complete: Profile updated successfully");
-      
-      clearTimeout(timeoutId);
-      toast({ title: "Success!", description: "Your profile picture has been updated." });
 
     } catch (err: any) {
-      clearTimeout(timeoutId);
-      console.error("❌ Upload failed at some step:", err);
+      console.error("Caught error during upload process:", err);
+      let description = 'An unexpected error occurred. Please check the browser console for details.';
       
-      let description = 'Upload failed. ';
-      if (err.message === 'Upload timeout') {
-        description += 'File upload took too long. Try a smaller image.';
-      } else if (err.message === 'Download URL timeout') {
-        description += 'Could not retrieve image URL. Check Firebase Storage configuration.';
-      } else if (err.message === 'Profile update timeout') {
-        description += 'Could not update profile. Try logging out and back in.';
-      } else if (err.code) {
-        description += `Firebase error: ${err.code}`;
-      } else {
-        description += err.message || 'Unknown error occurred.';
+      switch (err.code) {
+        case 'storage/unauthorized':
+          description = 'Permission denied. Please double-check your Firebase Storage security rules and CORS configuration.';
+          break;
+        case 'storage/object-not-found':
+          description = 'Storage bucket not found or not configured properly.';
+          break;
+        case 'storage/network-request-failed':
+          description = 'Network error. Check your internet connection and try again.';
+          break;
       }
 
       toast({ variant: 'destructive', title: 'Upload Failed', description });
-      
     } finally {
       clearTimeout(timeoutId);
-      console.log("🏁 Upload process finished. Resetting spinner.");
-      
-      // Force reset the spinner
-      setTimeout(() => {
-        setIsUploading(false);
-      }, 100);
-      
-      // Clear the file input
+      setIsUploading(false);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-    }
-  };
-
-  const forceResetUpload = () => {
-    console.log("🚨 Emergency reset triggered");
-    setIsUploading(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
     }
   };
 
@@ -285,16 +218,6 @@ export function AccountSettingsForm() {
             <Button onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
                 <Edit2 className="mr-2 h-4 w-4" />Change Picture
             </Button>
-            {isUploading && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={forceResetUpload}
-                className="ml-2"
-              >
-                Force Stop
-              </Button>
-            )}
             <input type="file" ref={fileInputRef} onChange={handleAvatarUpload} accept="image/png, image/jpeg" className="hidden" />
             <p className="text-xs text-muted-foreground mt-2">PNG or JPG, up to 2MB.</p>
         </div>
