@@ -1,6 +1,7 @@
 
 import { type CustomTheme } from '@/contexts/AppearanceContext';
 import { tint, shade } from 'polished';
+import { isColorDark } from './colorUtils';
 
 export const THEME_PRESETS = [
     { id: 'neo-future', name: '✨ Neo Future', colors: { primary: '#00f5d4', secondary: '#1a2b50', background: '#0c1324', accent: '#ff00ff' } },
@@ -22,7 +23,8 @@ export const THEME_PRESETS = [
  */
 export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme {
     const { colors } = preset;
-    const isDark = (shade(0.1, colors.background) === colors.background); // A simple check if the background is dark
+    const isBgDark = isColorDark(colors.background);
+    const isCardDark = isColorDark(colors.secondary);
 
     return {
         id: preset.id,
@@ -30,21 +32,21 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
         colors: {
             ...colors,
             // Base colors
-            foreground: isDark ? tint(0.9, colors.background) : shade(0.8, colors.background),
+            foreground: isBgDark ? tint(0.9, colors.background) : shade(0.8, colors.background),
             
             // Cards & Popovers often use the secondary color as a base
             card: colors.secondary,
-            cardForeground: isDark ? tint(0.9, colors.secondary) : shade(0.8, colors.secondary),
+            cardForeground: isCardDark ? tint(0.9, colors.secondary) : shade(0.8, colors.secondary),
             popover: colors.secondary,
-            popoverForeground: isDark ? tint(0.9, colors.secondary) : shade(0.8, colors.secondary),
+            popoverForeground: isCardDark ? tint(0.9, colors.secondary) : shade(0.8, colors.secondary),
             
             // Muted colors are tinted/shaded versions of the background
-            muted: isDark ? tint(0.1, colors.background) : shade(0.05, colors.background),
-            mutedForeground: isDark ? tint(0.5, colors.background) : shade(0.4, colors.background),
+            muted: isBgDark ? tint(0.1, colors.background) : shade(0.05, colors.background),
+            mutedForeground: isBgDark ? tint(0.5, colors.background) : shade(0.4, colors.background),
             
             // Borders and inputs are slightly different from the background
-            border: isDark ? tint(0.15, colors.background) : shade(0.1, colors.background),
-            input: isDark ? tint(0.18, colors.background) : shade(0.12, colors.background),
+            border: isBgDark ? tint(0.15, colors.background) : shade(0.1, colors.background),
+            input: isBgDark ? tint(0.18, colors.background) : shade(0.12, colors.background),
 
             // Ring color is often the primary color for focus states
             ring: colors.primary,
