@@ -30,6 +30,7 @@ body {
     --border: 220 13% 85%;
     --input: 220 13% 88%;
     --ring: 220 49% 21%;
+    --radius: 0.5rem;
     --chart-1: 220 49% 21%;
     --chart-2: 181 29% 42%;
     --chart-3: 197 37% 24%;
@@ -68,6 +69,7 @@ body {
     --border: 220 49% 25%;
     --input: 220 49% 25%;
     --ring: 181 29% 42%;
+    --radius: 0.5rem;
     --chart-1: 181 29% 42%;
     --chart-2: 220 49% 21%;
     --chart-3: 197 37% 24%;
@@ -104,6 +106,7 @@ body {
     --border: var(--custom-border);
     --input: var(--custom-input);
     --ring: var(--custom-ring);
+    --radius: 0.5rem;
     /* For sidebar, we can map them to the main theme for simplicity */
     --sidebar-background: var(--custom-background);
     --sidebar-foreground: var(--custom-foreground);
