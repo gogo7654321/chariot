@@ -74,26 +74,36 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
 
       const t = customTheme.colors;
       const css = `
-        :root {
-          --custom-primary-gradient-start: ${hexToHsl(t.primaryGradientStart)};
-          --custom-primary-gradient-end: ${hexToHsl(t.primaryGradientEnd)};
-          --custom-background: ${hexToHsl(t.background)};
-          --custom-foreground: ${hexToHsl(t.foreground)};
-          --custom-card: ${hexToHsl(t.card)};
-          --custom-card-foreground: ${hexToHsl(t.cardForeground)};
-          --custom-popover: ${hexToHsl(t.popover)};
-          --custom-popover-foreground: ${hexToHsl(t.popoverForeground)};
-          --custom-primary: ${hexToHsl(t.primary)};
-          --custom-primary-foreground: ${isColorDark(t.primary) ? '0 0% 100%' : '220 49% 10%'};
-          --custom-secondary: ${hexToHsl(t.secondary)};
-          --custom-secondary-foreground: ${isColorDark(t.secondary) ? '0 0% 100%' : '220 49% 10%'};
-          --custom-muted: ${hexToHsl(t.muted)};
-          --custom-muted-foreground: ${hexToHsl(t.mutedForeground)};
-          --custom-accent: ${hexToHsl(t.accent)};
-          --custom-accent-foreground: ${isColorDark(t.accent) ? '0 0% 100%' : '220 49% 10%'};
-          --custom-border: ${hexToHsl(t.border)};
-          --custom-input: ${hexToHsl(t.input)};
-          --custom-ring: ${hexToHsl(t.ring)};
+        html[data-custom-theme-active="true"]:has(body.dashboard-scope) {
+          --primary-gradient-start: ${hexToHsl(t.primaryGradientStart)};
+          --primary-gradient-end: ${hexToHsl(t.primaryGradientEnd)};
+          --background: ${hexToHsl(t.background)};
+          --foreground: ${hexToHsl(t.foreground)};
+          --card: ${hexToHsl(t.card)};
+          --card-foreground: ${hexToHsl(t.cardForeground)};
+          --popover: ${hexToHsl(t.popover)};
+          --popover-foreground: ${hexToHsl(t.popoverForeground)};
+          --primary: ${hexToHsl(t.primary)};
+          --primary-foreground: ${isColorDark(t.primary) ? '0 0% 100%' : '220 49% 10%'};
+          --secondary: ${hexToHsl(t.secondary)};
+          --secondary-foreground: ${isColorDark(t.secondary) ? '0 0% 100%' : '220 49% 10%'};
+          --muted: ${hexToHsl(t.muted)};
+          --muted-foreground: ${hexToHsl(t.mutedForeground)};
+          --accent: ${hexToHsl(t.accent)};
+          --accent-foreground: ${isColorDark(t.accent) ? '0 0% 100%' : '220 49% 10%'};
+          --border: ${hexToHsl(t.border)};
+          --input: ${hexToHsl(t.input)};
+          --ring: ${hexToHsl(t.ring)};
+          --radius: 0.5rem;
+          /* Sidebar colors */
+          --sidebar-background: ${hexToHsl(t.secondary)};
+          --sidebar-foreground: ${isColorDark(t.secondary) ? '0 0% 100%' : '220 49% 10%'};
+          --sidebar-accent: ${hexToHsl(t.muted)};
+          --sidebar-accent-foreground: ${isColorDark(t.muted) ? '0 0% 100%' : '220 49% 10%'};
+          --sidebar-border: ${hexToHsl(t.border)};
+          /* Charts */
+          --chart-1: ${hexToHsl(t.primary)};
+          --chart-2: ${hexToHsl(t.accent)};
         }
       `;
       styleElement.innerHTML = css;
