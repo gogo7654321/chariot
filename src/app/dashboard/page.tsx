@@ -13,7 +13,7 @@ import { QuickTools } from "./QuickTools";
 import { FocusZone } from "./FocusZone";
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import './dashboard.css';
 
@@ -68,7 +68,7 @@ export default function DashboardPage() {
     React.useEffect(() => {
         if (user) {
             const layoutDocRef = doc(db, 'users', user.uid);
-            getDoc(layoutDocRef).then(docSnap => {
+            const unsubscribe = onSnapshot(layoutDocRef, (docSnap) => {
                 if (docSnap.exists() && docSnap.data().dashboardLayouts) {
                     const savedLayouts = docSnap.data().dashboardLayouts;
                     const defaultKeys = defaultLayouts.lg.map(item => item.i);
@@ -79,12 +79,16 @@ export default function DashboardPage() {
                         setLayouts(savedLayouts);
                     }
                 }
-                setIsLayoutInitialized(true);
+                if (!isLayoutInitialized) {
+                  setIsLayoutInitialized(true);
+                }
             });
+
+            return () => unsubscribe();
         } else {
             setIsLayoutInitialized(true);
         }
-    }, [user]);
+    }, [user, isLayoutInitialized]);
 
     const handleLayoutChange = useCallback((layout: LayoutItem[], allLayouts: Layouts) => {
         if (!isLayoutInitialized || !user) return;

@@ -296,18 +296,21 @@ export default function CalendarPage() {
   }, [user, settingsForm]);
 
   React.useEffect(() => {
-      if (user) {
-          const layoutDocRef = doc(db, 'users', user.uid);
-          getDoc(layoutDocRef).then(docSnap => {
-              if (docSnap.exists() && docSnap.data().calendarLayouts) {
-                  setLayouts(docSnap.data().calendarLayouts);
-              }
-              setIsLayoutInitialized(true);
-          });
-      } else {
-          setIsLayoutInitialized(true);
-      }
-  }, [user]);
+    if (user) {
+        const layoutDocRef = doc(db, 'users', user.uid);
+        const unsubscribe = onSnapshot(layoutDocRef, (docSnap) => {
+            if (docSnap.exists() && docSnap.data().calendarLayouts) {
+                setLayouts(docSnap.data().calendarLayouts);
+            }
+            if (!isLayoutInitialized) {
+                setIsLayoutInitialized(true);
+            }
+        });
+        return () => unsubscribe();
+    } else {
+        setIsLayoutInitialized(true);
+    }
+  }, [user, isLayoutInitialized]);
 
   const onLayoutChange = (layout: LayoutItem[], newLayouts: Layouts) => {
     if (!isLayoutInitialized) return;
