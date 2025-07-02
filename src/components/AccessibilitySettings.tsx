@@ -15,7 +15,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Palette } from "lucide-react"
-import { useAppearance } from "@/contexts/AccessibilityContext"
+import { useAppearance } from "@/contexts/AppearanceContext"
 
 type AccessibilityTheme = "default" | "protanopia" | "deuteranopia" | "tritanopia";
 

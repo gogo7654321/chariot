@@ -5,21 +5,12 @@ import { useEffect } from 'react';
 import { useAppearance, type CustomTheme } from '@/contexts/AppearanceContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 import { useTheme as useNextTheme } from 'next-themes';
 
 type AccessibilityTheme = "default" | "protanopia" | "deuteranopia" | "tritanopia";
 type SidebarPosition = 'left' | 'right' | 'top' | 'bottom';
-
-async function getFirestoreSettings(user: User) {
-    const userDocRef = doc(db, 'users', user.uid);
-    const docSnap = await getDoc(userDocRef);
-    if (docSnap.exists()) {
-        return docSnap.data();
-    }
-    return null;
-}
 
 async function saveFirestoreSettings(user: User, settings: Record<string, any>) {
     const userDocRef = doc(db, 'users', user.uid);
@@ -43,8 +34,10 @@ export function UserSettingsManager() {
     if (isAuthLoading) return;
 
     if (user) {
-      // User is logged in, load from Firestore
-      getFirestoreSettings(user).then(data => {
+      // User is logged in, load from Firestore and listen for real-time updates
+      const userDocRef = doc(db, 'users', user.uid);
+      const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+        const data = docSnap.data();
         const settings = data?.appearance;
         if (settings) {
             if (settings.lightDarkTheme) setLightDarkTheme(settings.lightDarkTheme);
@@ -53,6 +46,9 @@ export function UserSettingsManager() {
             if (settings.customTheme) applyCustomTheme(settings.customTheme);
         }
       });
+      
+      // Cleanup listener when component unmounts or user changes
+      return () => unsubscribe();
     } else {
       // User is logged out, load from localStorage
       const storedAccessibilityTheme = localStorage.getItem('accessibility-theme') as AccessibilityTheme;
