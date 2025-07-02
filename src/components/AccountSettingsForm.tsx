@@ -90,17 +90,26 @@ export function AccountSettingsForm() {
     }
     
     setIsUploading(true);
+    console.log("Starting avatar upload...");
     const avatarRef = storageRef(storage, `avatars/${user.uid}/${file.name}`);
     
     try {
-        await uploadBytes(avatarRef, file);
-        const photoURL = await getDownloadURL(avatarRef);
+        console.log(`Attempting to upload to: ${avatarRef.fullPath}`);
+        const uploadResult = await uploadBytes(avatarRef, file);
+        console.log("Upload successful:", uploadResult);
         
+        console.log("Attempting to get download URL...");
+        const photoURL = await getDownloadURL(avatarRef);
+        console.log("Successfully received download URL:", photoURL);
+        
+        console.log("Attempting to update user profile...");
         await updateProfile(auth.currentUser!, { photoURL });
+        console.log("Profile update successful.");
         
         toast({ title: "Success!", description: "Your profile picture has been updated." });
+
     } catch (err: any) {
-        console.error("Full avatar upload error object:", err);
+        console.error("Caught error during upload process:", err);
         let description = 'An unexpected error occurred. Please check the browser console for details.';
         
         switch (err.code) {
@@ -108,7 +117,7 @@ export function AccountSettingsForm() {
                 description = 'Permission denied. Please double-check your Firebase Storage security rules.';
                 break;
             case 'storage/object-not-found':
-                description = 'File not found. This can happen if your Storage Bucket is not configured correctly in your project environment variables.';
+                description = `File not found. This can happen if your Storage Bucket ('${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}') is not configured correctly in your project environment variables.`;
                 break;
             case 'storage/unknown':
                 description = 'An unknown error occurred. This can happen if Firebase Storage is not enabled for your project.';
@@ -120,6 +129,7 @@ export function AccountSettingsForm() {
 
         toast({ variant: 'destructive', title: 'Upload Failed', description: description });
     } finally {
+        console.log("Upload process finished. Hiding spinner.");
         setIsUploading(false);
     }
   };
@@ -136,15 +146,9 @@ export function AccountSettingsForm() {
       }
       
       const userDocRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(userDocRef);
-      // NOTE: Client-side username uniqueness check removed to resolve Firestore permission errors.
-      // Firebase Auth will still prevent duplicate emails. A server-side check
-      // for usernames is recommended for a production environment.
-      if (!docSnap.exists() || docSnap.data().username !== data.username) {
-        await updateDoc(userDocRef, {
-            username: data.username,
-        });
-      }
+      await updateDoc(userDocRef, {
+        username: data.username,
+      });
 
       form.reset(data, { keepValues: true });
       
