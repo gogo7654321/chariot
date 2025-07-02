@@ -4,15 +4,15 @@ import { tint, shade } from 'polished';
 import { isColorDark } from './colorUtils';
 
 export const THEME_PRESETS = [
-    { id: 'neo-future', name: '✨ Neo Future', colors: { background: '#1a2b50', primary: '#00f5d4', accent: '#ff00ff' } },
-    { id: 'vaporwave', name: '🩵 Vaporwave', colors: { background: '#ff77cc', primary: '#00e5ff', accent: '#feca57' } },
-    { id: 'sunset-heat', name: '🔥 Sunset Heat', colors: { background: '#ff4e50', primary: '#f9d423', accent: '#fc913a' } },
-    { id: 'cosmic-grape', name: '🪐 Cosmic Grape', colors: { background: '#9b59b6', primary: '#f1c40f', accent: '#e67e22' } },
-    { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { background: '#00a8cc', primary: '#99d9e9', accent: '#FFFFFF' } },
+    { id: 'neo-future', name: '✨ Neo Future', colors: { background: '#00f5d4', primary: '#ff00ff', accent: '#1a2b50' } },
+    { id: 'vaporwave', name: '🩵 Vaporwave', colors: { background: '#ff77cc', primary: '#00e5ff', accent: '#2d3436' } },
+    { id: 'sunset-heat', name: '🔥 Sunset Heat', colors: { background: '#ff4e50', primary: '#fc913a', accent: '#2c3e50' } },
+    { id: 'cosmic-grape', name: '🪐 Cosmic Grape', colors: { background: '#9b59b6', primary: '#f1c40f', accent: '#341f97' } },
+    { id: 'arctic-drift', name: '🌊 Arctic Drift', colors: { background: '#00a8cc', primary: '#99d9e9', accent: '#f0f4f8' } },
     { id: 'candy-pop', name: '🍭 Candy Pop', colors: { background: '#ff69b4', primary: '#89cff0', accent: '#f9f9f9' } },
     { id: 'monochrome', name: '🕶️ Monochrome', colors: { background: '#222222', primary: '#ffffff', accent: '#555555' } },
-    { id: 'midnight-club', name: '🟣 Midnight Club', colors: { background: '#000033', primary: '#66ffe6', accent: '#4e4eff' } },
-    { id: 'neon-racer', name: '⚡ Neon Racer', colors: { background: '#001f3f', primary: '#d4ff00', accent: '#ff00ff' } },
+    { id: 'midnight-club', name: '🟣 Midnight Club', colors: { background: '#4e4eff', primary: '#66ffe6', accent: '#000033' } },
+    { id: 'neon-racer', name: '⚡ Neon Racer', colors: { background: '#d4ff00', primary: '#ff00ff', accent: '#001f3f' } },
 ];
 
 
