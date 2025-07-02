@@ -1,6 +1,6 @@
 
 import { type CustomTheme } from '@/contexts/AppearanceContext';
-import { tint, shade } from 'polished';
+import { tint, shade, mix } from 'polished';
 import { isColorDark } from './colorUtils';
 
 export const THEME_PRESETS = [
@@ -19,7 +19,7 @@ export const THEME_PRESETS = [
     { id: 'monochrome', name: '🕶️ Monochrome', colors: { background: '#000000', primary: '#ffffff', accent: '#555555' } },
     { id: 'midnight-club', name: '🟣 Midnight Club', colors: { background: '#000033', primary: '#66ffe6', accent: '#4e4eff' } },
     { id: 'neon-racer', name: '⚡ Neon Racer', colors: { background: '#001f3f', primary: '#d4ff00', accent: '#ff00ff' } },
-    { id: 'starlight-void', name: '🌌 Starlight Void', colors: { background: '#0f0c29', primary: '#f400a1', accent: '#00f2fe' } },
+    { id: 'aurora-borealis', name: '🌌 Aurora Borealis', colors: { background: '#000428', primary: '#f400a1', accent: '#00f2fe' } },
     { id: 'psychedelic-planet', name: '🪐 Psychedelic Planet', colors: { background: '#000000', primary: '#ff007f', accent: '#007fff' } },
 ];
 
@@ -33,36 +33,42 @@ export const THEME_PRESETS = [
 export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme {
     const { colors } = preset;
 
-    const gradientStart = colors.background;
-    const gradientEnd = colors.primary;
-
-    const primaryActionColor = colors.primary;
-    const accentColor = colors.accent;
-    
-    const isBgDark = isColorDark(gradientStart);
+    const isBgDark = isColorDark(colors.background);
     const themeForeground = isBgDark ? '#FAFAFA' : '#0A0A0A';
 
-    const cardColor = isBgDark ? tint(0.08, gradientStart) : shade(0.03, gradientStart);
-    const secondaryColor = isBgDark ? tint(0.05, gradientStart) : shade(0.05, gradientStart);
-    const popoverColor = isBgDark ? tint(0.12, gradientStart) : shade(0.08, gradientStart);
-    const mutedColor = isBgDark ? tint(0.15, gradientStart) : shade(0.07, gradientStart);
-    const borderColor = isBgDark ? tint(0.2, gradientStart) : shade(0.1, gradientStart);
+    let cardColor, secondaryColor, popoverColor, mutedColor, borderColor;
+
+    if (isBgDark) {
+        // Create a more vibrant dark theme by mixing in the accent color
+        cardColor = mix(0.92, colors.background, colors.accent);
+        secondaryColor = mix(0.85, colors.background, colors.accent);
+        popoverColor = mix(0.8, colors.background, colors.accent);
+        mutedColor = mix(0.75, colors.background, colors.accent);
+        borderColor = mix(0.8, colors.background, colors.accent);
+    } else {
+        // Original logic for light themes
+        cardColor = shade(0.03, colors.background);
+        secondaryColor = shade(0.05, colors.background);
+        popoverColor = shade(0.08, colors.background);
+        mutedColor = shade(0.07, colors.background);
+        borderColor = shade(0.1, colors.background);
+    }
 
     return {
         id: preset.id,
         name: preset.name,
         colors: {
-            primaryGradientStart: gradientStart,
-            primaryGradientEnd: gradientEnd,
+            primaryGradientStart: colors.background,
+            primaryGradientEnd: colors.primary,
 
             background: cardColor, 
             foreground: themeForeground,
 
-            primary: primaryActionColor,
-            primaryForeground: isColorDark(primaryActionColor) ? '#FFFFFF' : '#111827',
+            primary: colors.primary,
+            primaryForeground: isColorDark(colors.primary) ? '#FFFFFF' : '#111827',
 
-            accent: accentColor,
-            accentForeground: isColorDark(accentColor) ? '#FFFFFF' : '#111827',
+            accent: colors.accent,
+            accentForeground: isColorDark(colors.accent) ? '#FFFFFF' : '#111827',
             
             card: cardColor,
             cardForeground: themeForeground,
@@ -75,7 +81,7 @@ export function createThemeObject(preset: typeof THEME_PRESETS[0]): CustomTheme 
             mutedForeground: isBgDark ? tint(0.4, themeForeground) : shade(0.4, themeForeground),
             border: borderColor,
             input: borderColor,
-            ring: primaryActionColor,
+            ring: colors.primary,
         }
     };
 }
