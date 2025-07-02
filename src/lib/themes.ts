@@ -57,19 +57,19 @@ export const THEME_PRESETS: Preset[] = [
         }
     },
     {
-        id: 'neo-future',
-        name: '✨ Neo Future',
+        id: 'starlight-void',
+        name: '✨ Starlight Void',
         colors: {
-            background: '#f0fdf4', // Light green-white
-            foreground: '#1e293b', // Slate grey
-            primary: '#ff00ff', // Magenta
-            secondary: '#dcfce7', // Lighter green
-            accent: '#00f5d4', // Bright cyan
-            card: '#ffffff',
-            muted: '#f0fdf4',
-            border: '#d1fae5',
-            input: '#d1fae5',
-            ring: '#ff00ff',
+            background: '#10002b',
+            foreground: '#e0c3fc',
+            primary: '#c04cfd',
+            secondary: '#240046',
+            accent: '#5a189a',
+            card: '#240046',
+            muted: '#3c096c',
+            border: '#3c096c',
+            input: '#3c096c',
+            ring: '#c04cfd',
         }
     },
     {
@@ -122,7 +122,7 @@ export const THEME_PRESETS: Preset[] = [
     },
     {
         id: 'cosmic-grape',
-        name: '🪐 Cosmic Grape',
+        name: '🍇 Cosmic Grape',
         colors: {
             background: '#f3e5f5',
             foreground: '#3a2e39',
@@ -163,8 +163,6 @@ export const THEME_PRESETS: Preset[] = [
  */
 export function createThemeObject(preset: Preset): CustomTheme {
     const { colors } = preset;
-
-    const isBgDark = isColorDark(colors.background);
 
     const fullColors: CustomTheme['colors'] = {
         primaryGradientStart: colors.background,
