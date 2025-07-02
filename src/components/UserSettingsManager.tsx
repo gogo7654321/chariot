@@ -53,11 +53,15 @@ export function UserSettingsManager() {
     } = useAppearance();
 
     const isFirestoreInitialized = useRef(false);
+    const settingsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Effect for loading settings from storage (localStorage or Firestore)
     useEffect(() => {
+        if (settingsTimeoutRef.current) clearTimeout(settingsTimeoutRef.current);
+
         // If auth is still loading, we wait. The appearance is also considered loading.
         if (isAuthLoading) {
+            setIsAppearanceLoading(true);
             return;
         }
 
@@ -95,10 +99,14 @@ export function UserSettingsManager() {
                 applyCustomTheme(savedSettings.customTheme || null);
             }
             
-            // Mark as initialized and stop loading after the first data check
             if (!isFirestoreInitialized.current) {
-                setIsAppearanceLoading(false);
-                isFirestoreInitialized.current = true;
+                // Defer setting loading to false. This gives React time to run the
+                // AppearanceProvider's useEffect to inject the theme styles,
+                // ensuring the loading screen is correctly themed.
+                settingsTimeoutRef.current = setTimeout(() => {
+                    setIsAppearanceLoading(false);
+                    isFirestoreInitialized.current = true;
+                }, 50);
             }
         }, (error) => {
             console.error("Failed to load user settings:", error);
@@ -108,15 +116,16 @@ export function UserSettingsManager() {
         return () => {
             unsubscribe();
             isFirestoreInitialized.current = false; // Reset on user change/logout
+            if (settingsTimeoutRef.current) clearTimeout(settingsTimeoutRef.current);
         };
     }, [user, isAuthLoading, setNextTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme, setIsAppearanceLoading]);
 
     // Effect for saving settings to storage
     useEffect(() => {
         // Do not save anything until the initial settings have been loaded
-        if (!isFirestoreInitialized.current && !user) return; // For logged-out, wait for localStorage load
-        if (user && !isFirestoreInitialized.current) return; // For logged-in, wait for Firestore load
-        
+        if (isAuthLoading) return;
+        if (!isFirestoreInitialized.current && user) return;
+
         const currentSettings: AppearanceSettings = {
             lightDarkTheme: nextTheme as AppearanceSettings['lightDarkTheme'],
             accessibilityTheme: accessibilityTheme,
@@ -137,7 +146,7 @@ export function UserSettingsManager() {
                 localStorage.removeItem('custom-theme');
             }
         }
-    }, [user, nextTheme, accessibilityTheme, sidebarPosition, customTheme]);
+    }, [user, isAuthLoading, nextTheme, accessibilityTheme, sidebarPosition, customTheme]);
 
     return null; // This component does not render anything.
 }
