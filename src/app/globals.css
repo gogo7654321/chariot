@@ -462,7 +462,7 @@ html[data-theme-id="catpuccin"] body.dashboard-scope {
 
 /* Specific background for Midnight Office theme */
 html[data-theme-id="midnight-office"] body.dashboard-scope {
-  background-image: url('/images/living-room.gif');
+  background-image: url('/images/living room.gif');
 }
 
 /* --- Transparency rules for all full-background themes --- */
