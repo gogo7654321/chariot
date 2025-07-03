@@ -472,4 +472,15 @@ body {
     box-shadow: none;
     color: hsl(var(--custom-primary));
   }
+
+  html[data-starry-night="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button']:hover {
+    background-color: hsl(var(--custom-accent) / 0.15);
+    color: hsl(var(--custom-primary));
+  }
+  
+  html[data-starry-night="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button'][data-active='true'] {
+    background-color: transparent;
+    color: hsl(var(--custom-primary));
+    font-weight: 600;
+  }
 }
