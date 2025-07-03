@@ -461,4 +461,15 @@ body {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
+
+  html[data-starry-night="true"] [role="tablist"] {
+    background-color: transparent;
+    border: 1px solid hsl(var(--custom-border) / 0.5);
+  }
+
+  html[data-starry-night="true"] [role="tablist"] > [role="tab"][data-state="active"] {
+    background-color: hsl(var(--custom-accent) / 0.1);
+    box-shadow: none;
+    color: hsl(var(--custom-primary));
+  }
 }
