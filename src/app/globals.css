@@ -460,6 +460,16 @@ html[data-theme-id="catpuccin"] body.dashboard-scope {
   background-image: url('/images/background.png');
 }
 
+/* Specific background for Pixel City theme */
+html[data-theme-id="pixel-city"] body.dashboard-scope {
+  background-image: url('/images/city.gif');
+}
+
+/* Specific background for Lo-fi Nook theme */
+html[data-theme-id="lofi-nook"] body.dashboard-scope {
+  background-image: url('/images/living-room.gif');
+}
+
 /* --- Transparency rules for all full-background themes --- */
 html[data-has-full-background="true"] .bg-card,
 html[data-has-full-background="true"] [data-sidebar="sidebar"] {

@@ -227,7 +227,7 @@ function PresetsTab() {
     }, {} as Record<string, typeof THEME_PRESETS>);
   }, []);
   
-  const categoryOrder = ['Light', 'Dark', 'Gaming', 'Seasonal', 'General'];
+  const categoryOrder = ['Light', 'Dark', 'Gaming', 'Pixel Art', 'Seasonal', 'General'];
   
   return (
     <div className="space-y-6">

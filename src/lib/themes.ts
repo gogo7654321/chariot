@@ -23,7 +23,7 @@ export type PresetColorDefinition = {
 export type Preset = {
     id: string;
     name: string;
-    category: 'Light' | 'Dark' | 'Gaming' | 'Seasonal';
+    category: 'Light' | 'Dark' | 'Gaming' | 'Pixel Art' | 'Seasonal';
     hasFullScreenBackground?: boolean;
     variants?: ThemeVariant[];
     colors: PresetColorDefinition;
@@ -338,6 +338,44 @@ export const THEME_PRESETS: Preset[] = [
       input: '#44475a',
       ring: '#ff79c6',
     },
+  },
+
+  // 👾 PIXEL ART THEMES
+  {
+    id: 'pixel-city',
+    name: '🏙️ Pixel City',
+    category: 'Pixel Art',
+    hasFullScreenBackground: true,
+    colors: {
+      background: '#0c0d24',
+      foreground: '#e0e0ff',
+      primary: '#00ffff',
+      secondary: '#2a1d48',
+      accent: '#ff00ff',
+      card: '#1a1235',
+      muted: '#3a2d58',
+      border: '#4a3d68',
+      input: '#2a1d48',
+      ring: '#00ffff',
+    }
+  },
+  {
+    id: 'lofi-nook',
+    name: '🪴 Lo-fi Nook',
+    category: 'Pixel Art',
+    hasFullScreenBackground: true,
+    colors: {
+      background: '#4a3224',
+      foreground: '#f5e9d3',
+      primary: '#ffa040',
+      secondary: '#6a4a34',
+      accent: '#508c50',
+      card: '#6a4a34',
+      muted: '#5a3a24',
+      border: '#3a2214',
+      input: '#6a4a34',
+      ring: '#ff8040',
+    }
   },
 
   // 🍂 SEASONAL THEMES
