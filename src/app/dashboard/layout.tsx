@@ -12,6 +12,7 @@ import Link from "next/link";
 import { AceMascot } from "@/components/AceMascot";
 import { usePathname } from 'next/navigation';
 import { useAppearance } from '@/contexts/AppearanceContext';
+import { StarryNightBackground } from '@/components/StarryNightBackground';
 
 function DashboardWithSidebar({ children }: { children: React.ReactNode }) {
   const { setOpen, isMobile } = useSidebar();
@@ -52,6 +53,7 @@ function DashboardWithSidebarAndContext({ children }: { children: React.ReactNod
 
   return (
     <SidebarProvider defaultOpen={false} side={sidebarPosition}>
+      <StarryNightBackground />
       <DashboardWithSidebar>
         {children}
       </DashboardWithSidebar>

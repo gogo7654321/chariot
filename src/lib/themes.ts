@@ -13,6 +13,8 @@ export type PresetColorDefinition = {
     border: string;
     input: string;
     ring: string;
+    primaryGradientStart?: string;
+    primaryGradientEnd?: string;
 };
 
 export type Preset = {
@@ -75,7 +77,7 @@ export const THEME_PRESETS: Preset[] = [
       ring: '#95d5b2',
     },
   },
-
+  
   // 🌙 DARK THEMES
   {
     id: 'starlight-void',
@@ -116,6 +118,8 @@ export const THEME_PRESETS: Preset[] = [
     name: '🪨 Obsidian Mind',
     category: 'Dark',
     colors: {
+        primaryGradientStart: '#0a0a0a',
+        primaryGradientEnd: '#0a0a0a',
         background: '#0a0a0a',
         foreground: '#f5f5f5',
         primary: '#e5e5e5',
@@ -130,6 +134,25 @@ export const THEME_PRESETS: Preset[] = [
   },
 
   // 🕹️ GAMING THEMES
+  {
+    id: 'starry-night',
+    name: '🌌 Starry Night',
+    category: 'Gaming',
+    colors: {
+      primaryGradientStart: '#000000',
+      primaryGradientEnd: '#142b44',
+      background: '#152238',
+      foreground: '#FFFFFF',
+      primary: '#FFF3C4',
+      secondary: '#191919',
+      accent: '#FFFFFF',
+      card: '#152238',
+      muted: '#ADB5BD',
+      border: '#30363d',
+      input: '#191919',
+      ring: '#FFF3C4',
+    },
+  },
   {
     id: 'vaporwave-dream',
     name: '🕹️ Vaporwave Dream',
@@ -196,8 +219,8 @@ export function createThemeObject(preset: Preset): CustomTheme {
   const { colors } = preset;
 
   const fullColors: CustomTheme['colors'] = {
-    primaryGradientStart: colors.background,
-    primaryGradientEnd: colors.background,
+    primaryGradientStart: colors.primaryGradientStart || colors.background,
+    primaryGradientEnd: colors.primaryGradientEnd || mix(0.2, '#000000', colors.background),
 
     background: colors.background,
     foreground: colors.foreground,
