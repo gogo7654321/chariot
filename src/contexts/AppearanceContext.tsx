@@ -165,14 +165,14 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
       setCustomTheme(null);
     }
     setTheme(newTheme);
-  }, [setCustomTheme]);
+  }, [setCustomTheme, setTheme]);
 
   const handleApplyCustomTheme = useCallback((themeToApply: CustomTheme | null) => {
     setCustomTheme(themeToApply);
     if (themeToApply !== null) {
       setTheme('default');
     }
-  }, [setTheme]);
+  }, [setCustomTheme, setTheme]);
 
   const handleResetCustomTheme = useCallback(() => {
     setCustomTheme(null);
