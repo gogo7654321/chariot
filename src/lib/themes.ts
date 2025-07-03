@@ -1,5 +1,5 @@
 
-import { type CustomTheme } from '@/contexts/AppearanceContext';
+import { type CustomTheme, type ThemeVariant } from '@/contexts/AppearanceContext';
 import { mix } from 'polished';
 import { isColorDark } from './colorUtils';
 
@@ -23,6 +23,7 @@ export type Preset = {
     id: string;
     name: string;
     category: 'Light' | 'Dark' | 'Gaming' | 'Seasonal';
+    variants?: ThemeVariant[];
     colors: PresetColorDefinition;
 };
 
@@ -121,9 +122,9 @@ export const THEME_PRESETS: Preset[] = [
   // 🕹️ GAMING THEMES
   {
     id: 'starry-night',
-    name: '✨ Starry Night (Classic)',
+    name: '✨ Starry Night',
     category: 'Gaming',
-    colors: {
+    colors: { // Base/Classic variant colors
       primaryGradientStart: '#000000',
       primaryGradientEnd: '#142b44',
       background: '#152238',
@@ -137,82 +138,98 @@ export const THEME_PRESETS: Preset[] = [
       input: '#191919',
       ring: '#89ddff',
     },
-  },
-  {
-    id: 'starry-night-cotton-candy',
-    name: '🍭 Cotton Candy Sky',
-    category: 'Gaming',
-    colors: {
-      primaryGradientStart: '#ff71b2',
-      primaryGradientEnd: '#509be1',
-      background: '#9f45b0',
-      foreground: '#ffffff',
-      primary: '#d3e9ff',
-      secondary: '#a763b6',
-      accent: '#7f78be',
-      card: '#9f45b0',
-      muted: '#fff4f4',
-      border: '#a763b6',
-      input: '#a763b6',
-      ring: '#d3e9ff',
-    },
-  },
-  {
-    id: 'starry-night-forest',
-    name: '🌲 Forest Night',
-    category: 'Gaming',
-    colors: {
-      primaryGradientStart: '#000000',
-      primaryGradientEnd: '#14442b',
-      background: '#011502',
-      foreground: '#ffffff',
-      primary: '#c4c6ff',
-      secondary: '#191919',
-      accent: '#77be80',
-      card: '#011502',
-      muted: '#adb5bd',
-      border: '#191919',
-      input: '#191919',
-      ring: '#c4c6ff',
-    },
-  },
-  {
-    id: 'starry-night-galaxy',
-    name: '🔮 Galaxy Dream',
-    category: 'Gaming',
-    colors: {
-      primaryGradientStart: '#00076f',
-      primaryGradientEnd: '#b133c9',
-      background: '#9f45b0',
-      foreground: '#ffe4f2',
-      primary: '#fff3c4',
-      secondary: '#9d00ff',
-      accent: '#9d00ff',
-      card: '#9f45b0',
-      muted: '#ffffff',
-      border: '#9d00ff',
-      input: '#9d00ff',
-      ring: '#fff3c4',
-    },
-  },
-  {
-    id: 'starry-night-sunrise',
-    name: '🌅 Sunrise Fade',
-    category: 'Gaming',
-    colors: {
-      primaryGradientStart: '#FFAE41',
-      primaryGradientEnd: '#F83D41',
-      background: '#C49C48',
-      foreground: '#FFFFFF',
-      primary: '#FFF3C4',
-      secondary: '#C49C48',
-      accent: '#C49C48',
-      card: '#C49C48',
-      muted: '#E0E0E0',
-      border: '#C49C48',
-      input: '#C49C48',
-      ring: '#FFF3C4',
-    },
+    variants: [
+      {
+        id: 'classic',
+        name: 'Classic',
+        colors: {
+          primaryGradientStart: '#000000',
+          primaryGradientEnd: '#142b44',
+          background: '#152238',
+          foreground: '#FFFFFF',
+          primary: '#89ddff',
+          secondary: '#191919',
+          accent: '#e1adff',
+          card: '#152238',
+          muted: '#ADB5BD',
+          border: '#30363d',
+          input: '#191919',
+          ring: '#89ddff',
+        }
+      },
+      {
+        id: 'cotton-candy',
+        name: '🍭 Cotton Candy Sky',
+        colors: {
+          primaryGradientStart: '#ff71b2',
+          primaryGradientEnd: '#509be1',
+          background: '#9f45b0',
+          foreground: '#ffffff',
+          primary: '#d3e9ff',
+          secondary: '#a763b6',
+          accent: '#7f78be',
+          card: '#9f45b0',
+          muted: '#fff4f4',
+          border: '#a763b6',
+          input: '#a763b6',
+          ring: '#d3e9ff',
+        },
+      },
+      {
+        id: 'forest',
+        name: '🌲 Forest Night',
+        colors: {
+          primaryGradientStart: '#000000',
+          primaryGradientEnd: '#14442b',
+          background: '#011502',
+          foreground: '#ffffff',
+          primary: '#c4c6ff',
+          secondary: '#191919',
+          accent: '#77be80',
+          card: '#011502',
+          muted: '#adb5bd',
+          border: '#191919',
+          input: '#191919',
+          ring: '#c4c6ff',
+        },
+      },
+      {
+        id: 'galaxy',
+        name: '🔮 Galaxy Dream',
+        colors: {
+          primaryGradientStart: '#00076f',
+          primaryGradientEnd: '#b133c9',
+          background: '#9f45b0',
+          foreground: '#ffe4f2',
+          primary: '#fff3c4',
+          secondary: '#9d00ff',
+          accent: '#9d00ff',
+          card: '#9f45b0',
+          muted: '#ffffff',
+          border: '#9d00ff',
+          input: '#9d00ff',
+          ring: '#fff3c4',
+        },
+      },
+      {
+        id: 'sunrise',
+        name: '🌅 Sunrise Fade',
+        colors: {
+          primaryGradientStart: '#FFAE41',
+          primaryGradientEnd: '#F83D41',
+          background: '#C49C48',
+          foreground: '#FFFFFF',
+          primary: '#FFF3C4',
+          secondary: '#191919',
+          accent: '#C49C48',
+          card: '#C49C48',
+          muted: '#E0E0E0',
+          border: '#C49C48',
+          input: '#C49C48',
+          ring: '#FFF3C4',
+        },
+      },
+    ]
   },
   {
     id: 'vaporwave-dream',
@@ -314,6 +331,8 @@ export function createThemeObject(preset: Preset): CustomTheme {
   return {
     id: preset.id,
     name: preset.name,
+    variants: preset.variants,
+    selectedVariantId: preset.variants ? preset.variants[0].id : undefined,
     colors: fullColors,
   };
 }

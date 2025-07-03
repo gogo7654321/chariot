@@ -3,14 +3,23 @@
 
 import React, { createContext, useContext, useState, useLayoutEffect, ReactNode, useCallback, useEffect } from 'react';
 import { hexToHsl } from '@/lib/colorUtils';
+import { createThemeObject, THEME_PRESETS, type PresetColorDefinition } from '@/lib/themes';
 
 // --- TYPES --- //
 export type AccessibilityTheme = "default" | "protanopia" | "deuteranopia" | "tritanopia";
 export type SidebarPosition = 'left' | 'right' | 'top' | 'bottom';
 
+export type ThemeVariant = {
+  id: string;
+  name: string;
+  colors: PresetColorDefinition;
+};
+
 export type CustomTheme = {
   id: string;
   name: string;
+  variants?: ThemeVariant[];
+  selectedVariantId?: string;
   colors: {
     primaryGradientStart: string;
     primaryGradientEnd: string;
@@ -45,6 +54,7 @@ type AppearanceContextType = {
   customTheme: CustomTheme | null;
   applyCustomTheme: (theme: CustomTheme | null) => void;
   resetCustomTheme: () => void;
+  setCustomThemeVariant: (themeId: string, variantId: string) => void;
   // Loading state
   isAppearanceLoading: boolean;
   setIsAppearanceLoading: (loading: boolean) => void;
@@ -149,6 +159,30 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
     setCustomTheme(null);
   }, []);
 
+  const handleSetCustomThemeVariant = useCallback((themeId: string, variantId: string) => {
+    const mainThemePreset = THEME_PRESETS.find(p => p.id === themeId);
+    if (!mainThemePreset || !mainThemePreset.variants) return;
+
+    const variant = mainThemePreset.variants.find(v => v.id === variantId);
+    if (!variant) return;
+
+    // Create a new theme object based on the variant's colors
+    const variantThemeObject = createThemeObject({
+        ...mainThemePreset, // carry over id, name, category
+        colors: variant.colors
+    });
+
+    // Apply it, but preserve the main theme's identity and variant list
+    setCustomTheme({
+        ...variantThemeObject,
+        id: mainThemePreset.id, // IMPORTANT: Keep the main theme ID for CSS selectors
+        name: mainThemePreset.name,
+        variants: mainThemePreset.variants,
+        selectedVariantId: variantId,
+    });
+
+  }, []);
+
   // --- CONTEXT VALUE --- //
   const value = { 
     theme, 
@@ -158,6 +192,7 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
     customTheme,
     applyCustomTheme: handleApplyCustomTheme,
     resetCustomTheme: handleResetCustomTheme,
+    setCustomThemeVariant: handleSetCustomThemeVariant,
     isAppearanceLoading,
     setIsAppearanceLoading,
   };
