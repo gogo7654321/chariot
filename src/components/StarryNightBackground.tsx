@@ -24,7 +24,7 @@ interface ShootingStar {
 }
 
 export function StarryNightBackground() {
-  const { customTheme } = useAppearance();
+  const { customTheme, areShootingStarsEnabled } = useAppearance();
   const [stars, setStars] = useState<Star[]>([]);
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
 
@@ -101,20 +101,22 @@ export function StarryNightBackground() {
           />
         ))}
       </div>
-      <div className="shooting-star-container" aria-hidden="true">
-        {shootingStars.map((star) => (
-            <span 
-              key={star.id} 
-              className="shootingstar"
-              style={{
-                  top: star.top,
-                  right: star.right,
-                  animationDelay: star.animationDelay,
-                  animationDuration: star.animationDuration,
-              }}
-            />
-        ))}
-      </div>
+      {areShootingStarsEnabled && (
+        <div className="shooting-star-container" aria-hidden="true">
+          {shootingStars.map((star) => (
+              <span 
+                key={star.id} 
+                className="shootingstar"
+                style={{
+                    top: star.top,
+                    right: star.right,
+                    animationDelay: star.animationDelay,
+                    animationDuration: star.animationDuration,
+                }}
+              />
+          ))}
+        </div>
+      )}
     </>
   );
 }

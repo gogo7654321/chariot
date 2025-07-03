@@ -56,6 +56,9 @@ type AppearanceContextType = {
   applyCustomTheme: (theme: CustomTheme | null) => void;
   resetCustomTheme: () => void;
   setCustomThemeVariant: (themeId: string, variantId: string) => void;
+  // Starry night specific
+  areShootingStarsEnabled: boolean;
+  setAreShootingStarsEnabled: (enabled: boolean) => void;
   // Loading state
   isAppearanceLoading: boolean;
   setIsAppearanceLoading: (loading: boolean) => void;
@@ -71,6 +74,7 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
   const [sidebarPosition, setSidebarPosition] = useState<SidebarPosition>('left');
   const [customTheme, setCustomTheme] = useState<CustomTheme | null>(null);
   const [isAppearanceLoading, setIsAppearanceLoading] = useState(true);
+  const [areShootingStarsEnabled, setAreShootingStarsEnabled] = useState(true);
 
   // On initial client-side mount, hydrate state from localStorage to match the inline script.
   // This syncs React's state with what's already been rendered, preventing mismatches.
@@ -82,6 +86,7 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
             setTheme(settings.accessibilityTheme || 'default');
             setSidebarPosition(settings.sidebarPosition || 'left');
             setCustomTheme(settings.customTheme || null);
+            setAreShootingStarsEnabled(settings.areShootingStarsEnabled ?? true);
         }
     } catch(e) {
         console.error("Failed to parse settings from localStorage", e);
@@ -195,6 +200,8 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
     applyCustomTheme: handleApplyCustomTheme,
     resetCustomTheme: handleResetCustomTheme,
     setCustomThemeVariant: handleSetCustomThemeVariant,
+    areShootingStarsEnabled,
+    setAreShootingStarsEnabled,
     isAppearanceLoading,
     setIsAppearanceLoading,
   };

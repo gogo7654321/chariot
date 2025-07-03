@@ -18,6 +18,7 @@ export type AppearanceSettings = {
     accessibilityTheme: AccessibilityTheme;
     sidebarPosition: SidebarPosition;
     customTheme: CustomTheme | null;
+    areShootingStarsEnabled: boolean;
 };
 
 async function saveFirestoreSettings(user: User, settings: AppearanceSettings) {
@@ -43,6 +44,8 @@ export function UserSettingsManager() {
         setSidebarPosition,
         customTheme,
         applyCustomTheme,
+        areShootingStarsEnabled,
+        setAreShootingStarsEnabled,
         setIsAppearanceLoading,
     } = useAppearance();
 
@@ -73,6 +76,7 @@ export function UserSettingsManager() {
                 setAccessibilityTheme(savedSettings.accessibilityTheme || 'default');
                 setSidebarPosition(savedSettings.sidebarPosition || 'left');
                 applyCustomTheme(savedSettings.customTheme || null);
+                setAreShootingStarsEnabled(savedSettings.areShootingStarsEnabled ?? true);
             }
             
             isFirestoreInitialized.current = true;
@@ -87,7 +91,7 @@ export function UserSettingsManager() {
             unsubscribe();
             isFirestoreInitialized.current = false;
         };
-    }, [user, isAuthLoading, setNextTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme, setIsAppearanceLoading]);
+    }, [user, isAuthLoading, setNextTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme, setAreShootingStarsEnabled, setIsAppearanceLoading]);
 
     // Effect for SAVING settings to localStorage and Firestore
     useEffect(() => {
@@ -99,6 +103,7 @@ export function UserSettingsManager() {
             accessibilityTheme: accessibilityTheme,
             sidebarPosition: sidebarPosition,
             customTheme: customTheme,
+            areShootingStarsEnabled: areShootingStarsEnabled,
         };
         
         // Always save to localStorage. This acts as a cache for the initial load script.
@@ -107,7 +112,7 @@ export function UserSettingsManager() {
         if (user) {
             saveFirestoreSettings(user, currentSettings);
         }
-    }, [user, isAuthLoading, nextTheme, accessibilityTheme, sidebarPosition, customTheme]);
+    }, [user, isAuthLoading, nextTheme, accessibilityTheme, sidebarPosition, customTheme, areShootingStarsEnabled]);
 
     return null;
 }

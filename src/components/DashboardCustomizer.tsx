@@ -26,12 +26,13 @@ import { Separator } from '@/components/ui/separator';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useAppearance, type CustomTheme } from '@/contexts/AppearanceContext';
-import { Check, AlertTriangle } from 'lucide-react';
+import { Check, AlertTriangle, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { THEME_PRESETS, createThemeObject, type PresetColorDefinition, type Preset } from '@/lib/themes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getContrastRatio, isColorDark } from '@/lib/colorUtils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 
 const ResetToDefault = () => {
     const { resetCustomTheme } = useAppearance();
@@ -205,7 +206,7 @@ function ManualEditor() {
 }
 
 function PresetsTab() {
-  const { customTheme, applyCustomTheme, setCustomThemeVariant } = useAppearance();
+  const { customTheme, applyCustomTheme, setCustomThemeVariant, areShootingStarsEnabled, setAreShootingStarsEnabled } = useAppearance();
 
   const handlePresetSelect = (presetId: string) => {
     const preset = THEME_PRESETS.find(p => p.id === presetId);
@@ -243,45 +244,63 @@ function PresetsTab() {
                 const isSelected = customTheme?.id === preset.id;
                 
                 return (
-                  <div key={preset.id} className="flex flex-col gap-2">
-                    <button
-                      onClick={() => handlePresetSelect(preset.id)}
-                      className={cn(
-                        "relative rounded-xl border-2 p-3 text-left transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                        isSelected ? "border-primary" : "border-border"
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-sm">{preset.name}</span>
-                        {isSelected && (
-                          <Check className="h-5 w-5 text-primary" />
+                  <div key={preset.id}>
+                    <div className="flex flex-col gap-2">
+                      <button
+                        onClick={() => handlePresetSelect(preset.id)}
+                        className={cn(
+                          "relative rounded-xl border-2 p-3 text-left transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                          isSelected ? "border-primary" : "border-border"
                         )}
-                      </div>
-                      <div className="mt-2 flex gap-1">
-                        <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.background }}></div>
-                        <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.primary }}></div>
-                        <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.accent }}></div>
-                        <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.card }}></div>
-                      </div>
-                    </button>
-                    {isSelected && preset.variants && (
-                      <div className="px-1 animate-in fade-in duration-300">
-                        <Select
-                           value={customTheme?.selectedVariantId || preset.variants[0].id}
-                           onValueChange={(variantId) => setCustomThemeVariant(preset.id, variantId)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a variant..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {preset.variants.map((variant) => (
-                              <SelectItem key={variant.id} value={variant.id}>
-                                {variant.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-sm">{preset.name}</span>
+                          {isSelected && (
+                            <Check className="h-5 w-5 text-primary" />
+                          )}
+                        </div>
+                        <div className="mt-2 flex gap-1">
+                          <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.background }}></div>
+                          <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.primary }}></div>
+                          <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.accent }}></div>
+                          <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.card }}></div>
+                        </div>
+                      </button>
+                      {isSelected && preset.variants && (
+                        <div className="px-1 animate-in fade-in duration-300">
+                          <Select
+                            value={customTheme?.selectedVariantId || preset.variants[0].id}
+                            onValueChange={(variantId) => setCustomThemeVariant(preset.id, variantId)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a variant..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {preset.variants.map((variant) => (
+                                <SelectItem key={variant.id} value={variant.id}>
+                                  {variant.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+                    {isSelected && preset.id === 'starry-night' && (
+                        <div className="space-y-3 rounded-lg border bg-secondary/50 p-3 mt-3 animate-in fade-in duration-300">
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="shooting-star-switch" className="flex items-center gap-2">
+                                    <Rocket className="h-4 w-4" />
+                                    Shooting Stars
+                                </Label>
+                                <Switch
+                                    id="shooting-star-switch"
+                                    checked={areShootingStarsEnabled}
+                                    onCheckedChange={setAreShootingStarsEnabled}
+                                />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Toggle the animated shooting stars in the background.</p>
+                        </div>
                     )}
                   </div>
                 )
