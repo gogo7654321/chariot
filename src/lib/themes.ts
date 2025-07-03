@@ -81,6 +81,24 @@ export const THEME_PRESETS: Preset[] = [
       ring: '#95d5b2',
     },
   },
+  {
+    id: 'pink-aesthetic',
+    name: '🌸 Pink Aesthetic',
+    category: 'Light',
+    colors: {
+      background: '#F8C2D4',
+      foreground: '#7c3549',
+      primary: '#9A2D4A',
+      secondary: '#F7AEC1',
+      accent: '#FF6384',
+      card: '#fdeaf1',
+      muted: '#FFE4E1',
+      border: '#f0b8c8',
+      input: '#fdeaf1',
+      ring: '#9A2D4A',
+      mutedForeground: '#ab7886',
+    },
+  },
   
   // 🌙 DARK THEMES
   {
@@ -134,11 +152,12 @@ export const THEME_PRESETS: Preset[] = [
       secondary: '#191919',
       accent: '#e1adff',
       card: '#152238',
-      muted: '#ADB5BD',
+      muted: '#191919',
       border: '#30363d',
       input: '#191919',
       ring: '#89ddff',
       starColor: '#FFFFFF',
+      mutedForeground: '#ADB5BD',
     },
     variants: [
       {
