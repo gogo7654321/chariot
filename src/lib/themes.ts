@@ -342,39 +342,21 @@ export const THEME_PRESETS: Preset[] = [
 
   // 👾 PIXEL ART THEMES
   {
-    id: 'pixel-city',
-    name: '🏙️ Pixel City',
+    id: 'midnight-office',
+    name: '🌃 Midnight Office',
     category: 'Pixel Art',
     hasFullScreenBackground: true,
     colors: {
-      background: '#0c0d24',
-      foreground: '#e0e0ff',
-      primary: '#00ffff',
-      secondary: '#2a1d48',
-      accent: '#ff00ff',
-      card: '#1a1235',
-      muted: '#3a2d58',
-      border: '#4a3d68',
-      input: '#2a1d48',
-      ring: '#00ffff',
-    }
-  },
-  {
-    id: 'lofi-nook',
-    name: '🪴 Lo-fi Nook',
-    category: 'Pixel Art',
-    hasFullScreenBackground: true,
-    colors: {
-      background: '#4a3224',
-      foreground: '#f5e9d3',
-      primary: '#ffa040',
-      secondary: '#6a4a34',
-      accent: '#508c50',
-      card: '#6a4a34',
-      muted: '#5a3a24',
-      border: '#3a2214',
-      input: '#6a4a34',
-      ring: '#ff8040',
+      background: '#0c2434',
+      foreground: '#cceeee',
+      primary: '#d9444f',
+      secondary: '#1e4966',
+      accent: '#33cccc',
+      card: '#14364e',
+      muted: '#2d5a78',
+      border: '#28516d',
+      input: '#14364e',
+      ring: '#d9444f',
     }
   },
 

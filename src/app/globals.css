@@ -460,13 +460,8 @@ html[data-theme-id="catpuccin"] body.dashboard-scope {
   background-image: url('/images/background.png');
 }
 
-/* Specific background for Pixel City theme */
-html[data-theme-id="pixel-city"] body.dashboard-scope {
-  background-image: url('/images/city.gif');
-}
-
-/* Specific background for Lo-fi Nook theme */
-html[data-theme-id="lofi-nook"] body.dashboard-scope {
+/* Specific background for Midnight Office theme */
+html[data-theme-id="midnight-office"] body.dashboard-scope {
   background-image: url('/images/living-room.gif');
 }
 
