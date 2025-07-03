@@ -1,25 +1,19 @@
 
 import { type CustomTheme } from '@/contexts/AppearanceContext';
-import { darken, lighten } from 'polished';
+import { mix } from 'polished';
+import { isColorDark } from './colorUtils';
 
 type PresetColorDefinition = {
+    background: string;
+    foreground: string;
     primary: string;
     secondary: string;
-    background: string;
     accent: string;
-    foreground: string;
     card: string;
-    cardForeground: string;
-    popover: string;
-    popoverForeground: string;
     muted: string;
-    mutedForeground: string;
-    accentForeground: string;
     border: string;
     input: string;
     ring: string;
-    primaryForeground: string;
-    secondaryForeground: string;
 };
 
 type Preset = {
@@ -29,232 +23,183 @@ type Preset = {
 };
 
 export const THEME_PRESETS: Preset[] = [
-  // --- DARK THEMES ---
+  // Dark Themes
   {
     id: 'aurora-borealis',
     name: '🌌 Aurora Borealis',
     colors: {
-      primary: '#8A2BE2', // BlueViolet
-      secondary: '#1A1A2D', // Dark Slate Blue
-      background: '#0D0D1A', // Very Dark Blue
-      accent: '#00BFFF', // DeepSkyBlue
-      foreground: '#E0E0E0',
-      card: '#1A1A2D',
-      cardForeground: '#E0E0E0',
-      popover: '#1A1A2D',
-      popoverForeground: '#E0E0E0',
-      muted: '#2A2A4D',
-      mutedForeground: '#A0A0C0',
-      accentForeground: '#FFFFFF',
-      border: '#2A2A4D',
-      input: '#2A2A4D',
-      ring: '#00BFFF',
-      primaryForeground: '#FFFFFF',
-      secondaryForeground: '#E0E0E0',
+      background: '#0d1a26',
+      foreground: '#e0f2f1',
+      primary: '#8e44ad',
+      secondary: '#1a2b3c',
+      accent: '#2ecc71',
+      card: '#1a2b3c',
+      muted: '#2c3e50',
+      border: '#34495e',
+      input: '#2c3e50',
+      ring: '#8e44ad',
     },
   },
   {
     id: 'psychedelic-planet',
     name: '🪐 Psychedelic Planet',
     colors: {
-        primary: '#FF00FF', // Magenta
-        secondary: '#1A001A', // Dark Magenta
-        background: '#000000', // Black
-        accent: '#00FFFF', // Cyan/Aqua
-        foreground: '#F0F0F0',
-        card: '#1A001A',
-        cardForeground: '#F0F0F0',
-        popover: '#1A001A',
-        popoverForeground: '#F0F0F0',
-        muted: '#330033',
-        mutedForeground: '#CC00CC',
-        accentForeground: '#000000',
-        border: '#330033',
-        input: '#330033',
-        ring: '#00FFFF',
-        primaryForeground: '#FFFFFF',
-        secondaryForeground: '#F0F0F0'
-    }
-  },
-  {
-    id: 'sunset-heat',
-    name: '🌅 Sunset Heat',
-    colors: {
-      primary: '#FF4500', // OrangeRed
-      secondary: '#2B1200',
-      background: '#1A0A00',
-      accent: '#FFD700', // Gold
-      foreground: '#FFDAB9', // PeachPuff
-      card: '#2B1200',
-      cardForeground: '#FFDAB9',
-      popover: '#2B1200',
-      popoverForeground: '#FFDAB9',
-      muted: '#452A00',
-      mutedForeground: '#FFA500', // Orange
-      accentForeground: '#000000',
-      border: '#452A00',
-      input: '#452A00',
-      ring: '#FFD700',
-      primaryForeground: '#FFFFFF',
-      secondaryForeground: '#FFDAB9',
-    },
-  },
-  {
-    id: 'golden-hour',
-    name: '🌇 Golden Hour',
-    colors: {
-      primary: '#FFD700', // Gold
-      secondary: '#2C3E50', // Dark Slate Blue
-      background: '#1A2430',
-      accent: '#E67E22', // Carrot Orange
-      foreground: '#ECF0F1',
-      card: '#2C3E50',
-      cardForeground: '#ECF0F1',
-      popover: '#2C3E50',
-      popoverForeground: '#ECF0F1',
-      muted: '#34495E',
-      mutedForeground: '#BDC3C7',
-      accentForeground: '#FFFFFF',
-      border: '#34495E',
-      input: '#34495E',
-      ring: '#FFD700',
-      primaryForeground: '#1A2430',
-      secondaryForeground: '#ECF0F1',
-    },
-  },
-  {
-    id: 'vaporwave',
-    name: '🌴 Vaporwave',
-    colors: {
-        primary: '#FF00C1', // Neon Pink
-        secondary: '#2C003E',
-        background: '#1A0024',
-        accent: '#00F2FF', // Bright Cyan
-        foreground: '#D4D4D8',
-        card: '#2C003E',
-        cardForeground: '#D4D4D8',
-        popover: '#2C003E',
-        popoverForeground: '#D4D4D8',
-        muted: '#3E005A',
-        mutedForeground: '#A559C8',
-        accentForeground: '#000000',
-        border: '#3E005A',
-        input: '#3E005A',
-        ring: '#00F2FF',
-        primaryForeground: '#FFFFFF',
-        secondaryForeground: '#D4D4D8'
-    }
-  },
-  {
-    id: 'starlight-void',
-    name: '✨ Starlight Void',
-    colors: {
-      primary: '#9B59B6', // Amethyst
-      secondary: '#2C3A47',
-      background: '#1C2833',
-      accent: '#3498DB', // Peter River Blue
-      foreground: '#F2F2F2',
-      card: '#2C3A47',
-      cardForeground: '#F2F2F2',
-      popover: '#2C3A47',
-      popoverForeground: '#F2F2F2',
-      muted: '#34495E',
-      mutedForeground: '#95A5A6',
-      accentForeground: '#FFFFFF',
-      border: '#34495E',
-      input: '#34495E',
-      ring: '#3498DB',
-      primaryForeground: '#FFFFFF',
-      secondaryForeground: '#F2F2F2',
-    },
-  },
-   {
-    id: 'cosmic-grape',
-    name: '🍇 Cosmic Grape',
-    colors: {
-      primary: '#6A0DAD', // Grape
-      secondary: '#240030',
-      background: '#120018',
-      accent: '#FF00FF', // Magenta
-      foreground: '#E6E6FA', // Lavender
-      card: '#240030',
-      cardForeground: '#E6E6FA',
-      popover: '#240030',
-      popoverForeground: '#E6E6FA',
-      muted: '#360048',
-      mutedForeground: '#C080FF',
-      accentForeground: '#FFFFFF',
-      border: '#360048',
-      input: '#360048',
-      ring: '#FF00FF',
-      primaryForeground: '#FFFFFF',
-      secondaryForeground: '#E6E6FA',
+      background: '#000000',
+      foreground: '#f0f0f0',
+      primary: '#ff00ff',
+      secondary: '#1a1a1a',
+      accent: '#00ffff',
+      card: '#1a1a1a',
+      muted: '#2a2a2a',
+      border: '#333333',
+      input: '#2a2a2a',
+      ring: '#00ffff',
     },
   },
   {
     id: 'obsidian-mind',
     name: '🪨 Obsidian Mind',
     colors: {
-      primary: '#444444',
-      secondary: '#111111',
       background: '#0a0a0a',
-      accent: '#2e2e2e',
       foreground: '#f5f5f5',
+      primary: '#e5e5e5',
+      secondary: '#111111',
+      accent: '#555555',
       card: '#1a1a1a',
-      cardForeground: '#f5f5f5',
-      popover: '#1a1a1a',
-      popoverForeground: '#f5f5f5',
-      muted: '#222222',
-      mutedForeground: '#b8b8b8',
-      accentForeground: '#f5f5f5',
+      muted: '#444444',
       border: '#2e2e2e',
       input: '#2a2a2a',
-      ring: '#444444',
-      primaryForeground: '#f5f5f5',
-      secondaryForeground: '#f5f5f5',
+      ring: '#e5e5e5',
+    },
+  },
+  {
+    id: 'golden-hour',
+    name: '🌆 Golden Hour',
+    colors: {
+      background: '#1a202c',
+      foreground: '#e2e8f0',
+      primary: '#f6e05e',
+      secondary: '#2d3748',
+      accent: '#f6ad55',
+      card: '#2d3748',
+      muted: '#4a5568',
+      border: '#4a5568',
+      input: '#4a5568',
+      ring: '#f6e05e',
     },
   },
 
-  // --- LIGHT THEMES ---
+  // Light Themes
+  {
+    id: 'sunset-heat',
+    name: '🔥 Sunset Heat',
+    colors: {
+      background: '#fff3e0',
+      foreground: '#4e342e',
+      primary: '#ff7043',
+      secondary: '#ffe0b2',
+      accent: '#ffb74d',
+      card: '#ffffff',
+      muted: '#ffcc80',
+      border: '#ffb74d',
+      input: '#ffe0b2',
+      ring: '#ff7043',
+    },
+  },
   {
     id: 'arctic-drift',
     name: '🧊 Arctic Drift',
     colors: {
-      primary: '#2980B9', // Belize Hole Blue
-      secondary: '#EAF2F8',
-      background: '#F8F9F9',
-      accent: '#3498DB', // Peter River Blue
-      foreground: '#2C3E50', // Wet Asphalt
-      card: '#FFFFFF',
-      cardForeground: '#2C3E50',
-      popover: '#FFFFFF',
-      popoverForeground: '#2C3E50',
-      muted: '#EAF2F8',
-      mutedForeground: '#7F8C8D',
-      accentForeground: '#FFFFFF',
-      border: '#D6EAF8',
-      input: '#EAF2F8',
-      ring: '#3498DB',
-      primaryForeground: '#FFFFFF',
-      secondaryForeground: '#2C3E50',
+      background: '#f0f9ff',
+      foreground: '#0c4a6e',
+      primary: '#38bdf8',
+      secondary: '#e0f2fe',
+      accent: '#7dd3fc',
+      card: '#ffffff',
+      muted: '#e0f2fe',
+      border: '#bae6fd',
+      input: '#e0f2fe',
+      ring: '#38bdf8',
+    },
+  },
+  {
+    id: 'vaporwave',
+    name: '🌴 Vaporwave',
+    colors: {
+      background: '#1a1a2e',
+      foreground: '#e0e0e0',
+      primary: '#e94560',
+      secondary: '#16213e',
+      accent: '#0f3460',
+      card: '#16213e',
+      muted: '#2a2a4e',
+      border: '#3a3a5e',
+      input: '#2a2a4e',
+      ring: '#e94560',
+    },
+  },
+  {
+    id: 'starlight-void',
+    name: '✨ Starlight Void',
+    colors: {
+      background: '#1d1233',
+      foreground: '#f0e8ff',
+      primary: '#c780ff',
+      secondary: '#2d204d',
+      accent: '#5ccfe6',
+      card: '#2d204d',
+      muted: '#3c2d6b',
+      border: '#4a3d7d',
+      input: '#3c2d6b',
+      ring: '#c780ff',
     },
   },
 ];
 
-export const createThemeObject = (preset: Preset): CustomTheme => {
-  const { id, name, colors } = preset;
-  
-  // Auto-calculate gradient colors based on the primary color for a cohesive look.
-  const primaryGradientStart = darken(0.05, colors.primary);
-  const primaryGradientEnd = lighten(0.05, colors.primary);
+
+/**
+ * Creates a full theme object from a base preset.
+ * This version uses the detailed properties from the preset and calculates
+ * foreground colors to ensure text readability.
+ * @param preset - The base preset containing detailed color definitions.
+ * @returns A full CustomTheme object.
+ */
+export function createThemeObject(preset: Preset): CustomTheme {
+  const { colors } = preset;
+
+  const fullColors: CustomTheme['colors'] = {
+    primaryGradientStart: colors.background,
+    primaryGradientEnd: mix(0.2, colors.primary, colors.background),
+
+    background: colors.background,
+    foreground: colors.foreground,
+
+    card: colors.card,
+    cardForeground: colors.foreground,
+
+    popover: colors.secondary,
+    popoverForeground: colors.foreground,
+
+    primary: colors.primary,
+    primaryForeground: isColorDark(colors.primary) ? '#FFFFFF' : '#111827',
+
+    secondary: colors.secondary,
+    secondaryForeground: colors.foreground,
+
+    muted: colors.muted,
+    mutedForeground: mix(0.5, colors.foreground, colors.muted),
+
+    accent: colors.accent,
+    accentForeground: isColorDark(colors.accent) ? '#FFFFFF' : '#111827',
+
+    border: colors.border,
+    input: colors.input,
+    ring: colors.ring,
+  };
 
   return {
-    id,
-    name,
-    colors: {
-      ...colors,
-      primaryGradientStart,
-      primaryGradientEnd,
-    },
+    id: preset.id,
+    name: preset.name,
+    colors: fullColors,
   };
-};
+}
