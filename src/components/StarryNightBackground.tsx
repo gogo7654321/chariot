@@ -80,37 +80,41 @@ export function StarryNightBackground() {
   }
 
   return (
-    <div className="starry-background" aria-hidden="true">
-      {stars.map((star) => (
-        <div
-          key={star.id}
-          style={{
-            position: 'absolute',
-            left: star.left,
-            top: star.top,
-            width: `${star.size}px`,
-            height: `${star.size}px`,
-            opacity: star.opacity,
-            backgroundColor: 'hsl(var(--custom-accent))',
-            borderRadius: '50%',
-            animationName: star.animationName,
-            animationDuration: '5s',
-            animationIterationCount: 'infinite',
-          }}
-        />
-      ))}
-      {shootingStars.map((star) => (
-          <span 
-            key={star.id} 
-            className="shootingstar"
+    <>
+      <div className="starry-background" aria-hidden="true">
+        {stars.map((star) => (
+          <div
+            key={star.id}
             style={{
-                top: star.top,
-                right: star.right,
-                animationDelay: star.animationDelay,
-                animationDuration: star.animationDuration,
+              position: 'absolute',
+              left: star.left,
+              top: star.top,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              opacity: star.opacity,
+              backgroundColor: 'hsl(var(--custom-accent))',
+              borderRadius: '50%',
+              animationName: star.animationName,
+              animationDuration: '5s',
+              animationIterationCount: 'infinite',
             }}
           />
-      ))}
-    </div>
+        ))}
+      </div>
+      <div className="shooting-star-container" aria-hidden="true">
+        {shootingStars.map((star) => (
+            <span 
+              key={star.id} 
+              className="shootingstar"
+              style={{
+                  top: star.top,
+                  right: star.right,
+                  animationDelay: star.animationDelay,
+                  animationDuration: star.animationDuration,
+              }}
+            />
+        ))}
+      </div>
+    </>
   );
 }
