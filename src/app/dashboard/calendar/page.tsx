@@ -852,7 +852,7 @@ export default function CalendarPage() {
   )
 
   return (
-    <div className="w-full bg-background p-4 md:p-8">
+    <div className="w-full p-4 md:p-8">
         <ResponsiveGridLayout
             layouts={layouts}
             onLayoutChange={onLayoutChange}
