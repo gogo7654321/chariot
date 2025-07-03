@@ -1,3 +1,4 @@
+
 import { type CustomTheme } from '@/contexts/AppearanceContext';
 import { mix } from 'polished';
 import { isColorDark } from './colorUtils';
@@ -15,6 +16,7 @@ export type PresetColorDefinition = {
     ring: string;
     primaryGradientStart?: string;
     primaryGradientEnd?: string;
+    mutedForeground?: string;
 };
 
 export type Preset = {
@@ -147,7 +149,8 @@ export const THEME_PRESETS: Preset[] = [
       secondary: '#191919',
       accent: '#FFFFFF',
       card: '#152238',
-      muted: '#ADB5BD',
+      muted: '#191919',
+      mutedForeground: '#ADB5BD',
       border: '#30363d',
       input: '#191919',
       ring: '#FFF3C4',
@@ -240,7 +243,7 @@ export function createThemeObject(preset: Preset): CustomTheme {
       : mix(0.8, colors.foreground, colors.secondary),
 
     muted: colors.muted,
-    mutedForeground: mix(0.5, colors.foreground, colors.muted),
+    mutedForeground: colors.mutedForeground || mix(0.5, colors.foreground, colors.muted),
 
     accent: colors.accent,
     accentForeground: isColorDark(colors.accent) ? '#FFFFFF' : '#111827',
