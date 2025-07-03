@@ -129,14 +129,26 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
         root.style.setProperty(prop, value);
       }
       root.setAttribute('data-custom-theme-active', 'true');
+      root.setAttribute('data-theme-id', customTheme.id);
+
       if (customTheme.id === 'starry-night') {
         root.setAttribute('data-starry-night', 'true');
       } else {
         root.removeAttribute('data-starry-night');
       }
+
+      const preset = THEME_PRESETS.find(p => p.id === customTheme.id);
+      if (preset?.hasFullScreenBackground) {
+        root.setAttribute('data-has-full-background', 'true');
+      } else {
+        root.removeAttribute('data-has-full-background');
+      }
+
     } else {
       root.removeAttribute('data-custom-theme-active');
+      root.removeAttribute('data-theme-id');
       root.removeAttribute('data-starry-night');
+      root.removeAttribute('data-has-full-background');
     }
   }, [customTheme]);
 

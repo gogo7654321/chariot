@@ -176,7 +176,7 @@ body {
   }
 
   /* Apply the gradient background only when a custom theme is active within the dashboard */
-  html[data-custom-theme-active="true"] body.dashboard-scope {
+  html[data-custom-theme-active="true"]:not([data-theme-id="catpuccin"]) body.dashboard-scope {
     background-image: linear-gradient(135deg, hsl(var(--custom-primary-gradient-start)), hsl(var(--custom-primary-gradient-end)));
     background-attachment: fixed;
   }
@@ -447,38 +447,45 @@ body {
     100% { transform: rotate(315deg) translateX(-1500px); opacity: 0; }
   }
 
-  /* --- Starry Night Theme Overrides --- */
-  html[data-starry-night="true"] .bg-card,
-  html[data-starry-night="true"] [data-sidebar="sidebar"] {
+  /* --- Full Background Theme Overrides (Starry Night, Catpuccin, etc.) --- */
+  html[data-theme-id="catpuccin"] body.dashboard-scope {
+    background-image: url('/images/cat-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+
+  html[data-has-full-background="true"] .bg-card,
+  html[data-has-full-background="true"] [data-sidebar="sidebar"] {
     background-color: transparent;
   }
   
-  html[data-starry-night="true"] .shadow-lg {
+  html[data-has-full-background="true"] .shadow-lg {
     box-shadow: none;
   }
   
-  html[data-starry-night="true"] .backdrop-blur-xl {
+  html[data-has-full-background="true"] .backdrop-blur-xl {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
 
-  html[data-starry-night="true"] [role="tablist"] {
+  html[data-has-full-background="true"] [role="tablist"] {
     background-color: transparent;
     border: 1px solid hsl(var(--custom-border) / 0.5);
   }
 
-  html[data-starry-night="true"] [role="tablist"] > [role="tab"][data-state="active"] {
+  html[data-has-full-background="true"] [role="tablist"] > [role="tab"][data-state="active"] {
     background-color: hsl(var(--custom-accent) / 0.1);
     box-shadow: none;
     color: hsl(var(--custom-primary));
   }
 
-  html[data-starry-night="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button']:hover {
+  html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button']:hover {
     background-color: hsl(var(--custom-accent) / 0.15);
     color: hsl(var(--custom-primary));
   }
   
-  html[data-starry-night="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button'][data-active='true'] {
+  html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button'][data-active='true'] {
     background-color: transparent;
     color: hsl(var(--custom-primary));
     font-weight: 600;

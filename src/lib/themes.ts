@@ -24,6 +24,7 @@ export type Preset = {
     id: string;
     name: string;
     category: 'Light' | 'Dark' | 'Gaming' | 'Seasonal';
+    hasFullScreenBackground?: boolean;
     variants?: ThemeVariant[];
     colors: PresetColorDefinition;
 };
@@ -87,14 +88,14 @@ export const THEME_PRESETS: Preset[] = [
     category: 'Light',
     colors: {
       background: '#F8C2D4',
-      foreground: '#7c3549',
+      foreground: '#9C425C',
       primary: '#9A2D4A',
-      secondary: '#F7AEC1',
+      secondary: '#F8C2D4',
       accent: '#FF6384',
       card: '#fdeaf1',
       muted: '#FFE4E1',
       border: '#f0b8c8',
-      input: '#fdeaf1',
+      input: '#F7AEC1',
       ring: '#9A2D4A',
       mutedForeground: '#ab7886',
     },
@@ -143,6 +144,7 @@ export const THEME_PRESETS: Preset[] = [
     id: 'catpuccin',
     name: '🐾 Catpuccin',
     category: 'Gaming',
+    hasFullScreenBackground: true,
     colors: {
       background: '#23212e',
       foreground: '#e2e0ee',
@@ -160,6 +162,7 @@ export const THEME_PRESETS: Preset[] = [
     id: 'starry-night',
     name: '✨ Starry Night',
     category: 'Gaming',
+    hasFullScreenBackground: true,
     colors: { // Base/Classic variant colors
       primaryGradientStart: '#000000',
       primaryGradientEnd: '#142b44',
@@ -257,27 +260,7 @@ export const THEME_PRESETS: Preset[] = [
           starColor: '#FFFFFF',
         },
       },
-      {
-        id: 'sunrise-fade',
-        name: '🌅 Sunrise Fade',
-        colors: {
-          primaryGradientStart: '#FFAE41',
-          primaryGradientEnd: '#F83D41',
-          background: '#C49C48',
-          foreground: '#FFFFFF',
-          primary: '#FFF3C4',
-          secondary: '#191919',
-          accent: '#C49C48',
-          card: '#C49C48',
-          muted: '#191919',
-          mutedForeground: '#E0E0E0',
-          border: '#C49C48',
-          input: '#C49C48',
-          ring: '#FFF3C4',
-          starColor: '#FFFFFF',
-        },
-      },
-      {
+       {
         id: 'amber-horizon',
         name: '🟠 Amber Horizon',
         colors: {
@@ -313,6 +296,26 @@ export const THEME_PRESETS: Preset[] = [
           mutedForeground: '#040a18',
           border: '#aac2f9',
           input: '#95b3f8',
+          ring: '#FFF3C4',
+          starColor: '#FFFFFF',
+        },
+      },
+      {
+        id: 'sunrise-fade',
+        name: '🌅 Sunrise Fade',
+        colors: {
+          primaryGradientStart: '#FFAE41',
+          primaryGradientEnd: '#F83D41',
+          background: '#C49C48',
+          foreground: '#FFFFFF',
+          primary: '#FFF3C4',
+          secondary: '#191919',
+          accent: '#C49C48',
+          card: '#C49C48',
+          muted: '#191919',
+          mutedForeground: '#E0E0E0',
+          border: '#C49C48',
+          input: '#C49C48',
           ring: '#FFF3C4',
           starColor: '#FFFFFF',
         },
