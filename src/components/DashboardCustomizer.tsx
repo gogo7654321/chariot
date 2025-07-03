@@ -28,7 +28,7 @@ import { Label } from '@/components/ui/label';
 import { useAppearance, type CustomTheme } from '@/contexts/AppearanceContext';
 import { Check, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { THEME_PRESETS, createThemeObject } from '@/lib/themes';
+import { THEME_PRESETS, createThemeObject, type PresetColorDefinition, type Preset } from '@/lib/themes';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getContrastRatio, isColorDark } from '@/lib/colorUtils';
 
@@ -86,31 +86,36 @@ const ColorInput = ({ label, value, onChange }: { label: string; value: string; 
 
 
 function ManualEditor() {
-    const { customTheme, applyCustomTheme, resetCustomTheme } = useAppearance();
-    const [manualColors, setManualColors] = useState<CustomTheme['colors']>(
-        customTheme?.colors || createThemeObject(THEME_PRESETS.find(p => p.id === 'starlight-void')!).colors
-    );
+    const { customTheme, applyCustomTheme } = useAppearance();
+
+    const extractBaseColors = (theme: CustomTheme | null): PresetColorDefinition => {
+        if (theme?.colors) {
+            return {
+                background: theme.colors.background,
+                foreground: theme.colors.foreground,
+                primary: theme.colors.primary,
+                secondary: theme.colors.secondary,
+                accent: theme.colors.accent,
+                card: theme.colors.card,
+                muted: theme.colors.muted,
+                border: theme.colors.border,
+                input: theme.colors.input,
+                ring: theme.colors.ring,
+            }
+        }
+        // Default to obsidian mind if no custom theme is active
+        return THEME_PRESETS.find(p => p.id === 'obsidian-mind')!.colors;
+    };
+
+    const [baseColors, setBaseColors] = useState<PresetColorDefinition>(extractBaseColors(customTheme));
     const [isWarningOpen, setWarningOpen] = useState(false);
     const [warningMessage, setWarningMessage] = useState('');
 
     useEffect(() => {
-        setManualColors(customTheme?.colors || createThemeObject(THEME_PRESETS.find(p => p.id === 'starlight-void')!).colors);
+        setBaseColors(extractBaseColors(customTheme));
     }, [customTheme]);
 
-    const handleColorChange = (key: keyof CustomTheme['colors'], value: string) => {
-        const newColors = { ...manualColors, [key]: value };
-        setManualColors(newColors);
-
-        const newTheme: CustomTheme = {
-            id: 'manual-edit',
-            name: 'Manual Edit',
-            colors: newColors,
-        };
-        applyCustomTheme(newTheme);
-        checkContrast(newColors);
-    };
-
-    const checkContrast = (theme: CustomTheme['colors']) => {
+    const checkContrast = (theme: PresetColorDefinition) => {
         const bgFgContrast = getContrastRatio(theme.background, theme.foreground);
         if (bgFgContrast < 4.5) {
             setWarningMessage(`The contrast between your background and text color is very low (${bgFgContrast.toFixed(2)}:1). This may make text hard to read.`);
@@ -126,17 +131,49 @@ function ManualEditor() {
             return;
         }
     };
+
+    const handleColorChange = (key: keyof PresetColorDefinition, value: string) => {
+        const newBaseColors = { ...baseColors, [key]: value };
+        setBaseColors(newBaseColors);
+
+        const presetLike: Preset = {
+            id: 'manual-edit',
+            name: 'Manual Edit',
+            category: 'Light', // This is a placeholder and doesn't affect the theme generation
+            colors: newBaseColors
+        };
+
+        const newThemeObject = createThemeObject(presetLike);
+        applyCustomTheme(newThemeObject);
+        checkContrast(newBaseColors);
+    };
     
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-semibold mb-3">Manual Color Editor</h3>
+                <h3 className="text-lg font-semibold mb-2">Manual Color Editor</h3>
+                <p className="text-sm text-muted-foreground mb-4">Fine-tune every aspect of your dashboard's appearance. Changes are applied live.</p>
+                
                 <div className="space-y-4 rounded-xl border p-4">
-                    <ColorInput label="Primary" value={manualColors.primary} onChange={(v) => handleColorChange('primary', v)} />
-                    <ColorInput label="Accent" value={manualColors.accent} onChange={(v) => handleColorChange('accent', v)} />
-                    <ColorInput label="Background" value={manualColors.background} onChange={(v) => handleColorChange('background', v)} />
-                    <ColorInput label="Card / Secondary" value={manualColors.secondary} onChange={(v) => handleColorChange('secondary', v)} />
-                    <ColorInput label="Text" value={manualColors.foreground} onChange={(v) => handleColorChange('foreground', v)} />
+                     <h4 className="font-medium text-sm text-muted-foreground pb-2 border-b">Core Palette</h4>
+                     <ColorInput label="Primary" value={baseColors.primary} onChange={(v) => handleColorChange('primary', v)} />
+                     <ColorInput label="Accent" value={baseColors.accent} onChange={(v) => handleColorChange('accent', v)} />
+                     <ColorInput label="Secondary" value={baseColors.secondary} onChange={(v) => handleColorChange('secondary', v)} />
+                     <ColorInput label="Muted" value={baseColors.muted} onChange={(v) => handleColorChange('muted', v)} />
+                </div>
+                
+                <div className="space-y-4 rounded-xl border p-4 mt-4">
+                     <h4 className="font-medium text-sm text-muted-foreground pb-2 border-b">Surfaces & Text</h4>
+                     <ColorInput label="Background" value={baseColors.background} onChange={(v) => handleColorChange('background', v)} />
+                     <ColorInput label="Foreground (Text)" value={baseColors.foreground} onChange={(v) => handleColorChange('foreground', v)} />
+                     <ColorInput label="Card" value={baseColors.card} onChange={(v) => handleColorChange('card', v)} />
+                </div>
+
+                <div className="space-y-4 rounded-xl border p-4 mt-4">
+                     <h4 className="font-medium text-sm text-muted-foreground pb-2 border-b">Borders & Inputs</h4>
+                     <ColorInput label="Border" value={baseColors.border} onChange={(v) => handleColorChange('border', v)} />
+                     <ColorInput label="Input" value={baseColors.input} onChange={(v) => handleColorChange('input', v)} />
+                     <ColorInput label="Ring (Focus)" value={baseColors.ring} onChange={(v) => handleColorChange('ring', v)} />
                 </div>
             </div>
             <ResetToDefault />
@@ -153,7 +190,10 @@ function ManualEditor() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Dismiss</AlertDialogCancel>
-                        <AlertDialogAction onClick={resetCustomTheme} className={buttonVariants({ variant: "destructive" })}>
+                        <AlertDialogAction onClick={() => {
+                            const { resetCustomTheme } = useAppearance.getState();
+                            resetCustomTheme();
+                        }} className={buttonVariants({ variant: "destructive" })}>
                             Reset Colors
                         </AlertDialogAction>
                     </AlertDialogFooter>

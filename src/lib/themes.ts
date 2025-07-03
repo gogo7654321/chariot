@@ -2,7 +2,7 @@ import { type CustomTheme } from '@/contexts/AppearanceContext';
 import { mix } from 'polished';
 import { isColorDark } from './colorUtils';
 
-type PresetColorDefinition = {
+export type PresetColorDefinition = {
     background: string;
     foreground: string;
     primary: string;
@@ -15,7 +15,7 @@ type PresetColorDefinition = {
     ring: string;
 };
 
-type Preset = {
+export type Preset = {
     id: string;
     name: string;
     category: 'Light' | 'Dark' | 'Gaming' | 'Seasonal';
@@ -122,7 +122,7 @@ export const THEME_PRESETS: Preset[] = [
         secondary: '#111111',
         accent: '#555555',
         card: '#1a1a1a',
-        muted: '#333333',
+        muted: '#555555',
         border: '#2e2e2e',
         input: '#2a2a2a',
         ring: '#e5e5e5',
