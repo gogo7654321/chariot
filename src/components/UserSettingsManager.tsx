@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useAppearance, type CustomTheme } from '@/contexts/AppearanceContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { db } from '@/lib/firebase';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 import { useTheme as useNextTheme } from 'next-themes';
 
@@ -14,6 +14,7 @@ type SidebarPosition = 'left' | 'right' | 'top' | 'bottom';
 
 // This is the settings structure that will be saved to localStorage and Firestore.
 export type AppearanceSettings = {
+    updatedAt?: number;
     lightDarkTheme: 'light' | 'dark' | 'system';
     accessibilityTheme: AccessibilityTheme;
     sidebarPosition: SidebarPosition;
@@ -46,59 +47,60 @@ export function UserSettingsManager() {
         applyCustomTheme,
         areShootingStarsEnabled,
         setAreShootingStarsEnabled,
+        isAppearanceLoading,
         setIsAppearanceLoading,
     } = useAppearance();
 
-    const isFirestoreInitialized = useRef(false);
-
     // Effect for LOADING settings from Firestore for logged-in users
     useEffect(() => {
-        if (isAuthLoading) {
+        const loadSettings = async () => {
             setIsAppearanceLoading(true);
-            return;
-        }
-
-        if (!user) {
-            // For guests, settings are already loaded by the ThemeInitializer script.
-            // We just need to signal that the loading process is complete.
-            setIsAppearanceLoading(false);
-            isFirestoreInitialized.current = false; // Reset for next login
-            return;
-        }
-
-        // For logged-in users, subscribe to Firestore for real-time updates.
-        const userDocRef = doc(db, 'users', user.uid);
-        const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
-            const savedSettings = docSnap.exists() ? docSnap.data()?.appearance as AppearanceSettings | undefined : undefined;
-
-            if (savedSettings) {
-                setNextTheme(savedSettings.lightDarkTheme || 'light');
-                setAccessibilityTheme(savedSettings.accessibilityTheme || 'default');
-                setSidebarPosition(savedSettings.sidebarPosition || 'left');
-                applyCustomTheme(savedSettings.customTheme || null);
-                setAreShootingStarsEnabled(savedSettings.areShootingStarsEnabled ?? true);
-            }
             
-            isFirestoreInitialized.current = true;
-            setIsAppearanceLoading(false);
+            const localSettingsJSON = localStorage.getItem('appearance-settings');
+            const localSettings = localSettingsJSON ? JSON.parse(localSettingsJSON) as AppearanceSettings : null;
 
-        }, (error) => {
-            console.error("Failed to load user settings:", error);
-            setIsAppearanceLoading(false);
-        });
+            let finalSettings: AppearanceSettings | null = localSettings;
 
-        return () => {
-            unsubscribe();
-            isFirestoreInitialized.current = false;
+            if (user) {
+                try {
+                    const userDocRef = doc(db, 'users', user.uid);
+                    const docSnap = await getDoc(userDocRef);
+                    const firestoreSettings = docSnap.exists() ? docSnap.data().appearance as AppearanceSettings | undefined : undefined;
+
+                    if (firestoreSettings) {
+                        // If firestore is newer or local doesn't exist, use firestore
+                        if (!localSettings || (firestoreSettings.updatedAt || 0) > (localSettings.updatedAt || 0)) {
+                            finalSettings = firestoreSettings;
+                        }
+                    }
+                } catch (error) {
+                    console.error("Failed to load user settings from Firestore:", error);
+                }
+            }
+
+            if (finalSettings) {
+                setNextTheme(finalSettings.lightDarkTheme || 'light');
+                setAccessibilityTheme(finalSettings.accessibilityTheme || 'default');
+                setSidebarPosition(finalSettings.sidebarPosition || 'left');
+                applyCustomTheme(finalSettings.customTheme || null);
+                setAreShootingStarsEnabled(finalSettings.areShootingStarsEnabled ?? true);
+            }
+
+            setIsAppearanceLoading(false);
         };
-    }, [user, isAuthLoading, setNextTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme, setAreShootingStarsEnabled, setIsAppearanceLoading]);
+
+        if (!isAuthLoading) {
+            loadSettings();
+        }
+    }, [user, isAuthLoading, setIsAppearanceLoading, setNextTheme, setAccessibilityTheme, setSidebarPosition, applyCustomTheme, setAreShootingStarsEnabled]);
+
 
     // Effect for SAVING settings to localStorage and Firestore
     useEffect(() => {
-        if (isAuthLoading) return;
-        if (user && !isFirestoreInitialized.current) return;
+        if (isAppearanceLoading) return; // Don't save anything while initial settings are still loading.
 
         const currentSettings: AppearanceSettings = {
+            updatedAt: Date.now(),
             lightDarkTheme: nextTheme as AppearanceSettings['lightDarkTheme'],
             accessibilityTheme: accessibilityTheme,
             sidebarPosition: sidebarPosition,
@@ -106,13 +108,16 @@ export function UserSettingsManager() {
             areShootingStarsEnabled: areShootingStarsEnabled,
         };
         
-        // Always save to localStorage. This acts as a cache for the initial load script.
         localStorage.setItem('appearance-settings', JSON.stringify(currentSettings));
 
         if (user) {
-            saveFirestoreSettings(user, currentSettings);
+            // Debounce Firestore writes to avoid excessive updates
+            const timer = setTimeout(() => {
+                saveFirestoreSettings(user, currentSettings);
+            }, 500);
+            return () => clearTimeout(timer);
         }
-    }, [user, isAuthLoading, nextTheme, accessibilityTheme, sidebarPosition, customTheme, areShootingStarsEnabled]);
+    }, [user, isAppearanceLoading, nextTheme, accessibilityTheme, sidebarPosition, customTheme, areShootingStarsEnabled]);
 
     return null;
 }

@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, useLayoutEffect, ReactNode, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useLayoutEffect, ReactNode, useCallback } from 'react';
 import { hexToHsl } from '@/lib/colorUtils';
 import { createThemeObject, THEME_PRESETS, type PresetColorDefinition } from '@/lib/themes';
 
@@ -76,24 +76,6 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
   const [isAppearanceLoading, setIsAppearanceLoading] = useState(true);
   const [areShootingStarsEnabled, setAreShootingStarsEnabled] = useState(true);
 
-  // On initial client-side mount, hydrate state from localStorage to match the inline script.
-  // This syncs React's state with what's already been rendered, preventing mismatches.
-  useEffect(() => {
-    try {
-        const settingsJSON = localStorage.getItem('appearance-settings');
-        if (settingsJSON) {
-            const settings = JSON.parse(settingsJSON);
-            setTheme(settings.accessibilityTheme || 'default');
-            setSidebarPosition(settings.sidebarPosition || 'left');
-            setCustomTheme(settings.customTheme || null);
-            setAreShootingStarsEnabled(settings.areShootingStarsEnabled ?? true);
-        }
-    } catch(e) {
-        console.error("Failed to parse settings from localStorage", e);
-    }
-  }, []);
-
-
   // --- DYNAMIC STYLE APPLICATION --- //
   // This effect runs whenever the custom theme changes in React's state. It applies the styles
   // for real-time updates when a user interacts with the customizer UI.
@@ -165,18 +147,18 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
       setCustomTheme(null);
     }
     setTheme(newTheme);
-  }, [setCustomTheme, setTheme]);
+  }, []);
 
   const handleApplyCustomTheme = useCallback((themeToApply: CustomTheme | null) => {
     setCustomTheme(themeToApply);
     if (themeToApply !== null) {
       setTheme('default');
     }
-  }, [setCustomTheme, setTheme]);
+  }, []);
 
   const handleResetCustomTheme = useCallback(() => {
     setCustomTheme(null);
-  }, [setCustomTheme]);
+  }, []);
 
   const handleSetCustomThemeVariant = useCallback((themeId: string, variantId: string) => {
     const mainThemePreset = THEME_PRESETS.find(p => p.id === themeId);
@@ -200,7 +182,7 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
         selectedVariantId: variantId,
     });
 
-  }, [setCustomTheme]);
+  }, []);
 
   // --- CONTEXT VALUE --- //
   const value = { 
