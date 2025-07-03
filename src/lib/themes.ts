@@ -140,6 +140,23 @@ export const THEME_PRESETS: Preset[] = [
 
   // 🕹️ GAMING THEMES
   {
+    id: 'catpuccin',
+    name: '🐾 Catpuccin',
+    category: 'Gaming',
+    colors: {
+      background: '#23212e',
+      foreground: '#e2e0ee',
+      primary: '#b693ce',
+      secondary: '#302e42',
+      accent: '#997aae',
+      card: '#2a2739',
+      muted: '#39364c',
+      border: '#434059',
+      input: '#39364c',
+      ring: '#b693ce',
+    },
+  },
+  {
     id: 'starry-night',
     name: '✨ Starry Night',
     category: 'Gaming',
