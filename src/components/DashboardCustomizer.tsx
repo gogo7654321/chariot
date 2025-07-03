@@ -37,16 +37,16 @@ const ResetToDefault = () => {
     return (
      <div>
         <Separator className="my-6" />
-        <h3 className="text-lg font-semibold mb-2">Reset</h3>
-        <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-3">
+        <h3 className="text-base font-semibold mb-3 text-muted-foreground">Reset</h3>
+        <div className="flex items-center justify-between rounded-xl border p-3 bg-secondary/50">
             <div>
-                <Label className="text-black">Reset to Default</Label>
-                <p className="text-xs text-gray-500">Revert all colors to the AP Ace© default.</p>
+                <Label>Reset to Default</Label>
+                <p className="text-xs text-muted-foreground">Revert all colors to the AP Ace© default.</p>
             </div>
             <Button
                 variant="outline"
                 onClick={resetCustomTheme}
-                className="border-gray-300 bg-white text-black hover:bg-gray-100"
+                className="border-border bg-background text-foreground hover:bg-accent"
             >
                 Reset
             </Button>
@@ -88,13 +88,13 @@ const ColorInput = ({ label, value, onChange }: { label: string; value: string; 
 function ManualEditor() {
     const { customTheme, applyCustomTheme, resetCustomTheme } = useAppearance();
     const [manualColors, setManualColors] = useState<CustomTheme['colors']>(
-        customTheme?.colors || createThemeObject(THEME_PRESETS.find(p => p.id === 'arctic-drift')!).colors
+        customTheme?.colors || createThemeObject(THEME_PRESETS.find(p => p.id === 'starlight-void')!).colors
     );
     const [isWarningOpen, setWarningOpen] = useState(false);
     const [warningMessage, setWarningMessage] = useState('');
 
     useEffect(() => {
-        setManualColors(customTheme?.colors || createThemeObject(THEME_PRESETS.find(p => p.id === 'arctic-drift')!).colors);
+        setManualColors(customTheme?.colors || createThemeObject(THEME_PRESETS.find(p => p.id === 'starlight-void')!).colors);
     }, [customTheme]);
 
     const handleColorChange = (key: keyof CustomTheme['colors'], value: string) => {
@@ -173,40 +173,60 @@ function PresetsTab() {
       applyCustomTheme(themeObject);
     }
   };
+
+  const groupedPresets = React.useMemo(() => {
+    return THEME_PRESETS.reduce((acc, preset) => {
+      const category = preset.category || 'General';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(preset);
+      return acc;
+    }, {} as Record<string, typeof THEME_PRESETS>);
+  }, []);
+  
+  const categoryOrder = ['Light', 'Dark', 'Gaming', 'Seasonal', 'General'];
   
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold mb-3">Theme Presets</h3>
-        <div className="grid grid-cols-2 gap-4">
-          {THEME_PRESETS.map((preset) => {
-            const themeObject = createThemeObject(preset);
-            return (
-              <button
-                key={preset.id}
-                onClick={() => handlePresetSelect(preset.id)}
-                className={cn(
-                  "relative rounded-xl border-2 p-3 text-left transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                  customTheme?.id === preset.id ? "border-primary" : "border-border"
-                )}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-sm">{preset.name}</span>
-                  {customTheme?.id === preset.id && (
-                    <Check className="h-5 w-5 text-primary" />
-                  )}
-                </div>
-                <div className="mt-2 flex gap-1">
-                  <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.background }}></div>
-                  <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.primary }}></div>
-                  <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.accent }}></div>
-                  <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.card }}></div>
-                </div>
-              </button>
-            )
-          })}
-        </div>
-      </div>
+      {categoryOrder.map(category => {
+        const presetsInCategory = groupedPresets[category];
+        if (!presetsInCategory || presetsInCategory.length === 0) return null;
+
+        return (
+          <div key={category}>
+            <h3 className="text-base font-semibold mb-3 text-muted-foreground">{category} Themes</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {presetsInCategory.map((preset) => {
+                const themeObject = createThemeObject(preset);
+                return (
+                  <button
+                    key={preset.id}
+                    onClick={() => handlePresetSelect(preset.id)}
+                    className={cn(
+                      "relative rounded-xl border-2 p-3 text-left transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                      customTheme?.id === preset.id ? "border-primary" : "border-border"
+                    )}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-sm">{preset.name}</span>
+                      {customTheme?.id === preset.id && (
+                        <Check className="h-5 w-5 text-primary" />
+                      )}
+                    </div>
+                    <div className="mt-2 flex gap-1">
+                      <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.background }}></div>
+                      <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.primary }}></div>
+                      <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.accent }}></div>
+                      <div className="h-5 w-5 rounded-full border" style={{ backgroundColor: themeObject.colors.card }}></div>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
       <ResetToDefault />
     </div>
   );
