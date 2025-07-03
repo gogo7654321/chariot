@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -128,7 +127,7 @@ export function ClassProgress() {
                 <div className="rounded-xl border bg-card transition-all duration-200 flex flex-col overflow-hidden h-full shadow-sm group-hover:shadow-lg group-hover:-translate-y-1 focus-within:ring-2 focus-within:ring-ring">
                     <div className="h-36 bg-secondary/30 flex items-center justify-center p-4 relative overflow-hidden">
                         <div className="absolute top-2 right-2 z-10">
-                            <div className="bg-background/70 p-1.5 rounded-lg backdrop-blur-sm shadow">
+                            <div className="bg-card p-1.5 rounded-lg shadow">
                                 <CountdownTimer examDate={course.customExamDate || course.examDate} compact />
                             </div>
                         </div>
