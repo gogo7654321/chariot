@@ -165,18 +165,18 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
       setCustomTheme(null);
     }
     setTheme(newTheme);
-  }, []);
+  }, [setCustomTheme]);
 
   const handleApplyCustomTheme = useCallback((themeToApply: CustomTheme | null) => {
     setCustomTheme(themeToApply);
     if (themeToApply !== null) {
       setTheme('default');
     }
-  }, []);
+  }, [setTheme]);
 
   const handleResetCustomTheme = useCallback(() => {
     setCustomTheme(null);
-  }, []);
+  }, [setCustomTheme]);
 
   const handleSetCustomThemeVariant = useCallback((themeId: string, variantId: string) => {
     const mainThemePreset = THEME_PRESETS.find(p => p.id === themeId);
@@ -200,7 +200,7 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
         selectedVariantId: variantId,
     });
 
-  }, []);
+  }, [setCustomTheme]);
 
   // --- CONTEXT VALUE --- //
   const value = { 
