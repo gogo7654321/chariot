@@ -193,6 +193,10 @@ body {
   html[data-custom-theme-active="true"] .dashboard-scope main {
     background-color: transparent;
   }
+
+  .dashboard-scope #main-content > .p-4.md\:p-8 {
+    background: transparent !important;
+  }
 }
 
 @layer components {
