@@ -77,8 +77,14 @@ const initializerFunction = () => {
         root.style.setProperty(prop, value);
       }
       root.setAttribute('data-custom-theme-active', 'true');
+      if (settings.customTheme.id === 'starry-night') {
+        root.setAttribute('data-starry-night', 'true');
+      } else {
+        root.removeAttribute('data-starry-night');
+      }
     } else {
       root.removeAttribute('data-custom-theme-active');
+      root.removeAttribute('data-starry-night');
     }
   } catch (e) {
     // If something goes wrong, we don't want to break the page render.

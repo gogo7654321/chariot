@@ -446,4 +446,19 @@ body {
     70% { opacity: 1; }
     100% { transform: rotate(315deg) translateX(-1500px); opacity: 0; }
   }
+
+  /* --- Starry Night Theme Overrides --- */
+  html[data-starry-night="true"] .bg-card,
+  html[data-starry-night="true"] [data-sidebar="sidebar"] {
+    background-color: transparent;
+  }
+  
+  html[data-starry-night="true"] .shadow-lg {
+    box-shadow: none;
+  }
+  
+  html[data-starry-night="true"] .backdrop-blur-xl {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }

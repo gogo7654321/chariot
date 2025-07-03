@@ -112,8 +112,14 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
         root.style.setProperty(prop, value);
       }
       root.setAttribute('data-custom-theme-active', 'true');
+      if (customTheme.id === 'starry-night') {
+        root.setAttribute('data-starry-night', 'true');
+      } else {
+        root.removeAttribute('data-starry-night');
+      }
     } else {
       root.removeAttribute('data-custom-theme-active');
+      root.removeAttribute('data-starry-night');
     }
   }, [customTheme]);
 
