@@ -40,6 +40,7 @@ export type CustomTheme = {
     ring: string;
     primaryForeground: string;
     secondaryForeground: string;
+    starColor: string;
   };
 };
 
@@ -116,6 +117,7 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
         '--custom-border': hexToHsl(t.border),
         '--custom-input': hexToHsl(t.input),
         '--custom-ring': hexToHsl(t.ring),
+        '--custom-star-color': hexToHsl(t.starColor),
       };
 
       for (const [prop, value] of Object.entries(themeValues)) {

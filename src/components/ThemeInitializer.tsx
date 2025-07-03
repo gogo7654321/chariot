@@ -71,6 +71,7 @@ const initializerFunction = () => {
           '--custom-border': hexToHsl(colors.border),
           '--custom-input': hexToHsl(colors.input),
           '--custom-ring': hexToHsl(colors.ring),
+          '--custom-star-color': hexToHsl(colors.starColor),
       };
       
       for (const [prop, value] of Object.entries(themeValues)) {

@@ -17,6 +17,7 @@ export type PresetColorDefinition = {
     primaryGradientStart?: string;
     primaryGradientEnd?: string;
     mutedForeground?: string;
+    starColor?: string;
 };
 
 export type Preset = {
@@ -137,6 +138,7 @@ export const THEME_PRESETS: Preset[] = [
       border: '#30363d',
       input: '#191919',
       ring: '#89ddff',
+      starColor: '#FFFFFF',
     },
     variants: [
       {
@@ -151,10 +153,12 @@ export const THEME_PRESETS: Preset[] = [
           secondary: '#191919',
           accent: '#e1adff',
           card: '#152238',
-          muted: '#ADB5BD',
+          muted: '#191919',
+          mutedForeground: '#ADB5BD',
           border: '#30363d',
           input: '#191919',
           ring: '#89ddff',
+          starColor: '#FFFFFF',
         }
       },
       {
@@ -169,10 +173,12 @@ export const THEME_PRESETS: Preset[] = [
           secondary: '#a763b6',
           accent: '#7f78be',
           card: '#9f45b0',
-          muted: '#fff4f4',
+          muted: '#a763b6',
+          mutedForeground: '#fff4f4',
           border: '#a763b6',
           input: '#a763b6',
           ring: '#d3e9ff',
+          starColor: '#FFFFFF',
         },
       },
       {
@@ -187,10 +193,12 @@ export const THEME_PRESETS: Preset[] = [
           secondary: '#191919',
           accent: '#77be80',
           card: '#011502',
-          muted: '#adb5bd',
+          muted: '#191919',
+          mutedForeground: '#DBF9F4',
           border: '#191919',
           input: '#191919',
           ring: '#c4c6ff',
+          starColor: '#FFFFFF',
         },
       },
       {
@@ -205,14 +213,16 @@ export const THEME_PRESETS: Preset[] = [
           secondary: '#9d00ff',
           accent: '#9d00ff',
           card: '#9f45b0',
-          muted: '#ffffff',
+          muted: '#9d00ff',
+          mutedForeground: '#FFFFFF',
           border: '#9d00ff',
           input: '#9d00ff',
           ring: '#fff3c4',
+          starColor: '#FFFFFF',
         },
       },
       {
-        id: 'sunrise',
+        id: 'sunrise-fade',
         name: '🌅 Sunrise Fade',
         colors: {
           primaryGradientStart: '#FFAE41',
@@ -223,10 +233,52 @@ export const THEME_PRESETS: Preset[] = [
           secondary: '#191919',
           accent: '#C49C48',
           card: '#C49C48',
-          muted: '#E0E0E0',
+          muted: '#191919',
+          mutedForeground: '#E0E0E0',
           border: '#C49C48',
           input: '#C49C48',
           ring: '#FFF3C4',
+          starColor: '#FFFFFF',
+        },
+      },
+      {
+        id: 'amber-horizon',
+        name: '🟠 Amber Horizon',
+        colors: {
+          primaryGradientStart: '#000000',
+          primaryGradientEnd: '#e69138',
+          background: '#e69138',
+          foreground: '#FFFFFF',
+          primary: '#fbe39b',
+          secondary: '#191919',
+          accent: '#e06666',
+          card: '#c37728',
+          muted: '#191919',
+          mutedForeground: '#FFFFFF',
+          border: '#e69138',
+          input: '#191919',
+          ring: '#fbe39b',
+          starColor: '#ffe234',
+        },
+      },
+      {
+        id: 'twilight-sky',
+        name: '🏙️ Twilight Sky',
+        colors: {
+          primaryGradientStart: '#1e48a9',
+          primaryGradientEnd: '#62cff4',
+          background: '#6b94f5',
+          foreground: '#FFFFFF',
+          primary: '#FFF3C4',
+          secondary: '#95b3f8',
+          accent: '#aac2f9',
+          card: '#6b94f5',
+          muted: '#95b3f8',
+          mutedForeground: '#040a18',
+          border: '#aac2f9',
+          input: '#95b3f8',
+          ring: '#FFF3C4',
+          starColor: '#FFFFFF',
         },
       },
     ]
@@ -326,6 +378,8 @@ export function createThemeObject(preset: Preset): CustomTheme {
     border: colors.border,
     input: colors.input,
     ring: colors.ring,
+    
+    starColor: colors.starColor || '#FFFFFF',
   };
 
   return {

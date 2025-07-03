@@ -92,7 +92,7 @@ export function StarryNightBackground() {
               width: `${star.size}px`,
               height: `${star.size}px`,
               opacity: star.opacity,
-              backgroundColor: 'hsl(var(--custom-accent))',
+              backgroundColor: 'hsl(var(--custom-star-color))',
               borderRadius: '50%',
               animationName: star.animationName,
               animationDuration: '5s',
