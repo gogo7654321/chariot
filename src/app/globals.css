@@ -465,10 +465,21 @@ html[data-theme-id="midnight-office"] body.dashboard-scope {
   background-image: url('/images/living room.gif');
 }
 
-/* --- Transparency rules for all full-background themes --- */
+/* --- Glassmorphism rules for all full-background themes --- */
+/*
+  This applies a semi-transparent, blurred background to key UI elements
+  when a full-screen background theme is active, creating a "liquid glass" effect.
+*/
 html[data-has-full-background="true"] .bg-card,
-html[data-has-full-background="true"] [data-sidebar="sidebar"] {
-  background-color: transparent !important;
+html[data-has-full-background="true"] [data-sidebar="sidebar"],
+html[data-has-full-background="true"] [role="dialog"],
+html[data-has-full-background="true"] .bg-popover,
+html[data-has-full-background="true"] [role="tablist"] {
+  background-color: hsl(var(--custom-card) / 0.4) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-color: hsl(var(--custom-border) / 0.2) !important;
+  box-shadow: 0 4px 30px hsl(var(--custom-foreground, 0 0% 0%) / 0.1) !important;
 }
 
 html[data-has-full-background="true"] .shadow-lg {
@@ -480,26 +491,20 @@ html[data-has-full-background="true"] .backdrop-blur-xl {
   -webkit-backdrop-filter: none !important;
 }
 
-/* Make Tabs transparent */
-html[data-has-full-background="true"] [role="tablist"] {
-  background-color: transparent !important;
-  border: 1px solid hsl(var(--custom-border) / 0.5) !important;
-}
-
 html[data-has-full-background="true"] [role="tablist"] > [role="tab"][data-state="active"] {
-  background-color: hsl(var(--custom-accent) / 0.1) !important;
+  background-color: hsl(var(--custom-accent) / 0.2) !important;
   box-shadow: none !important;
   color: hsl(var(--custom-primary)) !important;
 }
 
-/* Make Sidebar buttons transparent */
+/* Make Sidebar buttons have a subtle background on hover */
 html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button']:hover {
   background-color: hsl(var(--custom-accent) / 0.15) !important;
   color: hsl(var(--custom-primary)) !important;
 }
 
 html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button'][data-active='true'] {
-  background-color: transparent !important;
+  background-color: hsl(var(--custom-accent) / 0.1) !important;
   color: hsl(var(--custom-primary)) !important;
   font-weight: 600 !important;
 }
