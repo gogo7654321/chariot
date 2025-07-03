@@ -174,12 +174,6 @@ body {
     --chart-1: var(--custom-primary);
     --chart-2: var(--custom-accent);
   }
-
-  /* Apply the gradient background only when a custom theme is active within the dashboard */
-  html[data-custom-theme-active="true"]:not([data-theme-id="catpuccin"]) body.dashboard-scope {
-    background-image: linear-gradient(135deg, hsl(var(--custom-primary-gradient-start)), hsl(var(--custom-primary-gradient-end)));
-    background-attachment: fixed;
-  }
 }
 
 @layer base {
@@ -190,11 +184,9 @@ body {
     @apply bg-background text-foreground;
   }
   
-  html[data-custom-theme-active="true"] .dashboard-scope main {
-    background-color: transparent;
-  }
-
-  .dashboard-scope #main-content > .p-4.md\:p-8 {
+  html[data-custom-theme-active="true"] .dashboard-scope main,
+  html[data-has-full-background="true"] .dashboard-scope main,
+  html[data-has-full-background="true"] .dashboard-scope .p-4.md\:p-8 {
     background: transparent !important;
   }
 }
@@ -450,48 +442,60 @@ body {
     70% { opacity: 1; }
     100% { transform: rotate(315deg) translateX(-1500px); opacity: 0; }
   }
+}
 
-  /* --- Full Background Theme Overrides (Starry Night, Catpuccin, etc.) --- */
-  html[data-theme-id="catpuccin"] body.dashboard-scope {
-    background-image: url('/images/cat-background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-  }
+/* --- FULL BACKGROUND THEME OVERRIDES --- */
+/* This section is placed after all @layer directives for higher specificity */
 
-  html[data-has-full-background="true"] .bg-card,
-  html[data-has-full-background="true"] [data-sidebar="sidebar"] {
-    background-color: transparent;
-  }
-  
-  html[data-has-full-background="true"] .shadow-lg {
-    box-shadow: none;
-  }
-  
-  html[data-has-full-background="true"] .backdrop-blur-xl {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
+/* Default full-screen background (gradient for Starry Night variants) */
+html[data-has-full-background="true"] body.dashboard-scope {
+  background-image: linear-gradient(135deg, hsl(var(--custom-primary-gradient-start)), hsl(var(--custom-primary-gradient-end)));
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-color: hsl(var(--custom-background)); /* Fallback color */
+}
 
-  html[data-has-full-background="true"] [role="tablist"] {
-    background-color: transparent;
-    border: 1px solid hsl(var(--custom-border) / 0.5);
-  }
+/* Specific background for Catpuccin theme */
+html[data-theme-id="catpuccin"] body.dashboard-scope {
+  background-image: url('/images/cat-background.jpg');
+}
 
-  html[data-has-full-background="true"] [role="tablist"] > [role="tab"][data-state="active"] {
-    background-color: hsl(var(--custom-accent) / 0.1);
-    box-shadow: none;
-    color: hsl(var(--custom-primary));
-  }
+/* --- Transparency rules for all full-background themes --- */
+html[data-has-full-background="true"] .bg-card,
+html[data-has-full-background="true"] [data-sidebar="sidebar"] {
+  background-color: transparent !important;
+}
 
-  html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button']:hover {
-    background-color: hsl(var(--custom-accent) / 0.15);
-    color: hsl(var(--custom-primary));
-  }
-  
-  html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button'][data-active='true'] {
-    background-color: transparent;
-    color: hsl(var(--custom-primary));
-    font-weight: 600;
-  }
+html[data-has-full-background="true"] .shadow-lg {
+  box-shadow: none !important;
+}
+
+html[data-has-full-background="true"] .backdrop-blur-xl {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Make Tabs transparent */
+html[data-has-full-background="true"] [role="tablist"] {
+  background-color: transparent !important;
+  border: 1px solid hsl(var(--custom-border) / 0.5) !important;
+}
+
+html[data-has-full-background="true"] [role="tablist"] > [role="tab"][data-state="active"] {
+  background-color: hsl(var(--custom-accent) / 0.1) !important;
+  box-shadow: none !important;
+  color: hsl(var(--custom-primary)) !important;
+}
+
+/* Make Sidebar buttons transparent */
+html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button']:hover {
+  background-color: hsl(var(--custom-accent) / 0.15) !important;
+  color: hsl(var(--custom-primary)) !important;
+}
+
+html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='menu-button'][data-active='true'] {
+  background-color: transparent !important;
+  color: hsl(var(--custom-primary)) !important;
+  font-weight: 600 !important;
 }
