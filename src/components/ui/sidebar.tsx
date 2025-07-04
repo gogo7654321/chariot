@@ -332,43 +332,14 @@ function SidebarInset(
   { className, ...props }: React.ComponentProps<"main">,
   ref: React.Ref<HTMLDivElement>
 ) {
-  const { side, state, isMobile } = useSidebar()
-
-  // On mobile, the sidebar is an overlay (a Sheet), so the main content doesn't need L/R padding.
-  if (isMobile) {
-    return (
-      <main
-        ref={ref}
-        className={cn(
-          "relative flex min-h-svh flex-1 flex-col bg-background",
-          {
-            "pt-[--sidebar-height]": side === "top",
-            "pb-[--sidebar-height]": side === "bottom",
-          },
-          className
-        )}
-        {...props}
-      />
-    )
-  }
+  const { side } = useSidebar()
 
   return (
     <main
       ref={ref}
       className={cn(
-        "relative flex min-h-svh flex-1 flex-col bg-background transition-[padding] ease-in-out duration-500",
-        // This dynamic padding is crucial for smooth transitions.
-        // It adjusts based on the sidebar's state (expanded/collapsed).
+        "relative flex min-h-svh flex-1 flex-col bg-background",
         {
-          // Left sidebar
-          "md:pl-[var(--sidebar-width)]": side === "left" && state === "expanded",
-          "md:pl-[calc(var(--sidebar-width-icon)_+_1rem)]": side === "left" && state === "collapsed",
-
-          // Right sidebar
-          "md:pr-[var(--sidebar-width)]": side === "right" && state === "expanded",
-          "md:pr-[calc(var(--sidebar-width-icon)_+_1rem)]": side === "right" && state === "collapsed",
-
-          // Horizontal sidebars
           "pt-[--sidebar-height]": side === "top",
           "pb-[--sidebar-height]": side === "bottom",
         },
@@ -554,7 +525,7 @@ function SidebarMenuItem(
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 group-data-[collapsible=icon]:gap-0 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 group-data-[collapsible=icon]:justify-center [&>span]:whitespace-nowrap [&>span]:group-data-[collapsible=icon]:hidden [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2 group-data-[collapsible=icon]:gap-0 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 group-data-[collapsible=icon]:justify-center [&>svg]:size-4 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -583,6 +554,7 @@ function SidebarMenuButton(
     size = "default",
     tooltip,
     className,
+    children,
     ...props
   }: React.ComponentProps<"button"> & {
     asChild?: boolean
@@ -595,6 +567,27 @@ function SidebarMenuButton(
   const { isMobile, state, side } = useSidebar()
   const isHorizontal = side === 'top' || side === 'bottom';
 
+  // Find the text span to apply animation classes
+  const childArray = React.Children.toArray(children)
+  const icon = childArray.find(
+    (child) => React.isValidElement(child) && (child.type as any).displayName !== "span"
+  );
+  const text = childArray.find(
+    (child) => React.isValidElement(child) && (child.type as any).displayName === "span"
+  );
+
+  const buttonContent = (
+    <>
+      {icon}
+      {React.isValidElement(text) && React.cloneElement(text as React.ReactElement<any>, {
+        className: cn(
+          "whitespace-nowrap transition-all duration-300 overflow-hidden",
+          "group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0"
+        )
+      })}
+    </>
+  );
+
   const button = (
     <Comp
       ref={ref}
@@ -603,7 +596,9 @@ function SidebarMenuButton(
       data-active={isActive}
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
       {...props}
-    />
+    >
+      {buttonContent}
+    </Comp>
   )
 
   if (!tooltip) {

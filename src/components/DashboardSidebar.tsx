@@ -85,8 +85,6 @@ export function DashboardSidebar() {
                         {menuItems.map((item) => (
                             <SidebarMenuItem key={item.href}>
                                 <SidebarMenuButton
-                                    href={item.href}
-                                    isActive={handleIsActive(item.href)}
                                     asChild
                                     className="h-9"
                                     tooltip={typeof item.label === 'string' ? item.label : 'Ace OS©'}
@@ -143,7 +141,7 @@ export function DashboardSidebar() {
             <SidebarHeader>
                  <a href="/" className="flex items-center group-data-[state=expanded]:gap-2 group-data-[state=collapsed]:justify-center group-data-[state=collapsed]:gap-0">
                     <AceMascot className="w-8 h-8 flex-shrink-0" />
-                    <span className="font-bold text-lg whitespace-nowrap transition-opacity duration-500 group-data-[state=collapsed]:hidden">AP Ace<span className="copyright-symbol">&copy;</span></span>
+                    <span className="font-bold text-lg whitespace-nowrap transition-all duration-300 group-data-[state=collapsed]:w-0 group-data-[state=collapsed]:opacity-0 overflow-hidden">AP Ace<span className="copyright-symbol">&copy;</span></span>
                 </a>
             </SidebarHeader>
             <SidebarContent>
@@ -151,7 +149,6 @@ export function DashboardSidebar() {
                     {menuItems.map((item) => (
                         <SidebarMenuItem key={item.href}>
                             <SidebarMenuButton
-                                href={item.href}
                                 isActive={handleIsActive(item.href)}
                                 asChild
                                 tooltip={typeof item.label === 'string' ? item.label : 'Ace OS©'}
@@ -277,7 +274,7 @@ function UserInfo({ user, onLogout }: { user: User, onLogout?: () => void }) {
               </AvatarFallback>
             </Avatar>
             <div className={cn(
-                "overflow-hidden transition-opacity duration-200",
+                "overflow-hidden transition-all duration-300",
                 "data-[state=collapsed]:w-0 data-[state=collapsed]:opacity-0"
             )}>
                 <p className="font-semibold text-sm truncate whitespace-nowrap">{user.displayName || <>AP Ace<span className="copyright-symbol">&copy;</span> Student</>}</p>
