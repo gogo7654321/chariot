@@ -332,15 +332,43 @@ function SidebarInset(
   { className, ...props }: React.ComponentProps<"main">,
   ref: React.Ref<HTMLDivElement>
 ) {
-  const { side } = useSidebar();
+  const { side, state, isMobile } = useSidebar()
+
+  // On mobile, the sidebar is an overlay (a Sheet), so the main content doesn't need L/R padding.
+  if (isMobile) {
+    return (
+      <main
+        ref={ref}
+        className={cn(
+          "relative flex min-h-svh flex-1 flex-col bg-background",
+          {
+            "pt-[--sidebar-height]": side === "top",
+            "pb-[--sidebar-height]": side === "bottom",
+          },
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+
   return (
     <main
       ref={ref}
       className={cn(
-        "relative flex min-h-svh flex-1 flex-col bg-background transition-[padding] duration-500",
+        "relative flex min-h-svh flex-1 flex-col bg-background transition-[padding] ease-in-out duration-500",
+        // This dynamic padding is crucial for smooth transitions.
+        // It adjusts based on the sidebar's state (expanded/collapsed).
         {
-          "md:pl-[calc(var(--sidebar-width-icon)_+_1rem)]": side === "left",
-          "md:pr-[calc(var(--sidebar-width-icon)_+_1rem)]": side === "right",
+          // Left sidebar
+          "md:pl-[var(--sidebar-width)]": side === "left" && state === "expanded",
+          "md:pl-[calc(var(--sidebar-width-icon)_+_1rem)]": side === "left" && state === "collapsed",
+
+          // Right sidebar
+          "md:pr-[var(--sidebar-width)]": side === "right" && state === "expanded",
+          "md:pr-[calc(var(--sidebar-width-icon)_+_1rem)]": side === "right" && state === "collapsed",
+
+          // Horizontal sidebars
           "pt-[--sidebar-height]": side === "top",
           "pb-[--sidebar-height]": side === "bottom",
         },
