@@ -377,6 +377,7 @@ export const THEME_PRESETS: Preset[] = [
       border: '#efb9c8',
       input: '#f5c6d3',
       ring: '#d35867',
+      mutedForeground: '#ab7886',
     }
   },
 

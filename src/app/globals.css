@@ -531,25 +531,25 @@ html[data-has-full-background="true"] .dashboard-customizer-sheet {
   border-color: hsl(var(--custom-border)) !important;
 }
 
-/* Force readable text colors for Parisian Daydream theme header */
-html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-foreground {
-  color: #050505 !important;
-  text-shadow: 0 1px 2px hsla(0, 0%, 100%, 0.5) !important;
-}
+/* Ensure readability for the Parisian Daydream theme header */
+html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-foreground,
 html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-muted-foreground {
-  color: #333333 !important;
-  text-shadow: 0 1px 2px hsla(0, 0%, 100%, 0.3) !important;
+  text-shadow: 0 1px 3px rgba(43, 28, 28, 0.5) !important;
 }
+
 
 /* --- START: Sidebar Centering Fix --- */
-/* This applies to the main menu items when the sidebar is collapsed */
-.group[data-state="collapsed"] [data-sidebar="menu-button"] {
+/* This section contains high-specificity overrides to ensure correct icon centering. */
+
+/* For menu buttons */
+[data-sidebar="sidebar"][data-state="collapsed"] [data-sidebar="menu-button"] {
   justify-content: center !important;
-  padding: 0 !important; /* Reset all padding */
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
-/* This applies to the logo in the header when the sidebar is collapsed */
-.group[data-state="collapsed"] [data-sidebar="header"] > a {
+/* For the logo in the header */
+[data-sidebar="sidebar"][data-state="collapsed"] [data-sidebar="header"] > a {
   justify-content: center !important;
 }
 /* --- END: Sidebar Centering Fix --- */
