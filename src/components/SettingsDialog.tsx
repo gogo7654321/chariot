@@ -28,6 +28,7 @@ import { useAppearance } from '@/contexts/AppearanceContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AccountSettingsForm } from './AccountSettingsForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 type AccessibilityTheme = "default" | "protanopia" | "deuteranopia" | "tritanopia";
 type SidebarPosition = "left" | "right" | "top" | "bottom";
@@ -45,7 +46,7 @@ export function SettingsDialog({ trigger }: { trigger: React.ReactNode }) {
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="max-w-2xl h-full sm:h-auto sm:max-h-[90vh] flex flex-col">
+      <DialogContent className="settings-dialog-content max-w-2xl h-full sm:h-auto sm:max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
           <DialogDescription>

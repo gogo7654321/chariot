@@ -518,12 +518,12 @@ html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='me
 }
 
 /* --- Theme-specific Overrides & Fixes --- */
-
 html[data-has-full-background="true"] .dashboard-header-container p {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-html[data-has-full-background="true"] .dashboard-customizer-sheet {
+html[data-has-full-background="true"] .dashboard-customizer-sheet,
+html[data-has-full-background="true"] .settings-dialog-content {
   background-color: hsl(var(--custom-background)) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -539,7 +539,6 @@ html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-muted-
     color: #2c3e50 !important; /* A readable, lighter slate blue */
     text-shadow: 0 2px 6px rgba(255, 255, 255, 0.3) !important; /* Matching soft glow */
 }
-
 
 /* --- START: Sidebar Centering Fix --- */
 /* This section contains high-specificity overrides to ensure correct icon centering. */
