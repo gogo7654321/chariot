@@ -332,20 +332,17 @@ function SidebarInset(
   { className, ...props }: React.ComponentProps<"main">,
   ref: React.Ref<HTMLDivElement>
 ) {
-  const { side, state } = useSidebar()
+  const { side } = useSidebar()
 
   return (
     <main
       ref={ref}
       data-sidebar-inset="true"
-      data-state={state}
       className={cn(
-        "relative flex min-h-svh flex-1 flex-col bg-background transition-[padding] duration-500 ease-in-out",
+        "relative flex min-h-svh flex-1 flex-col bg-background",
         {
           "pt-[--sidebar-height]": side === "top",
           "pb-[--sidebar-height]": side === "bottom",
-          "md:pl-[--sidebar-width] group-data-[state=collapsed]/sidebar-wrapper:md:pl-[--sidebar-width-icon]": side === "left",
-          "md:pr-[--sidebar-width] group-data-[state=collapsed]/sidebar-wrapper:md:pr-[--sidebar-width-icon]": side === "right",
         },
         className
       )}
