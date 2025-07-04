@@ -532,12 +532,12 @@ html[data-has-full-background="true"] .dashboard-customizer-sheet {
 
 /* Ensure readability for the Parisian Daydream theme header */
 html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-foreground {
-    color: hsl(var(--primary)) !important;
-    text-shadow: 0 1px 3px hsl(var(--primary) / 0.4) !important;
+    color: #0d2c4f !important; /* Deep, dark navy blue for max contrast */
+    text-shadow: 0 2px 6px rgba(255, 255, 255, 0.3) !important; /* Soft white glow for separation */
 }
 html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-muted-foreground {
-    color: hsl(var(--primary) / 0.85) !important;
-    text-shadow: 0 1px 2px hsl(var(--primary) / 0.2) !important;
+    color: #2c3e50 !important; /* A readable, lighter slate blue */
+    text-shadow: 0 2px 6px rgba(255, 255, 255, 0.3) !important; /* Matching soft glow */
 }
 
 
@@ -549,10 +549,12 @@ html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-muted-
   justify-content: center !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
+  gap: 0 !important;
 }
 
 /* For the logo in the header */
 [data-sidebar="sidebar"][data-state="collapsed"] [data-sidebar="header"] > a {
   justify-content: center !important;
+  gap: 0 !important;
 }
 /* --- END: Sidebar Centering Fix --- */
