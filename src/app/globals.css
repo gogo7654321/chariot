@@ -530,6 +530,11 @@ html[data-has-full-background="true"] .dashboard-customizer-sheet {
   -webkit-backdrop-filter: none !important;
   border-color: hsl(var(--custom-border)) !important;
 }
-    
 
-    
+/* Force readable text colors for Parisian Daydream theme header */
+html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-foreground {
+  color: hsl(var(--custom-foreground)) !important;
+}
+html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-muted-foreground {
+  color: hsl(var(--custom-muted-foreground)) !important;
+}
