@@ -141,9 +141,9 @@ export function DashboardSidebar() {
     return (
         <>
             <SidebarHeader>
-                 <a href="/" className="flex items-center gap-2">
+                 <a href="/" className="flex items-center group-data-[state=expanded]:gap-2 group-data-[state=collapsed]:justify-center">
                     <AceMascot className="w-8 h-8 flex-shrink-0" />
-                    <span className="font-bold text-lg whitespace-nowrap transition-opacity duration-500 group-data-[state=collapsed]:opacity-0">AP Ace<span className="copyright-symbol">&copy;</span></span>
+                    <span className="font-bold text-lg whitespace-nowrap transition-opacity duration-500 group-data-[state=collapsed]:hidden">AP Ace<span className="copyright-symbol">&copy;</span></span>
                 </a>
             </SidebarHeader>
             <SidebarContent>
