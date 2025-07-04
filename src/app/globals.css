@@ -462,7 +462,14 @@ html[data-theme-id="catpuccin"] body.dashboard-scope {
 
 /* Specific background for Midnight Office theme */
 html[data-theme-id="midnight-office"] body.dashboard-scope {
-  background-image: url('/images/living room.gif');
+  background-color: #0c2434;
+  background-image: url('/images/theme/living_room.gif');
+}
+
+/* Specific background for Parisian Daydream theme */
+html[data-theme-id="parisian-daydream"] body.dashboard-scope {
+  background-color: #fdeef1;
+  background-image: url('/images/theme/paris.gif');
 }
 
 /* --- Glassmorphism rules for all full-background themes --- */

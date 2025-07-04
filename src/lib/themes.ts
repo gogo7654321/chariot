@@ -23,7 +23,7 @@ export type PresetColorDefinition = {
 export type Preset = {
     id: string;
     name: string;
-    category: 'Light' | 'Dark' | 'Gaming' | 'Pixel Art' | 'Seasonal';
+    category: 'Light' | 'Dark' | 'Gaming' | 'Pixel Art' | 'Seasonal' | 'Scenic';
     hasFullScreenBackground?: boolean;
     variants?: ThemeVariant[];
     colors: PresetColorDefinition;
@@ -357,6 +357,26 @@ export const THEME_PRESETS: Preset[] = [
       border: '#28516d',
       input: '#14364e',
       ring: '#d9444f',
+    }
+  },
+
+  // ✨ SCENIC THEMES
+  {
+    id: 'parisian-daydream',
+    name: '🎨 Parisian Daydream',
+    category: 'Scenic',
+    hasFullScreenBackground: true,
+    colors: {
+      background: '#fdeef1',
+      foreground: '#4c3e45',
+      primary: '#e54e64',
+      secondary: '#f9d8e1',
+      accent: '#8eb2c7',
+      card: '#f9d8e1',
+      muted: '#f5c6d3',
+      border: '#efb9c8',
+      input: '#f5c6d3',
+      ring: '#e54e64',
     }
   },
 
