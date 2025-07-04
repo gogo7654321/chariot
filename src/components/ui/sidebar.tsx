@@ -332,16 +332,20 @@ function SidebarInset(
   { className, ...props }: React.ComponentProps<"main">,
   ref: React.Ref<HTMLDivElement>
 ) {
-  const { side } = useSidebar()
+  const { side, state } = useSidebar()
 
   return (
     <main
       ref={ref}
+      data-sidebar-inset="true"
+      data-state={state}
       className={cn(
-        "relative flex min-h-svh flex-1 flex-col bg-background",
+        "relative flex min-h-svh flex-1 flex-col bg-background transition-[padding] duration-500 ease-in-out",
         {
           "pt-[--sidebar-height]": side === "top",
           "pb-[--sidebar-height]": side === "bottom",
+          "md:pl-[--sidebar-width] group-data-[state=collapsed]/sidebar-wrapper:md:pl-[--sidebar-width-icon]": side === "left",
+          "md:pr-[--sidebar-width] group-data-[state=collapsed]/sidebar-wrapper:md:pr-[--sidebar-width-icon]": side === "right",
         },
         className
       )}
@@ -525,7 +529,7 @@ function SidebarMenuItem(
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button flex w-full items-center gap-2 group-data-[collapsible=icon]:gap-0 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 group-data-[collapsible=icon]:justify-center [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button flex w-full items-center gap-2 group-data-[collapsible=icon]:gap-0 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-colors duration-100 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:justify-center [&>svg]:size-4 [&>svg]:shrink-0 [&_span]:whitespace-nowrap [&_span]:overflow-hidden [&_span]:transition-all [&_span]:duration-300 group-data-[collapsible=icon]:[&_span]:w-0 group-data-[collapsible=icon]:[&_span]:opacity-0",
   {
     variants: {
       variant: {
@@ -567,27 +571,6 @@ function SidebarMenuButton(
   const { isMobile, state, side } = useSidebar()
   const isHorizontal = side === 'top' || side === 'bottom';
 
-  // Find the text span to apply animation classes
-  const childArray = React.Children.toArray(children)
-  const icon = childArray.find(
-    (child) => React.isValidElement(child) && (child.type as any).displayName !== "span"
-  );
-  const text = childArray.find(
-    (child) => React.isValidElement(child) && (child.type as any).displayName === "span"
-  );
-
-  const buttonContent = (
-    <>
-      {icon}
-      {React.isValidElement(text) && React.cloneElement(text as React.ReactElement<any>, {
-        className: cn(
-          "whitespace-nowrap transition-all duration-300 overflow-hidden",
-          "group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0"
-        )
-      })}
-    </>
-  );
-
   const button = (
     <Comp
       ref={ref}
@@ -597,7 +580,7 @@ function SidebarMenuButton(
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
       {...props}
     >
-      {buttonContent}
+      {children}
     </Comp>
   )
 
