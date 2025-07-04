@@ -319,7 +319,7 @@ export function DashboardCustomizer({ children }: { children: React.ReactNode })
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md flex flex-col">
+      <SheetContent className="dashboard-customizer-sheet w-full sm:max-w-md flex flex-col">
         <SheetHeader>
           <SheetTitle>Dashboard Customizer</SheetTitle>
           <SheetDescription>
