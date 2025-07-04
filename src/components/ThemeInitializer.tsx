@@ -77,7 +77,22 @@ const initializerFunction = () => {
       for (const [prop, value] of Object.entries(themeValues)) {
         root.style.setProperty(prop, value);
       }
+      
+      // Set the theme attributes
       root.setAttribute('data-custom-theme-active', 'true');
+      if (settings.customTheme.id) {
+        root.setAttribute('data-theme-id', settings.customTheme.id);
+      }
+      
+      // Handle full background themes
+      const themesWithFullBackground = ['catpuccin', 'starry-night', 'midnight-office', 'parisian-daydream'];
+      if (settings.customTheme.id && themesWithFullBackground.includes(settings.customTheme.id)) {
+        root.setAttribute('data-has-full-background', 'true');
+      } else {
+        root.removeAttribute('data-has-full-background');
+      }
+      
+      // Handle starry night specifically
       if (settings.customTheme.id === 'starry-night') {
         root.setAttribute('data-starry-night', 'true');
       } else {
@@ -86,6 +101,8 @@ const initializerFunction = () => {
     } else {
       root.removeAttribute('data-custom-theme-active');
       root.removeAttribute('data-starry-night');
+      root.removeAttribute('data-theme-id');
+      root.removeAttribute('data-has-full-background');
     }
   } catch (e) {
     // If something goes wrong, we don't want to break the page render.
