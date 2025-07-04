@@ -19,8 +19,6 @@ import {
   LogOut,
   User as UserIcon,
   BookCopy,
-  Sun,
-  Moon,
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { AceMascot } from '@/components/AceMascot';
@@ -32,13 +30,7 @@ import { signOut } from 'firebase/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useSidebar } from '@/components/ui/sidebar';
-import { AccessibilitySettings } from '@/components/AccessibilitySettings';
 import { Separator } from '@/components/ui/separator';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useTheme } from 'next-themes';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 
 const devMenuItems = [
   { href: '/dashboard/dev', label: 'Dashboard Home', icon: Home },
@@ -52,7 +44,6 @@ export function DevSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
-  const { theme, setTheme } = useTheme();
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -113,53 +104,6 @@ export function DevSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
         <Separator className="my-2" />
-        
-        <div className="relative h-[72px]">
-            {/* Expanded view */}
-            <div className="absolute inset-0 space-y-1 p-2 transition-opacity duration-200 group-data-[state=collapsed]:pointer-events-none group-data-[state=collapsed]:opacity-0">
-                <div className="flex items-center justify-between">
-                    <Label htmlFor="dev-theme-switch" className="flex cursor-pointer items-center gap-2 text-sm">
-                        <div className="relative flex h-4 w-4 items-center justify-center">
-                            <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                            <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                        </div>
-                        <span className="whitespace-nowrap">Dark Mode</span>
-                    </Label>
-                    <Switch
-                        id="dev-theme-switch"
-                        checked={theme === 'dark'}
-                        onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-                    />
-                </div>
-                <AccessibilitySettings triggerType="button" />
-            </div>
-
-            {/* Collapsed view */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 p-1 transition-opacity duration-200 group-data-[state=expanded]:pointer-events-none group-data-[state=expanded]:opacity-0">
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-9 w-9"
-                            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                            >
-                            <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                            <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                            <span className="sr-only">Toggle theme</span>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" align="center">Toggle Theme</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                    <AccessibilitySettings triggerType="icon" />
-                    </TooltipTrigger>
-                    <TooltipContent side="right" align="center">Accessibility</TooltipContent>
-                </Tooltip>
-            </div>
-        </div>
-        
         {user && <UserInfo user={user} />}
       </SidebarFooter>
     </>
