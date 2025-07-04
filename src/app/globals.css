@@ -519,7 +519,6 @@ html[data-has-full-background="true"] [data-sidebar='sidebar'] [data-sidebar='me
 
 /* --- Theme-specific Overrides & Fixes --- */
 
-html[data-has-full-background="true"] .dashboard-header-container h1,
 html[data-has-full-background="true"] .dashboard-header-container p {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
@@ -532,9 +531,13 @@ html[data-has-full-background="true"] .dashboard-customizer-sheet {
 }
 
 /* Ensure readability for the Parisian Daydream theme header */
-html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-foreground,
+html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-foreground {
+    color: hsl(var(--primary)) !important;
+    text-shadow: 0 1px 3px hsl(var(--primary) / 0.4) !important;
+}
 html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-muted-foreground {
-  text-shadow: 0 1px 3px rgba(43, 28, 28, 0.5) !important;
+    color: hsl(var(--primary) / 0.85) !important;
+    text-shadow: 0 1px 2px hsl(var(--primary) / 0.2) !important;
 }
 
 
