@@ -538,3 +538,15 @@ html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-foregr
 html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-muted-foreground {
   color: hsl(var(--custom-muted-foreground)) !important;
 }
+
+/* Fix sidebar icon centering when collapsed */
+html[data-has-full-background="true"] [data-sidebar="sidebar"] [data-sidebar="menu-button"][data-size="default"] {
+  justify-content: center !important;
+}
+
+/* Also fix for different button sizes */
+html[data-has-full-background="true"] [data-sidebar="sidebar"] [data-sidebar="menu-button"] {
+  justify-content: center !important;
+}
+
+    
