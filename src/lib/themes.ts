@@ -368,16 +368,15 @@ export const THEME_PRESETS: Preset[] = [
     hasFullScreenBackground: true,
     colors: {
       background: '#fdeef1',
-      foreground: '#050505',
-      primary: '#e6a4b4',
+      foreground: '#d35867',
+      primary: '#d35867',
       secondary: '#f9d8e1',
       accent: '#8eb2c7',
       card: '#f9d8e1',
       muted: '#f5c6d3',
       border: '#efb9c8',
       input: '#f5c6d3',
-      ring: '#d96d84',
-      mutedForeground: '#333333',
+      ring: '#d35867',
     }
   },
 
