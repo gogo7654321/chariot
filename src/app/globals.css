@@ -533,30 +533,23 @@ html[data-has-full-background="true"] .dashboard-customizer-sheet {
 
 /* Force readable text colors for Parisian Daydream theme header */
 html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-foreground {
-  color: hsl(var(--custom-foreground)) !important;
-  text-shadow: 0 1px 4px hsla(var(--custom-foreground), 0.3) !important;
+  color: #050505 !important;
+  text-shadow: 0 1px 2px hsla(0, 0%, 100%, 0.5) !important;
 }
 html[data-theme-id="parisian-daydream"] .dashboard-header-container .text-muted-foreground {
-  color: hsl(var(--custom-muted-foreground)) !important;
-  text-shadow: 0 1px 4px hsla(var(--custom-foreground), 0.3) !important;
+  color: #333333 !important;
+  text-shadow: 0 1px 2px hsla(0, 0%, 100%, 0.3) !important;
 }
 
 /* --- START: Sidebar Centering Fix --- */
-/* This is Option 1 from your debugging steps. */
-
-/* Debug: Force center sidebar icons */
-[data-sidebar="sidebar"] [data-sidebar="menu-button"] {
+/* This applies to the main menu items when the sidebar is collapsed */
+.group[data-state="collapsed"] [data-sidebar="menu-button"] {
   justify-content: center !important;
-  align-items: center !important;
-  display: flex !important;
+  padding: 0 !important; /* Reset all padding */
 }
 
-/* More specific for collapsed state */
-[data-sidebar="sidebar"][data-state="collapsed"] [data-sidebar="menu-button"] {
+/* This applies to the logo in the header when the sidebar is collapsed */
+.group[data-state="collapsed"] [data-sidebar="header"] > a {
   justify-content: center !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
 }
 /* --- END: Sidebar Centering Fix --- */
-
-    
