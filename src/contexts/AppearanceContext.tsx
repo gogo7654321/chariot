@@ -110,16 +110,22 @@ export const AppearanceProvider = ({ children }: { children: ReactNode }) => {
       for (const [prop, value] of Object.entries(themeValues)) {
         root.style.setProperty(prop, value);
       }
+      
+      // Set the theme attributes
       root.setAttribute('data-custom-theme-active', 'true');
-      root.setAttribute('data-theme-id', customTheme.id);
-
-      const preset = THEME_PRESETS.find(p => p.id === customTheme.id);
-      if (preset?.hasFullScreenBackground) {
+      if (customTheme.id) {
+          root.setAttribute('data-theme-id', customTheme.id);
+      }
+      
+      // Handle full background themes
+      const themesWithFullBackground = ['catpuccin', 'starry-night', 'midnight-office', 'parisian-daydream'];
+      if (customTheme.id && themesWithFullBackground.includes(customTheme.id)) {
         root.setAttribute('data-has-full-background', 'true');
       } else {
         root.removeAttribute('data-has-full-background');
       }
-
+      
+      // Handle starry night specifically
       if (customTheme.id === 'starry-night') {
         root.setAttribute('data-starry-night', 'true');
       } else {
