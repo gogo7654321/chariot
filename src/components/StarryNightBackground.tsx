@@ -28,10 +28,10 @@ export function StarryNightBackground() {
   const [stars, setStars] = useState<Star[]>([]);
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
 
-  const shouldRender = customTheme?.id === 'starry-night';
+  const themeId = customTheme?.id;
 
   useEffect(() => {
-    if (!shouldRender || typeof window === 'undefined') {
+    if (themeId !== 'starry-night' || typeof window === 'undefined') {
       setStars([]);
       setShootingStars([]);
       return;
@@ -73,50 +73,62 @@ export function StarryNightBackground() {
 
     window.addEventListener('resize', generateStars);
     return () => window.removeEventListener('resize', generateStars);
-  }, [shouldRender]);
+  }, [themeId]);
 
-  if (!shouldRender) {
-    return null;
-  }
 
-  return (
-    <>
-      <div className="starry-background" aria-hidden="true">
-        {stars.map((star) => (
-          <div
-            key={star.id}
-            style={{
-              position: 'absolute',
-              left: star.left,
-              top: star.top,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-              opacity: star.opacity,
-              backgroundColor: 'hsl(var(--custom-star-color))',
-              borderRadius: '50%',
-              animationName: star.animationName,
-              animationDuration: '5s',
-              animationIterationCount: 'infinite',
-            }}
-          />
-        ))}
-      </div>
-      {areShootingStarsEnabled && (
-        <div className="shooting-star-container" aria-hidden="true">
-          {shootingStars.map((star) => (
-              <span 
-                key={star.id} 
-                className="shootingstar"
+  switch(themeId) {
+    case 'parisian-daydream':
+      return (
+        <div className="starry-background" aria-hidden="true">
+           <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+               <source src="/images/theme/paris.mp4" type="video/mp4" />
+           </video>
+        </div>
+      );
+    
+    case 'starry-night':
+      return (
+        <>
+          <div className="starry-background" aria-hidden="true">
+            {stars.map((star) => (
+              <div
+                key={star.id}
                 style={{
-                    top: star.top,
-                    right: star.right,
-                    animationDelay: star.animationDelay,
-                    animationDuration: star.animationDuration,
+                  position: 'absolute',
+                  left: star.left,
+                  top: star.top,
+                  width: `${star.size}px`,
+                  height: `${star.size}px`,
+                  opacity: star.opacity,
+                  backgroundColor: 'hsl(var(--custom-star-color))',
+                  borderRadius: '50%',
+                  animationName: star.animationName,
+                  animationDuration: '5s',
+                  animationIterationCount: 'infinite',
                 }}
               />
-          ))}
-        </div>
-      )}
-    </>
-  );
+            ))}
+          </div>
+          {areShootingStarsEnabled && (
+            <div className="shooting-star-container" aria-hidden="true">
+              {shootingStars.map((star) => (
+                  <span 
+                    key={star.id} 
+                    className="shootingstar"
+                    style={{
+                        top: star.top,
+                        right: star.right,
+                        animationDelay: star.animationDelay,
+                        animationDuration: star.animationDuration,
+                    }}
+                  />
+              ))}
+            </div>
+          )}
+        </>
+      );
+      
+    default:
+      return null;
+  }
 }
